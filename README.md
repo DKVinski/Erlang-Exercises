@@ -1,2 +1,2 @@
 # Erlang-Exercises
-Solutions of Erlangator basic cource exercises
+Solutions of Erlangator basic course exercises
