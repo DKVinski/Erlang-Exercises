@@ -12,14 +12,13 @@ create_index(FileName) ->
 people_sort([Head|Tail]) ->
 	people_sort_tail(Tail, Head, 1).
 
-people_sort_tail([Head|Tail], Previous, Index) ->
-	{Name, Birth} = Head,
-	{PreviousName, PreviousBirth} = Previous,
-	{Year, Month, Day} = Birth,
-	{PreviousYear, PreviousMonth, PreviousDay} = PreviousBirth,
+people_sort_tail([{Name, {Year, Month, Day}}|Tail], {PreviousName, {PreviousYear, PreviousMonth, PreviousDay}}, Index) ->
 	if
-		Month > PreviousMonth or (Month == PreviousMonth and Day > PreviousDay) or (Month == PreviousMonth and Day == PreviousDay and Name > PreviousName) -> [#person{Name, Birth, Index}|people_sort_tail(Tail, Head, Index + 1)];
-		false -> [#person{Name, Birth, Index}|people_sort_tail(Tail, Previous, Index + 1)] 
+		(list_to_integer(Month) > list_to_integer(PreviousMonth)) or 
+		(list_to_integer(Month) == list_to_integer(PreviousMonth) and list_to_integer(Day) > list_to_integer(PreviousDay)) or 
+		(list_to_integer(Month) == list_to_integer(PreviousMonth) and list_to_integer(Day) == list_to_integer(PreviousDay) and list_to_atom(Name) > list_to_atom(PreviousName))
+			-> #person{name = Name, birth = {Year, Month, Day}, index = Index},[{Name, {Year, Month, Day}, Index}|people_sort_tail(Tail, {Year, Month, Day}, Index}, Index + 1)];
+		false -> #person{name = Name, birth = {Year, Month, Day}, Index}, index = Index},[{Name, {Year, Month, Day}, Index}}|people_sort_tail(Tail, {PreviousYear, PreviousMonth, PreviousDay}, Index + 1)] 
 	end;
 people_sort_tail([], _, _) ->
 	[].		
