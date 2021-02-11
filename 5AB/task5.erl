@@ -3,6 +3,7 @@
 
 -record(person, {name, birth, index = 0}).
 
+%% row 20: syntax error before '>'
 create_index(FileName) ->
 	People = file:consult(FileName),
 	people_sort(People),
