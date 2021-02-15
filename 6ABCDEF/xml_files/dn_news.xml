@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<rss version="2.0">
+	<channel>
+  		<title>Dagens Nyheter</title> 
+		<link>http://www.dn.se/</link> 
+		<description>De viktigaste nyheterna från Sveriges största morgontidning.</description> 
+		<language>sv-se</language>
+		<image>
+			<title>Dagens Nyheter</title>
+			<url>http://www.dn.se/content/2/c4/13/99/logoDagensNyheter.gif</url>
+			<link>http://www.dn.se/</link>
+			<width>144</width>
+			<height>18</height>
+		</image>
+		<item>
+            <title>Pojke hörd om mord</title>
+            <link>http://www.dn.se/DNet/jsp/polopoly.jsp?d=147&amp;a=826937&amp;rss=1399</link>
+			<description>70-årig lantbrukare hittades död och bunden. 14-åringen har inte delgivits misstanke om brott, enligt polisen.</description>
+			<pubDate>Thu, 11 Sep 2008 11:40:01 +0200 (CEST)</pubDate>
+		</item>
+		<item>
+            <title>Dog av mjölkersättning</title>
+            <link>http://www.dn.se/DNet/jsp/polopoly.jsp?d=148&amp;a=826901&amp;rss=1399</link>
+			<description>Spädbarn i Kina fick förfalskad ersättning. Ett barn har avlidit och flera skadats efter att ha fått njursten.</description>
+			<pubDate>Thu, 11 Sep 2008 09:44:05 +0200 (CEST)</pubDate>
+		</item>
+		<item>
+            <title>Så vet du om ditt barn har stjärtfluss</title>
+            <link>http://www.dn.se/DNet/jsp/polopoly.jsp?d=145&amp;a=826912&amp;rss=1399</link>
+			<description>Infektioner i barns underliv. Mats Reimer, barnläkare, förklarar hur symptomen ser ut.</description>
+		</item>
+		<item>
+            <title>Nu har vi börjat snåla</title>
+            <link>http://www.dn.se/DNet/jsp/polopoly.jsp?d=3130&amp;a=826855&amp;rss=1399</link>
+			<description>Höjda priser pressar oss. Skohandeln har tappat 5,5 procent av omsättningen under 2008.</description>
+			<pubDate>Thu, 11 Sep 2008 08:28:05 +0200 (CEST)</pubDate>
+		</item>
+		<item>
+            <title>&quot;Ike&quot; växer i styrka</title>
+            <link>http://www.dn.se/DNet/jsp/polopoly.jsp?d=148&amp;a=826884&amp;rss=1399</link>
+			<description>Orkanen på väg mot Texas. Kan växa till en kategori fyra innan den når USA:s fastland.</description>
+			<pubDate>Thu, 11 Sep 2008 09:03:58 +0200 (CEST)</pubDate>
+		</item>
+		<item>
+            <title>Fiskfetter kan vara onyttigare än tidigare känt</title>
+            <link>http://www.dn.se/DNet/jsp/polopoly.jsp?d=147&amp;a=826909&amp;rss=1399</link>
+			<description>Fastfooddiet. Fisken töms på nyttiga omega 3-fetter.</description>
+			<pubDate>Thu, 11 Sep 2008 09:59:44 +0200 (CEST)</pubDate>
+		</item>
+		<item>
+            <title>Elitsoldat skadades under hemlig övning</title>
+            <link>http://www.dn.se/DNet/jsp/polopoly.jsp?d=147&amp;a=826755&amp;rss=1399</link>
+			<description>Svensk övning i Norge. Soldaten föll tio meter från en helikopter.</description>
+			<pubDate>Wed, 10 Sep 2008 23:18:13 +0200 (CEST)</pubDate>
+		</item>
+		<item>
+            <title>Kraftiga jordskalv i Japan och Indonesien</title>
+            <link>http://www.dn.se/DNet/jsp/polopoly.jsp?d=148&amp;a=826829&amp;rss=1399</link>
+			<description>Tsunamivarningar utfärdades men hävdes. Två kraftiga skalv inträffade med 20 minuters mellanrum.</description>
+			<pubDate>Thu, 11 Sep 2008 07:45:59 +0200 (CEST)</pubDate>
+		</item>
+		<item>
+            <title>Alliansen ger nya miljarder till vägar</title>
+            <link>http://www.dn.se/DNet/jsp/polopoly.jsp?d=572&amp;a=826630&amp;rss=1399</link>
+			<description>Lovar kraftsamling på trafikområdet: &quot;Den enskilt största satsningen som någonsin gjorts i en budgetproposition&quot;.</description>
+			<pubDate>Thu, 11 Sep 2008 00:50:28 +0200 (CEST)</pubDate>
+		</item>
+
+  	</channel>
+</rss>
+0
+

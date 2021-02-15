@@ -1,0 +1,1055 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+
+<channel>
+	<title>Planet Trapexit - Erlang/OTP News</title>
+	<link>http://planet.trapexit.org</link>
+	<language>en</language>
+	<description>Planet Trapexit - Erlang/OTP News - http://planet.trapexit.org</description>
+
+<item>
+	<title>ProTest events: ProTest Consortium Quarterly Meeting</title>
+	<guid>http://www.protest-project.eu/app/view/events.html#43</guid>
+	<link>http://www.protest-project.eu/app/view/events.html#43</link>
+	<description>The second ProTest Consortium Quarterly Meeting will be held in Gothenburg, Sweden on the 15th and 16th of September. Contact us if you have any ideas or items you would like the Consortium members to raise and discuss.</description>
+	<pubDate>Thu, 11 Sep 2008 09:50:44 +0000</pubDate>
+</item>
+<item>
+	<title>ProTest events: Commercial Users of Functional Programming Workshop, (Victoria, Canada)</title>
+	<guid>http://www.protest-project.eu/app/view/events.html#44</guid>
+	<link>http://www.protest-project.eu/app/view/events.html#44</link>
+	<description>Erlang Training and Consulting is proud to represent the Erlang Community on the program committee of the 2007 ACM SIGPLAN Commercial Users of Functional Programming Workshop, held in Freiburg, Germany. The workshops are affiliated with ICFP 2008, providing a forum for researchers and developers to hear about the latest work on the design, implementations, principles, and uses of functional programming. Francesco Cesarini will give a presentation on their latest and so far largest project entitled &quot;MMGS: Building the Mobile Messaging Gateway System&quot;. We will be covering wireless IM, Email and stress testing Erlang systems to levels never seen before! See you there! Call for participation and the workshop program is  &lt;a href=&quot;http://cufp.galois.com/&quot;&gt;here&lt;/a&gt;... Keep an eye on this page for more information.</description>
+	<pubDate>Thu, 11 Sep 2008 09:50:44 +0000</pubDate>
+</item>
+<item>
+	<title>ProTest news: Results paper for Erlang testing tools survey is available</title>
+	<guid>http://www.protest-project.eu/app/view/news.html#92</guid>
+	<link>http://www.protest-project.eu/app/view/news.html#92</link>
+	<description>The Result for Erlang testing tools survey is available, &lt;a href=&quot;http://www.protest-project.eu/publications/survey.pdf&quot;&gt;Click Here&lt;/a&gt; to view the report.</description>
+	<pubDate>Fri, 05 Sep 2008 00:00:00 +0000</pubDate>
+</item>
+<item>
+	<title>plok: Open CouchDB Event in London, August 26th, 18:30</title>
+	<guid>http://jan.prima.de/~jan/plok/archives/154-guid.html</guid>
+	<link>http://jan.prima.de/~jan/plok/archives/154-Open-CouchDB-Event-in-London,-August-26th,-1830.html</link>
+	<description>&lt;blockquote&gt;
+  &lt;p&gt;You got a toothbrush? We&amp;#8217;re going to London. Do you hear that, Doug? I&amp;#8217;m coming to London.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;Update 24/08/2008:&lt;/strong&gt; The event is &amp;#8220;sold out&amp;#8221;. We have filled every single seat in the venue! I am thrilled by the response. Thanks everybody! If you couldn&amp;#8217;t make it through registration or don&amp;#8217;t have time on Tuesday anyway, do get in touch.&lt;/p&gt;
+
+&lt;p&gt;&amp;mdash;&lt;/p&gt;
+
+&lt;p&gt;This is a bit of a short notice, and I apologise, but things moved quickly here. &lt;/p&gt;
+
+&lt;p&gt;I&amp;#8217;ll be spending three couchy days in London next week. On Tuesday night, that is the 26th, &lt;a href=&quot;http://www.erlang-consulting.com/erlang/events.html#63&quot;&gt;I&amp;#8217;ll be speaking about CouchDB&lt;/a&gt; at &lt;a href=&quot;http://www.erlang-consulting.com/&quot;&gt;Erlang Training and Consulting&lt;/a&gt; starting 6:30 pm. And you are all invited!&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href=&quot;http://www.erlang-consulting.com/erlang/events.html#63&quot;&gt;event&lt;/a&gt; is &lt;strong&gt;free&lt;/strong&gt;! &lt;a href=&quot;http://www.erlang-consulting.com/erlang/usergroup/erlanglondon/lugregister.html?event=Couch%20DB%20at%2010,000%20ft&quot;&gt;You just need to register&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;If you can&amp;#8217;t make it and want to grab a cold beverage or anything, just drop me a line.&lt;/p&gt;
+
+&lt;p&gt;Big thanks for my friend &lt;a href=&quot;http://www.erlang-consulting.com/&quot;&gt;Francesco&lt;/a&gt; for putting this together on such a short notice.&lt;/p&gt;</description>
+	<pubDate>Sun, 24 Aug 2008 08:52:27 +0000</pubDate>
+	<author>jan@apache.org (Jan)</author>
+</item>
+<item>
+	<title>Damien Katz: Upcoming CouchDB Event in London, August 26th</title>
+	<guid>tag:damienkatz.net,2008://1.493</guid>
+	<link>http://damienkatz.net/2008/08/upcoming-couchdb-event-in-lond.html</link>
+	<description>&lt;p&gt;&lt;a href=&quot;http://jan.prima.de/~jan/plok/archives/154-Open-CouchDB-Event-in-London,-August-26th,-1830.html&quot;&gt;Jan will be speaking about CouchDB&lt;/a&gt; at Erlang Training and Consulting, starting 6:30 pm. It's a free event, you are invited. Go Jan!&lt;/p&gt;</description>
+	<pubDate>Thu, 21 Aug 2008 15:00:27 +0000</pubDate>
+</item>
+<item>
+	<title>Erlang Eclipse IDE: Update site</title>
+	<guid>http://sourceforge.net/forum/forum.php?forum_id=858064</guid>
+	<link>http://sourceforge.net/forum/forum.php?forum_id=858064</link>
+	<description>For a while, we used a separate update site for unstable releases, but now we removed it and there is only one site to go to: &lt;a href=&quot;http://erlide.sf.net/update&quot;&gt;http://erlide.sf.net/update&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;There are two categories, if you install from the &amp;quot;unstable&amp;quot; one then expect things to not be at their best. (&lt;a href=&quot;http://sourceforge.net/forum/forum.php?forum_id=858064&quot;&gt;0 comments&lt;/a&gt;)</description>
+	<pubDate>Tue, 19 Aug 2008 09:59:41 +0000</pubDate>
+	<author>vladdu@users.sourceforge.net (Vlad Dumitrescu)</author>
+</item>
+<item>
+	<title>Damien Katz: REST is the web, nothing more</title>
+	<guid>tag:damienkatz.net,2008://1.492</guid>
+	<link>http://damienkatz.net/2008/08/rest-is-the-web-nothing-more.html</link>
+	<description>&lt;p&gt;&lt;a href=&quot;http://www.tbray.org/ongoing/When/200x/2008/08/18/On-REST&quot;&gt;I'm&lt;/a&gt; &lt;a href=&quot;http://www.25hoursaday.com/weblog/2008/08/17/ExplainingRESTToDamienKatz.aspx&quot;&gt;wrong&lt;/a&gt;. REST, as originally described, has nothing to do with POST PUT DELETE. If &lt;a href=&quot;http://intertwingly.net/blog/2008/08/16/Tilting-at-Windmills&quot;&gt;you look at the original paper&lt;/a&gt; (chapter 5), REST is simply a description of the web as it actually work as a distributed hypermedia browser platform. The paper talks alot about all the things required to send media to the clients, but almost nothing about sending data from the client to the server.&lt;/p&gt;
+
+&lt;p&gt;There is nothing about verbs, RPC, POST vs. PUT, idempotency, or posting resources back to the same URI from which they were gotten. I was blasting the dogma around those things but was wrong to call it REST, I was under the misconception that REST is also about those things. Lots of writing about REST seem to have this misconception as well.&lt;/p&gt;
+
+&lt;p&gt;Why isn't REST about these things? Because REST is a description of the web and those things don't really exist on the web. Not in any standardized way. When people start talking about something being RESTful, do they mean its how the web actually works, or how we wish it worked?&lt;/p&gt;
+
+&lt;p&gt;In the real world, there is a remarkable effort to ensure that a wide range of browsers can find, retrieve and understand media and content from web servers. DNS, URIs, HTTP, firewalls, proxies, caches, media types, etc are what makes the web work and that's what REST describes, but in more generic terms.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, pretty much any time a browser POSTs a message, only one server in the whole world is supposed to understand what it means, there is no broad standardization of sending data and content to servers and how the servers are supposed to interpret it. Each server is free to implement its own interface, and they generally do. While there has been efforts to make the web into a standardized read/write platform, nothing has caught on in a big way.&lt;/p&gt;
+
+&lt;p&gt;So is POST as RPC RESTful? The practice of roll-your-own POST format is alive and well and successful on the web, and therefore, by definition, RESTful. As long as you are not abstracting HTTP away (and ignoring what HTTP gives you for free), your are probably using it RESTfully.&lt;/p&gt;
+
+&lt;p&gt;Glad we cleared that up.&lt;/p&gt;</description>
+	<pubDate>Mon, 18 Aug 2008 16:11:21 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: Klerfmuffle</title>
+	<guid>tag:damienkatz.net,2008://1.491</guid>
+	<link>http://damienkatz.net/2008/08/klerfmuffle.html</link>
+	<description>&lt;p&gt;Strangely, OS X spell check doesn't recognize kerfluffle as a word, but it does recognize klerfmuffle (suggested after I typed in klerfluffle). But klerfmuffle isn't a word, not &lt;a href=&quot;http://www.google.com/search?q=klerfmuffle&quot;&gt;even in Google&lt;/a&gt;. Until now that is.&lt;/p&gt;</description>
+	<pubDate>Fri, 15 Aug 2008 15:53:26 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: &quot;The web is built on REST. Therefore REST is good&quot; Bullshit</title>
+	<guid>tag:damienkatz.net,2008://1.490</guid>
+	<link>http://damienkatz.net/2008/08/the-web-is-built-on-rest-there.html</link>
+	<description>&lt;p&gt;The web is built on GET and POST verbs, not the RESTful GET, PUT and DELETE (and sometimes POST) verbs.&lt;/p&gt;
+
+&lt;p&gt;The only thing that's RESTful about 99% of the web is that it uses GET (even then many applications use GET wrong). The argument  that REST is great because it provides standardized caching support, well that pretty much only applies to GET requests anyway, what about PUT and DELETE?&lt;/p&gt;
+
+&lt;p&gt;It's not verbs that make it all work, it's URLs and HTTP. HTTP 1.0 is so damn simple to be almost too simple. 1.1 fixed its biggest deficiencies without adding much complexity, and now HTTP is a transport and protocol that does its job just well enough to not get in the way. And that's what the web is built on.&lt;/p&gt;</description>
+	<pubDate>Fri, 15 Aug 2008 14:12:42 +0000</pubDate>
+</item>
+<item>
+	<title>plok: CouchDB for Web Developers: Berlin, 18.08.2008, 19:00</title>
+	<guid>http://jan.prima.de/~jan/plok/archives/153-guid.html</guid>
+	<link>http://jan.prima.de/~jan/plok/archives/153-CouchDB-for-Web-Developers-Berlin,-18.08.2008,-1900.html</link>
+	<description>&lt;p&gt;&lt;img src=&quot;http://jan.prima.de/~jan/plok/uploads//couchdb-logo-128-cropped.png&quot; alt=&quot;couchdb-logo-128-cropped.png&quot; border=&quot;0&quot; width=&quot;127&quot; height=&quot;71&quot; align=&quot;right&quot; class=&quot;inline&quot; /&gt;&lt;a href=&quot;http://www.newthinking.de/web/guest/store&quot;&gt;The Newthinking Store&lt;/a&gt; in Berlin runs a monthly web-geek-get-together called Webmontag. They invited me to talk about &amp;#8220;&lt;a href=&quot;http://www.webmontag.de/location/berlin/index&quot;&gt;CouchDB for Web Developers&lt;/a&gt;&amp;#8221;.&lt;/p&gt;
+
+&lt;p&gt;When I first discovered &lt;a href=&quot;http://incubator.apache.org/couchdb/&quot;&gt;CouchDB&lt;/a&gt; I thought to myself: &amp;#8220;This will solve a lot of my everyday problems&amp;#8221;. I was doing web development at the time (I still do) and CouchDB&amp;#8217;s features sounded like magic. Only that they actually do exist; and they work like a charm.&lt;/p&gt;
+
+&lt;p&gt;CouchDB is very easy to learn, with one caveat: If you are deep into relational databases, you might have a hard time imagining that doing things &amp;#8220;The CouchDB Way&amp;#8221; is actually a good idea. Getting out of this state mainly involves ignoring and forgetting what you learned about RDBMSs and start to focus more on the pure data-storage aspect.&lt;/p&gt;
+
+&lt;p&gt;In this talk I&amp;#8217;ll give you an idea about why you would want to use CouchDB for your next web application and I will try to shift your thinking about data storage from the relational- to a more natural data behaviour model. I&amp;#8217;ll also show you how to use CouchDB with your favourite development platform. If you are quick, you might walk out with a first app by the end of Webmontag.&lt;/p&gt;
+
+&lt;p&gt;See you on &lt;strong&gt;Monday, August 18th, 19:00&lt;/strong&gt;. This is a good opportunity to have some drinks with like-minded folks. Do not miss it!&lt;/p&gt;
+
+&lt;p&gt;P.S: If you are not yet convinced, let me throw out some more buzzwords to get your attention: HTTP REST API, JSON data, N-master- and offline-replication, written in Erlang, fault tolerant, highly concurrent, ACID &amp;amp; MVCC and (Apache 2.0-) open source.&lt;/p&gt;
+
+&lt;p&gt;P.P.S: The talk will be in German unless some non-speaker shows up and all other attendees agree on proceeding in English.&lt;/p&gt;</description>
+	<pubDate>Fri, 15 Aug 2008 10:28:05 +0000</pubDate>
+	<author>jan@apache.org (Jan)</author>
+</item>
+<item>
+	<title>Erlang Announce List: Erlang announce mailing list :: Erlang/OTP R12B-3 has been released</title>
+	<guid>http://www.trapexit.org/forum/viewtopic.php?p=44041#44041</guid>
+	<link>http://www.trapexit.org/forum/viewtopic.php?p=44041#44041</link>
+	<description>Author: Anonymous&lt;br /&gt;
+Subject: Erlang/OTP R12B-3 has been released&lt;br /&gt;
+Posted: Wed Jun 11, 2008 1:49 pm (GMT 0)&lt;br /&gt;
+Topic Replies: 0&lt;br /&gt;&lt;br /&gt;
+&lt;span class=&quot;postbody&quot;&gt;Bug fix release : otp_src_R12B-3
+&lt;br /&gt;
+Build date      : 2008-06-11
+&lt;br /&gt;
+
+&lt;br /&gt;
+This is bug fix release 3 for the R12B release.
+&lt;br /&gt;
+
+&lt;br /&gt;
+You can find the README file for the release at
+&lt;br /&gt;
+
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_src_R12B-3.readme&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_src_R12B-3.readme&lt;/a&gt; (this file)
+&lt;br /&gt;
+
+&lt;br /&gt;
+The source distribution and binary distribution for Windows can be
+&lt;br /&gt;
+downloaded from
+&lt;br /&gt;
+
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_src_R12B-3.tar.gz&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_src_R12B-3.tar.gz&lt;/a&gt;
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_win32_R12B-3.exe&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_win32_R12B-3.exe&lt;/a&gt;
+&lt;br /&gt;
+
+&lt;br /&gt;
+The distribution can also be downloaded using the BitTorrent
+&lt;br /&gt;
+protocol. Use the following torrent files to download the source
+&lt;br /&gt;
+distribution and binary distribution for Windows:
+&lt;br /&gt;
+
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_src_R12B-3.tar.gz.torrent&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_src_R12B-3.tar.gz.torrent&lt;/a&gt;
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_win32_R12B-3.exe.torrent&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_win32_R12B-3.exe.torrent&lt;/a&gt;
+&lt;br /&gt;
+
+&lt;br /&gt;
+Note: To unpack the TAR archive you need a GNU TAR compatible program.
+&lt;br /&gt;
+
+&lt;br /&gt;
+For installation instructions please read the README file that is part
+&lt;br /&gt;
+of the distribution.
+&lt;br /&gt;
+
+&lt;br /&gt;
+The on-line documentation can be found at: &lt;a href=&quot;http://www.erlang.org/doc/&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/doc/&lt;/a&gt;
+&lt;br /&gt;
+You can also download the complete HTML documentation or the Unix manual files
+&lt;br /&gt;
+
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_doc_html_R12B-3.tar.gz&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_doc_html_R12B-3.tar.gz&lt;/a&gt;
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_doc_man_R12B-3.tar.gz&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_doc_man_R12B-3.tar.gz&lt;/a&gt;
+&lt;br /&gt;
+
+&lt;br /&gt;
+We also want to thank those that sent us patches, suggestions and bug
+&lt;br /&gt;
+reports,
+&lt;br /&gt;
+
+&lt;br /&gt;
+The OTP Team
+&lt;br /&gt;
+
+&lt;br /&gt;
+-- 
+&lt;br /&gt;
+Bj
+&lt;/span&gt;&lt;br /&gt;</description>
+	<pubDate>Fri, 15 Aug 2008 10:20:41 +0000</pubDate>
+</item>
+<item>
+	<title>Erlang Announce List: Erlang announce mailing list :: Password reminders</title>
+	<guid>http://www.trapexit.org/forum/viewtopic.php?p=44040#44040</guid>
+	<link>http://www.trapexit.org/forum/viewtopic.php?p=44040#44040</link>
+	<description>Author: Anonymous&lt;br /&gt;
+Subject: Password reminders&lt;br /&gt;
+Posted: Mon Jun 02, 2008 10:15 am (GMT 0)&lt;br /&gt;
+Topic Replies: 0&lt;br /&gt;&lt;br /&gt;
+&lt;span class=&quot;postbody&quot;&gt;The erlang.org mailing list's configurations have
+&lt;br /&gt;
+changed to not send password reminders any more,
+&lt;br /&gt;
+since it is a security risc to do so.
+&lt;br /&gt;
+
+&lt;br /&gt;
+-- 
+&lt;br /&gt;
+
+&lt;br /&gt;
+/ Raimo Niskanen, Erlang/OTP, Ericsson AB
+&lt;br /&gt;
+_______________________________________________
+&lt;br /&gt;
+erlang-announce mailing list
+&lt;br /&gt;
+&lt;a href=&quot;mailto:erlang-announce@erlang.org&quot;&gt;erlang-announce@erlang.org&lt;/a&gt;
+&lt;br /&gt;
+&lt;a href=&quot;http://www.erlang.org/mailman/listinfo/erlang-announce&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/mailman/listinfo/erlang-announce&lt;/a&gt;
+&lt;br /&gt;
+ Post received from mailinglist
+&lt;/span&gt;&lt;br /&gt;</description>
+	<pubDate>Fri, 15 Aug 2008 10:20:41 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: REST, I just don't get it</title>
+	<guid>tag:damienkatz.net,2008://1.489</guid>
+	<link>http://damienkatz.net/2008/08/rest-i-just-dont-get-it.html</link>
+	<description>&lt;p&gt;As the guy who created CouchDB, I should be a big cheerleader for RESTful architectures. But the truth is, I just don't get it.&lt;/p&gt;
+
+&lt;p&gt;For CouchDB, REST makes absolutely insanely perfect sense. Read a document, edit, put the document back. Beautiful. But for most applications, enterprise or not, I don't see what the big win is.&lt;/p&gt;
+
+&lt;p&gt;I know what is wrong with SOAP, and it has everything to do with unnecessary complexity and solving the same problems twice. But what is the big advantage of making all your calls into GET PUT and DELETE? If POST can handle everything you need, then what's the problem?&lt;/p&gt;
+
+&lt;p&gt;I guess what I mean to say is just because SOAP is a disaster, doesn't somehow make REST the answer. Simpler is better, and REST is generally simpler than SOAP. But there is nothing wrong with a plain old POST as an RPC call.  If its easy to make all your calls conform to the RESTful verb architecture, then that's good, I guess. But if not, then just use a POST as an RPC call, keep it as simple as possible and be done with it. And don't spend another minute worrying about being RESTful or not.&lt;/p&gt;</description>
+	<pubDate>Fri, 15 Aug 2008 03:56:44 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: Quick Blog Entry</title>
+	<guid>tag:damienkatz.net,2008://1.488</guid>
+	<link>http://damienkatz.net/2008/08/quick-blog-entry.html</link>
+	<description>&lt;p&gt;I've been really busy and just not in a blogging mood lately. But I'm going to force myself to write a blog post for 15 minutes. This is it. I'm a slow typist.&lt;/p&gt;
+
+&lt;p&gt;CouchDB development is going well. We have more contributors and are about to add another project member. We are about to release a 0.8.1, which I think will be a very solid and useable release. The trunk is usually in good shape, but unpredictable. You might encounter serious bugs. Be warned.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://www.google.com/trends?q=couchdb%2C+simpledb%2C+microsoft+mesh&amp;ctab=0&amp;geo=all&amp;date=ytd&amp;sort=0&quot;&gt;The interest in CouchDB is impressive&lt;/a&gt; for a still immature project. And like most open source projects, its all word of mouth. We don't have a PR or marketing department. Except for Jan :)&lt;/p&gt;
+
+&lt;p&gt;Right now I'm working on a few performance optimizations in the btrees. It currently does linear scans on the keys in each btree node, when really it should be binary search. Doing some early profiling showed the number of keys comparisons is eating up CPU.&lt;/p&gt;
+
+&lt;p&gt;There are a number of big companies and small startups alike using CouchDB already. The uptake has been amazing here, I'm absolutely thrilled and CouchDB is being used to solve real problems. There is one company, a tech giant, that is piloting a couchdb project. If successful, CouchDB will be the storage engine in the next version of a product already used by millions.&lt;/p&gt;
+
+&lt;p&gt;But puzzlingly there is a lack of interest within IBM. I'm not much of an evangelist, but I thought people within Lotus would be interested. But so far, not so much.&lt;/p&gt;
+
+&lt;p&gt;Quick thought: Cloud computing is great. Right up until you lose your connection, then what?&lt;/p&gt;
+
+&lt;p&gt;Okay, that's 15 minutes. A quick read through, a few edits and a sick feeling at the lack of structure aaaaaaand publish.&lt;/p&gt;</description>
+	<pubDate>Tue, 12 Aug 2008 15:27:53 +0000</pubDate>
+</item>
+<item>
+	<title>ejabberd@jabber.ru: This website shutdown for several hours</title>
+	<guid>http://www.ejabberd.im/3168 at http://www.ejabberd.im</guid>
+	<link>http://www.ejabberd.im/node/3168</link>
+	<description>&lt;p&gt;This website will be shutdown due to maintance tasks since the morning of 6th August 2008 for several hours.&lt;/p&gt;</description>
+	<pubDate>Tue, 05 Aug 2008 21:13:08 +0000</pubDate>
+</item>
+<item>
+	<title>ejabberd@jabber.ru: ejabberd 2.0.2-beta1 - source code package for beta testing</title>
+	<guid>http://www.ejabberd.im/3166 at http://www.ejabberd.im</guid>
+	<link>http://www.ejabberd.im/ejabberd-2.0.2-beta1</link>
+	<description>&lt;p&gt;&lt;a href=&quot;http://lists.jabber.ru/pipermail/ejabberd/2008-August/004028.html&quot;&gt;Announcement of ejabberd 2.0.2-beta1&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;After several months of fixing bugs in ejabberd 2.0.x, a new maintenance release is planned for the end of this month.&lt;/p&gt;
+&lt;p&gt;Until then, we still have time to beta test the ejabberd source code.  For this purpose ejabberd 2.0.2-beta1 is released.&lt;/p&gt;
+&lt;p&gt;Notice that this beta is only released as source code package, no binary installers are published now.&lt;/p&gt;
+&lt;p&gt;The download is: &lt;a href=&quot;http://download.process-one.net/ejabberd/ejabberd-2.0.2-beta1.tar.gz&quot; title=&quot;http://download.process-one.net/ejabberd/ejabberd-2.0.2-beta1.tar.gz&quot;&gt;http://download.process-one.net/ejabberd/ejabberd-2.0.2-beta1.tar.gz&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Finally, here are the release notes:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.ejabberd.im/ejabberd-2.0.2-beta1&quot; target=&quot;_blank&quot;&gt;read more&lt;/a&gt;&lt;/p&gt;</description>
+	<pubDate>Fri, 01 Aug 2008 18:23:04 +0000</pubDate>
+</item>
+<item>
+	<title>plok: OSCON 2008</title>
+	<guid>http://jan.prima.de/~jan/plok/archives/152-guid.html</guid>
+	<link>http://jan.prima.de/~jan/plok/archives/152-OSCON-2008.html</link>
+	<description>&lt;p&gt;What a week!&lt;/p&gt;
+
+&lt;p&gt;First off, &lt;a href=&quot;http://jan.prima.de/OSCON_CouchDB1000k.pdf&quot;&gt;here are the slides from my talk &amp;#8220;CouchDB at 10,000ft&amp;#8221;&lt;/a&gt;.  Thanks to everyone who showed up and a double thanks for the eight of you who rated my session so far. More special props to the ones with constructive criticism. I&amp;#8217;ll do better next time. If you haven&amp;#8217;t already, &lt;a href=&quot;http://en.oreilly.com/oscon2008/public/schedule/detail/2725&quot;&gt;place your vote&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://www.sauria.com/blog/&quot;&gt;Ted&lt;/a&gt; has &lt;a href=&quot;http://www.sauria.com/blog/2008/07/29/oscon-2008/&quot;&gt;some nice pictures of my talk and the discussion afterwards&lt;/a&gt;. The feedback I got was great and people do really want to use &lt;a href=&quot;http://incubator.apache.org/couchdb/&quot;&gt;CouchDB&lt;/a&gt;. This is great encouragement for putting in some after-work hours to push things towards 1.0.&lt;/p&gt;
+
+&lt;p&gt;But OSCON. &lt;/p&gt;
+
+&lt;p&gt;This was my first and I couldn&amp;#8217;t have liked it better. I got in Sunday without any signs of jetlag (will blog about the secret later) and started things off with dinner &amp;amp; pub crawl with my old (and some new) PHP friends. &lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://flickr.com/photos/hiromy/73726954/&quot;&gt;&lt;img src=&quot;http://jan.prima.de/~jan/plok/uploads//73726954_744e70fec9_o.jpg&quot; alt=&quot;73726954_744e70fec9_o.jpg&quot; border=&quot;0&quot; width=&quot;200&quot; height=&quot;371&quot; align=&quot;right&quot; class=&quot;inline&quot; /&gt;&lt;/a&gt;OSCON starts at around 8:00, the official programme ends no later than 18:00, but there&amp;#8217;s a lot of after-conf activity. It basically means dinner, drinks and party until midnight, or even later with an occasional BoF session thrown in. The next day starts at 8:00 again. 7 days. Is that exhausting? Yes. But it is also great times.&lt;/p&gt;
+
+&lt;p&gt;I met a bunch of Apache folks that are connected with the CouchDB project which was nice. The XMPP folks are interested in bonding with CouchDB as well, as are the Python folks I&amp;#8217;ve met. Heck, even &lt;a href=&quot;http://krow.net/&quot;&gt;Brian&lt;/a&gt; of MySQL fame is a big fan of ours.&lt;/p&gt;
+
+&lt;p&gt;I&amp;#8217;ve attended (among others!) a talk on &lt;a href=&quot;http://code.bestpractical.com/project/Prophet&quot;&gt;Prophet&lt;/a&gt;, a &amp;#8220;Prophet is a peer to peer disconnected, replicated property database&amp;#8221;. Sounds a lot like CouchDB for sure, but with a different focus. And thus, with a few cool ideas I really like to steal from them. Jesse said he&amp;#8217;d be cool with that when I asked him afterwards and I am glad he is. &lt;/p&gt;
+
+&lt;p&gt;They focus a lot on integration with other data stores. They have a plugin architecture that allows them to write little modules that translate data schemas across systems. That would allow you, for example, run bug tracker A on the database of bug tracker B. This is pretty neat stuff and worth looking at.&lt;/p&gt;
+
+&lt;p&gt;OSCON is big. Everybody is there. And while I am more of a smaller conference kind of guy OSCON is pretty good given its size. I hope I can make it again next year.&lt;/p&gt;
+
+&lt;p&gt;Oh hey, and O&amp;#8217;Reilly, if you are listening, food on the tutorial days was not, you know, that good.&lt;/p&gt;
+
+&lt;p&gt;Finally, thanks to Duncan and Chris who put me up for the week. It was nice seeing you and I hope to see you again soon! I had a great time in Portland.&lt;/p&gt;</description>
+	<pubDate>Thu, 31 Jul 2008 13:57:10 +0000</pubDate>
+	<author>jan@apache.org (Jan)</author>
+</item>
+<item>
+	<title>Erlang Eclipse IDE: SVN issues</title>
+	<guid>http://sourceforge.net/forum/forum.php?forum_id=851781</guid>
+	<link>http://sourceforge.net/forum/forum.php?forum_id=851781</link>
+	<description>Since SourceForge has issues with SVN at the moment, we replicated the repository to &lt;a href=&quot;https://tools.assembla.com/svn/adRvL6yMKr24I9aaeP0Qfc&quot;&gt;https://tools.assembla.com/svn/adRvL6yMKr24I9aaeP0Qfc&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;best regards,&lt;br /&gt;Vlad (&lt;a href=&quot;http://sourceforge.net/forum/forum.php?forum_id=851781&quot;&gt;0 comments&lt;/a&gt;)</description>
+	<pubDate>Thu, 31 Jul 2008 08:44:00 +0000</pubDate>
+	<author>vladdu@users.sourceforge.net (Vlad Dumitrescu)</author>
+</item>
+<item>
+	<title>RabbitMQ Announcements: [rabbitmq-announce] RabbitMQ 1.4.0 released</title>
+	<guid>http://lists.rabbitmq.com/pipermail/rabbitmq-announce/2008-July/000012.html</guid>
+	<link>http://lists.rabbitmq.com/pipermail/rabbitmq-announce/2008-July/000012.html</link>
+	<pubDate>Wed, 30 Jul 2008 00:00:00 +0000</pubDate>
+</item>
+<item>
+	<title>ejabberd@jabber.ru: Call to translators for ejabberd 2.0.2</title>
+	<guid>http://www.ejabberd.im/3161 at http://www.ejabberd.im</guid>
+	<link>http://www.ejabberd.im/node/3161</link>
+	<description>&lt;p&gt;ejabberd 2.0.2 is planned to release soon. It will contain mostly bugfixes. A few of the changes since the previous version added new strings that can be translated. I tried to contact previous translators, but there are still some languages that need to be updated.&lt;/p&gt;
+&lt;p&gt;Those languages are complete thanks to those translators:&lt;/p&gt;
+&lt;pre&gt;
+ca.msg  0       Catalan (català)        Vicent Alberola Canet
+cs.msg  0       Czech (čeština)         Lukáš Polívka
+de.msg  0       German (deutsch)        Nikolaus Polak
+es.msg  0       Spanish (castellano)    Badlop&lt;/pre&gt;&lt;p&gt;&lt;a href=&quot;http://www.ejabberd.im/node/3161&quot; target=&quot;_blank&quot;&gt;read more&lt;/a&gt;&lt;/p&gt;</description>
+	<pubDate>Tue, 29 Jul 2008 00:17:49 +0000</pubDate>
+</item>
+<item>
+	<title>ejabberd@jabber.ru: ejabberd-modules SVN repository: unavailable [fixed]</title>
+	<guid>http://www.ejabberd.im/3158 at http://www.ejabberd.im</guid>
+	<link>http://www.ejabberd.im/node/3158</link>
+	<description>&lt;p&gt;&lt;strong&gt;Update: the ejabberd-modules SVN repo works correctly now.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The ejabberd-modules SVN repository doesn't work since yesterday. The problem is not yet known.&lt;/p&gt;
+&lt;p&gt;As a temporary solution to download the latest versions of files, there are &lt;a href=&quot;http://git.process-one.net/ejabberd-modules/&quot;&gt;Git repositories&lt;/a&gt; of individual ejabberd-modules projects that seem to work correctly. Example usage:&lt;/p&gt;
+&lt;pre&gt;
+git clone &lt;a href=&quot;http://git.process-one.net/ejabberd-modules/ejabberd-dev.git&quot; title=&quot;http://git.process-one.net/ejabberd-modules/ejabberd-dev.git&quot;&gt;http://git.process-one.net/ejabberd-modules/ejabberd-dev.git&lt;/a&gt;
+git clone &lt;a href=&quot;http://git.process-one.net/ejabberd-modules/pgsql.git&quot; title=&quot;http://git.process-one.net/ejabberd-modules/pgsql.git&quot;&gt;http://git.process-one.net/ejabberd-modules/pgsql.git&lt;/a&gt;
+&lt;/pre&gt;&lt;p&gt;&lt;a href=&quot;http://www.ejabberd.im/node/3158&quot; target=&quot;_blank&quot;&gt;read more&lt;/a&gt;&lt;/p&gt;</description>
+	<pubDate>Thu, 24 Jul 2008 10:52:55 +0000</pubDate>
+</item>
+<item>
+	<title>plok: Know Your Tool</title>
+	<guid>http://jan.prima.de/~jan/plok/archives/151-guid.html</guid>
+	<link>http://jan.prima.de/~jan/plok/archives/151-Know-Your-Tool.html</link>
+	<description>&lt;p&gt;The &lt;a href=&quot;http://rarestnews.com/&quot;&gt;RarestNews&lt;/a&gt; developer &lt;a href=&quot;http://rarestblog.com/2008/07/scalability-problem/&quot;&gt;considers InnoDB and CouchDB for a re-architection of his high volume news site.&lt;/a&gt; He did his homework researching, but I couldn&amp;#8217;t help but &lt;a href=&quot;http://rarestblog.com/2008/07/scalability-problem/#comment-461&quot;&gt;comment&lt;/a&gt; on a few things he wrote. The comment turned into a blog post and since this is my blog it should be posted here as well.&lt;/p&gt;
+
+&lt;p&gt;I am specifically referring to the paragraphs about InnoDB and CouchDB:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;MySQL problems&lt;/strong&gt;&lt;br /&gt;&lt;br /&gt;
+  So, to be technical here I&amp;#8217;ve used MyISAM tables (never really liked InnoDB because of it&amp;#8217;s slow writes and at 100k new articles a day with lots of meta-data to write about them, like tags, dates, snippets, word frequencies, etc) - it seemed like a good decision. The bad part was that on write MyISAM locks the whole table. So 50 bots scouring the Web for news writing and locking whole table made site almost unresponsive.&lt;br /&gt;&lt;br /&gt;
+  I&amp;#8217;m not yet sure how to solve it - with InnoDB, with PostgreSQL or with some kind of new-age databases like CouchDB, StrokeDB, maybe Amazon&amp;#8217;s SimpleDB, etc&amp;hellip;&lt;br /&gt;&lt;br /&gt;
+  &lt;strong&gt;CouchDB problems&lt;/strong&gt;&lt;br /&gt;&lt;br /&gt;
+  They seem like a nice idea when you read about them, but&amp;hellip; there are flaws.. The main problem with CouchDB for example is it&amp;#8217;s complete HDD-dependence. Modern memory is hundreds of times faster than DB, so you&amp;#8217;re using only 1% of speed if you use HDD-based database. And the second problem is it&amp;#8217;s &amp;#8220;Do not overwrite&amp;#8221; motto. It doesn&amp;#8217;t reuse space no longer needed, so if I write a 100KB article to database (along with some other data and then I rewrite this entry - there&amp;#8217;s now 200KB stored on my drive) and each update eats 100KB more.&lt;br /&gt;&lt;br /&gt;
+  How to avoid it? Compact the database, so it creates a NEW file with only the latter 100KB. And delete the previous database file. So, even I didn&amp;#8217;t change anything - I&amp;#8217;ve had to write the same data 3 times (along with all of my database in compaction process). What that means.&lt;br /&gt;&lt;br /&gt;
+  1) It&amp;#8217;s AT LEAST 3 time slower than your HDD speed if you want to effectively use ALL of your hard drive, so now we have only 0.3% of computer speed (compared to memory usage).&lt;br /&gt;&lt;br /&gt;
+  2) You can only use databases of size of HALF of your HDD (but in reality more like 33%) to effectively use CouchDB (remember - compaction process creates NEW file, so it needs at least same amount of space as it uses).&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I replied: &lt;/p&gt;
+
+&lt;p&gt;Heya,&lt;/p&gt;
+
+&lt;p&gt;I just want to put in perspective that CouchDB is still in alpha stage and no performance work has been done. Expect the HDD dependency to be less of a problem. In the meantime, a caching HTTP proxy will do the trick for you.&lt;/p&gt;
+
+&lt;p&gt;The update-to-write is a design choice with the consequences you correctly line out. But &amp;#8220;effectively using your hard drive&amp;#8221; might not mean &amp;#8220;use the least amount of space at all times&amp;#8221;. It is more like don&amp;#8217;t talk to the drive if you can avoid it and make as little seeks as possible and that is what CouchDB is designed to do at the expense of deferring another write operation to off-peak times with compaction. Compaction takes advantage of writing en-bulk, which is just flushing data to disk without random seeks. So your equation is close, but not exact &lt;/p&gt;
+
+&lt;p&gt;You can use the bulk insertion feature yourself to get less fragmentation in the first place when your crawlers dump their data. This is also fairly fast (3 seeks and a flush of data).&lt;/p&gt;
+
+&lt;p&gt;To be frank, I don&amp;#8217;t see a crawled news item to change that often. But then, I don&amp;#8217;t know what you are doing with it at RarestNews.&lt;/p&gt;
+
+&lt;p&gt;Also, InnoDB is not the worst choice. It puts data integrity before speed (which CouchDB does as well), which will always be slower than MyISAM which just doesn&amp;#8217;t care for integrity. InnoDB works hard to make sure to hit the HDD as infrequent as possible and if it has to, to read and write in batches.&lt;/p&gt;
+
+&lt;p&gt;The difference between InnoDB and CouchDB is that you can control when to do some of the work with CouchDB&amp;#8217;s compaction and InnoDB&amp;#8217;s mechanisms add to the current load of a system. So CouchDB lets you actually make smart use o your resources.&lt;/p&gt;
+
+&lt;p&gt;I&amp;#8217;d like to recommend Theo Schlossnagle&amp;#8217;s &lt;a href=&quot;http://www.amazon.com/exec/obidos/ASIN/067232699X/lethargy-20/104-9600898-8379162?%5Fencoding=UTF8&amp;camp=1789&amp;link%5Fcode=xm2&quot;&gt;Scalable Internet Architectures&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Among a plethora of useful information, it discusses the design of a system similar to the one you are describing.&lt;/p&gt;
+
+&lt;p&gt;Cheers&lt;br /&gt;
+Jan&lt;br /&gt;
+&amp;mdash;&lt;br /&gt;
+PS: I work with MySQL on the day job and work on CouchDB in my free time, so I am obviously biased in both ways.&lt;/p&gt;
+
+&lt;p&gt;PPS: If you have any questions regarding any of the above, feel free to contact me.&lt;/p&gt;</description>
+	<pubDate>Tue, 22 Jul 2008 18:29:42 +0000</pubDate>
+	<author>jan@apache.org (Jan)</author>
+</item>
+<item>
+	<title>Damien Katz: Thank You RubyFringe</title>
+	<guid>tag:damienkatz.net,2008://1.487</guid>
+	<link>http://damienkatz.net/2008/07/thank-you-rubyfringe.html</link>
+	<description>&lt;p&gt;Pete Forde, Meghann Millard, the rest of  the folks from &lt;a href=&quot;http://www.unspace.ca/innovation/contact&quot;&gt;Unspace&lt;/a&gt; and everyone else helping with &lt;a href=&quot;http://rubyfringe.com/&quot;&gt;RubyFringe&lt;/a&gt; were amazing. It might be the best conference I've been too, excellent on almost every level. People, topics, food, drinks, events, all were great. And no sponsors! I feel privileged to have attended, and the response I got for my talk just blew me away. Thank You!&lt;/p&gt;</description>
+	<pubDate>Mon, 21 Jul 2008 18:50:36 +0000</pubDate>
+</item>
+<item>
+	<title>ejabberd@jabber.ru: Updated  Drupal; fixing problems</title>
+	<guid>http://www.ejabberd.im/3154 at http://www.ejabberd.im</guid>
+	<link>http://www.ejabberd.im/node/3154</link>
+	<description>&lt;p&gt;This website has been updated to the latest version of Drupal.&lt;/p&gt;
+&lt;p&gt;There are a few known problems that will be solved in the next days:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The color scheme of the site is the default one, not the old one.
+&lt;/li&gt;&lt;li&gt;The Drupal messages are only in English, not translated like before.
+&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;If you experience any other problem using this website, please add a comment here. If you can't add a comment, you can join the ejabberd chatroom &lt;strong&gt;ejabberd@conference.jabber.ru&lt;/strong&gt; and contact me.&lt;/p&gt;</description>
+	<pubDate>Sun, 20 Jul 2008 21:32:23 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: &quot;Tried to build Erlang, but there's something wrong with the MacPorts port.&quot;</title>
+	<guid>tag:damienkatz.net,2008://1.485</guid>
+	<link>http://damienkatz.net/2008/07/tried-to-build-erlang-but-ther.html</link>
+	<description>&lt;blockquote&gt;&lt;div&gt;There's something wrong with the Macports port? Maybe you should try the Macports port Port port. If that doesn't work you could always port the port port port over to the port port port port, recompile and then run this ruby script:&lt;br /&gt;&lt;br /&gt;
+&lt;code&gt;
+class CaptainsLog&lt;br /&gt;
+def self.new_log_entry&lt;br /&gt;
+cl = self.new&lt;br /&gt;
+cl.stardate = Time.now&lt;br /&gt;
+cl.log_entry = &quot;It has been four day since we arrived in orbit around Planet Erlang and I couldn't port the port port port port port port. My crew, and I, are running out of oxygen. My ship is nothing but a cluster of unreliable commodity hardware. I can never forgive them for the death of my son.&quot;&lt;br /&gt;
+cl.save&lt;br /&gt;
+end&lt;/code&gt;
+&lt;/div&gt;&lt;/blockquote&gt;
+&lt;a href=&quot;http://damienkatz.net/2008/07/couchdbx-couchdb-binary-for-os.html#comments&quot;&gt;From here.&lt;/a&gt; We should probably add this to the &lt;a href=&quot;http://wiki.apache.org/couchdb/FrequentlyAskedQuestions&quot;&gt;FAQ&lt;/a&gt;.</description>
+	<pubDate>Thu, 17 Jul 2008 18:48:15 +0000</pubDate>
+</item>
+<item>
+	<title>RabbitMQ Announcements: [rabbitmq-announce] RabbitMQ .Net/C# AMQP client library 1.4.0
+	released</title>
+	<guid>http://lists.rabbitmq.com/pipermail/rabbitmq-announce/2008-July/000011.html</guid>
+	<link>http://lists.rabbitmq.com/pipermail/rabbitmq-announce/2008-July/000011.html</link>
+	<pubDate>Thu, 17 Jul 2008 00:00:00 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: Epiphany</title>
+	<guid>tag:damienkatz.net,2008://1.480</guid>
+	<link>http://damienkatz.net/2008/06/epiphany.html</link>
+	<description>&lt;p&gt;I just fully realized something that's been rattling around in my head for a while. Static typing in OO languages isn't the solution to software complexity, rather it's an enabler of it. Static typing is like giving a drunk a bunch of breath mints and saying &quot;Don't drive drunk. But if you must, use these breath mints in case you get pulled over.&quot;&lt;/p&gt;
+
+&lt;p&gt;The problem is static typing tends to encourage large, complex framework-like interfaces, instead of the decoupled, modular interfaces everyone desires. The irony is, if your interfaces are small and simple, then static typing offers you very little benefit. Static typing works best when there is lots of complexity, but like breath mints for a drunk, we are just making it easier to get away with what we know to be a mistake anyway.&lt;/p&gt;</description>
+	<pubDate>Sun, 13 Jul 2008 19:56:27 +0000</pubDate>
+</item>
+<item>
+	<title>Erlware: Video of Martin and Eric speaking about Erlware at the Erlang eXchange in London</title>
+	<guid>tag:blogger.com,1999:blog-4167999740082219489.post-5549165956836214315</guid>
+	<link>http://erlware.blogspot.com/2008/07/video-of-martin-and-eric-speaking-about.html</link>
+	<description>Martin and Eric recently spoke at the Erlang eXchange in London.  The conference was truly inspiring.  There are some amazing apps being developed in our community right now. Erlware is just about to go 1.0 (should be a couple weeks from now) and this conference was a great way to start the 1.0 launch path.
+
+ 
+
+More on Erlware at erlware.org</description>
+	<pubDate>Sat, 12 Jul 2008 13:29:24 +0000</pubDate>
+	<author>noreply@blogger.com (Martin)</author>
+</item>
+<item>
+	<title>plok: News at Couch</title>
+	<guid>http://jan.prima.de/~jan/plok/archives/141-guid.html</guid>
+	<link>http://jan.prima.de/~jan/plok/archives/141-News-at-Couch.html</link>
+	<description>&lt;p&gt;&lt;img src=&quot;http://jan.prima.de/~jan/plok/uploads//couchdb-logo-128-cropped.png&quot; alt=&quot;couchdb-logo-128-cropped.png&quot; border=&quot;0&quot; width=&quot;127&quot; height=&quot;71&quot; class=&quot;inline&quot; /&gt;Welcome to yet another installment of &lt;em&gt;News at Couch&lt;/em&gt;, our review of what&amp;#8217;s new with, on and around &lt;a href=&quot;http://incubator.apache.org/couchdb/&quot;&gt;CouchDB&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://incubator.apache.org/couchdb/downloads.html&quot;&gt;CouchDB 0.8.0 was released&lt;/a&gt;! Biiig news. This is our first release with the ASF and we are all very pleased with this. Great work everybody! Changes include:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Changed core licensing to the Apache Software License 2.0.&lt;/li&gt;
+&lt;li&gt;Refactoring of the core view and storage engines.&lt;/li&gt;
+&lt;li&gt;Added support for incremental map/reduce views.&lt;/li&gt;
+&lt;li&gt;Changed database file format.&lt;/li&gt;
+&lt;li&gt;Many improvements to Futon, the web administration interface.&lt;/li&gt;
+&lt;li&gt;Miscellaneous improvements to system integration and portability.&lt;/li&gt;
+&lt;li&gt;Swapped out Erlang&amp;#8217;s inets HTTP server for the Mochiweb HTTP server.&lt;/li&gt;
+&lt;li&gt;SpiderMonkey is no longer included with CouchDB, but rather treated as an external dependency.&lt;/li&gt;
+&lt;li&gt;Added bits of awesome.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Christopher Lenz fixed HTTP 1.0 handling in our copy of &lt;a href=&quot;http://code.google.com/p/mochiweb/&quot;&gt;MochiWeb&lt;/a&gt; and got his patches accepted at the official distribution. Congrats to Christopher and Benoit Chesneau who helped figuring out what went wrong. Why is that relevant? A lot of HTTP proxy servers talk HTTP 1.0 to their respective backends and the patch allows you to use CouchDB behind your favourite HTTP proxy.&lt;/p&gt;
+
+&lt;p&gt;This is not exactly news but I somehow missed to mention &lt;a href=&quot;https://launchpad.net/paisley&quot;&gt;Paisley&lt;/a&gt; in the past. Paisley is a connector for the excellent Python framework &lt;a href=&quot;http://twistedmatrix.com/trac/&quot;&gt;Twisted&lt;/a&gt;. Twisted is king when you are developing applications that need asynchronous event handling (which is everything between network programming and GUIs). With Paisley, it is very easy to integrate CouchDB into your Twisted-based application. It might not work perfectly with the recent CouchDB 0.8.0 release, but with a few minor tweaks, it should be fine.&lt;/p&gt;
+
+&lt;p&gt;Speaking of language bindings, Kore Nordmann released &lt;a href=&quot;http://kore-nordmann.de/blog/phpillow_php_couchdb_wrapper.html&quot;&gt;PHPillow&lt;/a&gt;, the most comprehensive, best documented (it has docs :-) and unit-tested library for PHP. I highly recommend PHPillow over the (comparatively crappy) PHP library I released. And it is compatible with CouchDB 0.8.0.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://damienkatz.net/2008/04/rubyfringe.html&quot;&gt;Damien will be speaking&lt;/a&gt; at &lt;a href=&quot;http://rubyfringe.com/&quot;&gt;RubyFringe&lt;/a&gt; this month. Make sure the see the great man in action when you are going!&lt;/p&gt;
+
+&lt;p&gt;Oh conferences, yeah. I went to the &lt;a href=&quot;http://www.erlang-exchange.com/&quot;&gt;Erlang eXchange&lt;/a&gt; in London last week and it was a blast! I will write a dedicated report but while you wait for that, &lt;a href=&quot;http://video.google.com/videoplay?docid=-3714560380544574985&amp;q=erlang+2008&amp;ei=dlhuSK_jDpPyjgKKzZn4BA&quot;&gt;check out the video of my presentation&lt;/a&gt;. I still do the &amp;#8216;hands thing&amp;#8217; and I was mighty nervous with Joe sitting in the front row and Klacke way in the back. But it went well I guess, too bad the video doesn&amp;#8217;t show the standing ovations I did not actually get. &lt;a href=&quot;http://jan.prima.de/~jan/plok/archives/143-At-OSCON.html&quot;&gt;And I&amp;#8217;ll be speaking at OSCON&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://jchris.mfdz.com/&quot;&gt;Chris Anderson&lt;/a&gt; of &lt;a href=&quot;http://grabb.it/&quot;&gt;grabb.it&lt;/a&gt; fame posted a row of interesting things on his blog and even started working with CouchDB. Here&amp;#8217;s a short rundown on what he&amp;#8217;s been up to: &lt;a href=&quot;http://jchris.mfdz.com/code/2008/5/why_couchdb_&quot;&gt;Chris explains why CouchDB is relevant for him&lt;/a&gt;. Chris &lt;a href=&quot;http://jchris.mfdz.com/code/2008/5/couchrest__restful_ruby_client_&quot;&gt;releases&lt;/a&gt; &lt;a href=&quot;http://github.com/jchris/couchrest/tree/master&quot;&gt;couchrest&lt;/a&gt;, a Ruby library for working with CouchDB (that has been &lt;a href=&quot;http://jchris.mfdz.com/posts/110&quot;&gt;gemified&lt;/a&gt; since). Chris &lt;a href=&quot;http://jchris.mfdz.com/posts/106&quot;&gt;explains how to do word counts with map/reduce&lt;/a&gt;. Chris &lt;a href=&quot;http://jchris.mfdz.com/code/2008/6/markov_chains_using_couchdb_s_g&quot;&gt;creates Markov Chains with group reduce&lt;/a&gt;. Finally, &lt;a href=&quot;http://jchris.mfdz.com/posts/112&quot;&gt;Chris turns CouchDB into a self-contained application server&lt;/a&gt;. And finally finally, he &lt;a href=&quot;http://groups.google.com/group/couchdb-pdx&quot;&gt;co-founds the first CouchDB user group&lt;/a&gt; in Portland, OR. Has he been busy or what? Thanks Chris for all your contributions!&lt;/p&gt;
+
+&lt;p&gt;Todd Hoff posted a very informed article &lt;a href=&quot;http://highscalability.com/how-i-learned-stop-worrying-and-love-using-lot-disk-space-scale&quot;&gt;about why it is a good idea to trade disk space for scalability&lt;/a&gt;. This is not something CouchDB-specific, but a concept that CouchDB heartily embraces.&lt;/p&gt;
+
+&lt;p&gt;The aforementioned &lt;a href=&quot;http://tragicallyleet.com/2008/05/12/nodedb-010a2-released/&quot;&gt;NodeDB&lt;/a&gt; project is &lt;a href=&quot;http://tragicallyleet.com/2008/05/24/contributions-for-nodedb-welcome/&quot;&gt;looking for contributors&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Can CouchDB &lt;a href=&quot;http://taniwha-nz.livejournal.com/396126.html&quot;&gt;solve email client problems&lt;/a&gt;?&lt;/p&gt;
+
+&lt;p&gt;Chris Hartjes encourages you to &lt;a href=&quot;http://www.littlehart.net/atthekeyboard/2008/05/30/never-stop-learning-2/&quot;&gt;never stop learning&lt;/a&gt;. The tools &amp;amp; techniques you use successfully today might be useless tomorrow. At least know what the competition is up to.&lt;/p&gt;
+
+&lt;p&gt;A very interesting &lt;a href=&quot;http://bexhuff.com/2008/06/look-out-oracle-mapreduce-might-be-able-to-do-joins&quot;&gt;research paper made the rounds&lt;/a&gt; suggesting that you can project JOIN operations on a map/reduce system. This might help to convince people that we are onto something.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://garbett.org/articles/2008/06/04/couch-store-opens&quot;&gt;Shawn connects CouchDB and ExtJS&lt;/a&gt;. His examples show how neatly designed ExtJS&amp;#8217;s JSON store is and how perfectly it fits onto CouchDB&amp;#8217;s RESTful JSON API.&lt;/p&gt;
+
+&lt;p&gt;And here is another one by Kris Zyp, he &lt;a href=&quot;http://www.sitepen.com/blog/2008/06/13/restful-json-dojo-data/&quot;&gt;connects CouchDB to Dojo&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://jhcore.com/2008/06/07/jsonpickle/&quot;&gt;John Paulett released jsonpickle&lt;/a&gt;, a JSON to Python object converter that is a bit smarter than the regular simplejson library in that it can convert JSON objects into non-native Python types.&lt;/p&gt;
+
+&lt;p&gt;Over at &lt;em&gt;Resourceful Idiot&lt;/em&gt; they have &lt;a href=&quot;http://www.resourcefulidiot.com/2008/06/restful-databases-are-finally-here/&quot;&gt;a nice list of RESTful databases&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://simonwillison.net/2008/Jun/15/steveys/&quot;&gt;Simon Willison quotes Steve Jegge&lt;/a&gt;. This is exactly why CouchDB switched from XML to JSON.&lt;/p&gt;
+
+&lt;p&gt;Ken Downs has &lt;a href=&quot;http://database-programmer.blogspot.com/2008/06/why-i-do-not-use-orm.html&quot;&gt;a case against ORMs &lt;/a&gt;(Object Relational Mappers).&lt;/p&gt;
+
+&lt;p&gt;BradfordW has a &lt;a href=&quot;http://closersonly.blogspot.com/2008/06/datamapper-and-couchdb.html&quot;&gt;smaller&lt;/a&gt; and a &lt;a href=&quot;http://closersonly.blogspot.com/2008/06/so-i-finally-bit-bullet-and-did-it.html&quot;&gt;larger example&lt;/a&gt; on how to use CouchDB with &lt;a href=&quot;http://datamapper.org/&quot;&gt;DataMapper&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Bob Briski (of Yahoo!) &lt;a href=&quot;http://www.semdevel.com/?p=20&quot;&gt;explains how to count clicks with CouchDB&lt;/a&gt;: &lt;blockquote&gt;I don&amp;#8217;t lose any granularity, it takes almost no time to maintain and it&amp;#8217;s incredibly fast. &lt;/blockquote&gt;&lt;/p&gt;
+
+&lt;p&gt;Peter &lt;a href=&quot;http://peter.michaux.ca/article/7991&quot;&gt;suggests&lt;/a&gt; that your middleware and architecture naturally follow your problem domain and cannot, or at least should not, be chosen independently.&lt;/p&gt;
+
+&lt;p&gt;Loren Segal released &lt;a href=&quot;http://rubyforge.org/forum/forum.php?forum_id=25344&quot;&gt;CouchIO&lt;/a&gt;: &lt;blockquote&gt;[&amp;hellip;] a simple VFS for Ruby, adding support to open, read and write CouchDB resource URI&amp;#8217;s as if they were local files. &lt;/blockquote&gt;&lt;/p&gt;
+
+&lt;p&gt;Yoan Blanc &lt;a href=&quot;http://yoan.dosimple.ch/blog/2008/06/10/&quot;&gt;creates an Erlang based web chat system&lt;/a&gt; on top of CouchDB.&lt;/p&gt;
+
+&lt;p&gt;&amp;#8212;&lt;/p&gt;
+
+&lt;p&gt;Thanks for joining me for this issue of &lt;em&gt;News at Couch&lt;/em&gt; and until next time: Take &lt;strike&gt;couch&lt;/strike&gt;care!&lt;/p&gt;</description>
+	<pubDate>Fri, 04 Jul 2008 18:06:19 +0000</pubDate>
+	<author>jan@apache.org (Jan)</author>
+</item>
+<item>
+	<title>plok: Erlang User Group Berlin</title>
+	<guid>http://jan.prima.de/~jan/plok/archives/144-guid.html</guid>
+	<link>http://jan.prima.de/~jan/plok/archives/144-Erlang-User-Group-Berlin.html</link>
+	<description>&lt;p&gt;&lt;img src=&quot;http://jan.prima.de/~jan/plok/uploads//e.png&quot; alt=&quot;e.png&quot; border=&quot;0&quot; width=&quot;74&quot; height=&quot;75&quot; align=&quot;right&quot; class=&quot;inline&quot; /&gt;Berlin has a long history of blooming user groups and the Erlang User Group Berlin will be no exception!&lt;/p&gt;
+
+&lt;p&gt;That&amp;#8217;s right, Germany&amp;#8217;s capital and one of the nicest places to be in Europe (among all the other nice places, hooray for plurality) finally has place for Erlang enthusiasts. That is in fact a &lt;a href=&quot;http://en.wikipedia.org/wiki/Pleonasm&quot;&gt;pleonasm&lt;/a&gt;, I haven&amp;#8217;t found a single soul yet who is not enthusiastic about working with Erlang, but what do I know?&lt;/p&gt;
+
+&lt;p&gt;Anyway.&lt;/p&gt;
+
+&lt;p&gt;Join the &lt;a href=&quot;http://groups.google.com/group/erlang-berlin/&quot;&gt;discussion group&lt;/a&gt; and help to pick a date for meetings.&lt;/p&gt;
+
+&lt;p&gt;If you are an Erlang developer on visit in Berlin, let us know, so we can have an out-of-order meeting with you.&lt;/p&gt;
+
+&lt;p&gt;Sorry if that shows up at a seemingly non-related planet feed, this is a spam measure and won&amp;#8217;t happen again. Thanks for your patience.&lt;/p&gt;</description>
+	<pubDate>Wed, 02 Jul 2008 14:35:55 +0000</pubDate>
+	<author>jan@apache.org (Jan)</author>
+</item>
+<item>
+	<title>Damien Katz: CouchDBX - CouchDB Binary for OS X</title>
+	<guid>tag:damienkatz.net,2008://1.484</guid>
+	<link>http://damienkatz.net/2008/07/couchdbx-couchdb-binary-for-os.html</link>
+	<description>&lt;blockquote&gt;&lt;div&gt;If you want to play with CouchDB on your Mac and you don't want to mess with any command line installation business, this is for you.&lt;/div&gt;&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://jan.prima.de/~jan/plok/archives/142-CouchDBX-Revival.html&quot;&gt;CouchDBX Revival&lt;/a&gt;&lt;/p&gt;</description>
+	<pubDate>Tue, 01 Jul 2008 21:10:49 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: Apache CouchDB 0.8.0 escapes!</title>
+	<guid>tag:damienkatz.net,2008://1.482</guid>
+	<link>http://damienkatz.net/2008/06/apache-couchdb-080-escapes.html</link>
+	<description>&lt;p&gt;&lt;img src=&quot;http://damienkatz.net/pics/logo.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Congratulations and big thanks to Jan Lehnardt, Christopher Lenz and Noah Slater.&lt;/p&gt;
+
+&lt;p&gt;Get it here: &lt;a href=&quot;http://incubator.apache.org/couchdb/downloads.html&quot;&gt;http://incubator.apache.org/couchdb/downloads.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Soon I'll be writing about the new stuff, particularly the new incremental reduce functionality. Stay tuned. &lt;/p&gt;</description>
+	<pubDate>Wed, 25 Jun 2008 19:32:36 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: Working from my front porch</title>
+	<guid>tag:damienkatz.net,2008://1.481</guid>
+	<link>http://damienkatz.net/2008/06/working-from-my-front-porch.html</link>
+	<description>&lt;p&gt;&lt;img alt=&quot;viewfromporch.jpg&quot; src=&quot;http://damienkatz.net/pics/viewfromporch.jpg&quot; width=&quot;450&quot; height=&quot;338&quot; class=&quot;mt-image-none&quot; /&gt;&lt;/p&gt;</description>
+	<pubDate>Wed, 11 Jun 2008 17:13:14 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: Something bit me</title>
+	<guid>tag:damienkatz.net,2008://1.479</guid>
+	<link>http://damienkatz.net/2008/06/something-bit-me.html</link>
+	<description>&lt;p&gt;&lt;img alt=&quot;Photo 242.jpg&quot; src=&quot;http://damienkatz.net/pics/Photo%20242.jpg&quot; width=&quot;400&quot; height=&quot;300&quot; class=&quot;mt-image-none&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;It started off last Saturday with what I thought was a mosquito bite, but it just kept getting bigger. I wasn't worried until a day later when a red line started making it's way up my arm. After a little online research, we decided to go to the emergency room.&lt;/p&gt;
+
+&lt;p&gt;It's never fun to go to the emergency room, but this was the best emergency room experience I've ever had. Even considering they shot me with heavy-duty antibiotics into my butt cheek, making it feel like someone literally kicked me in the ass. They were fast and the facility was really nice. They even had free wifi. And we were in and out in less than 2 hours. My advice: get sick near the Lake Normal Regional Medical Center.&lt;/p&gt;
+
+&lt;p&gt;According to the doctors, I had rock 'n roll fever and the boogie-woogie  &lt;a href=&quot;http://en.wikipedia.org/wiki/Cellulitis&quot;&gt;Cellulitis&lt;/a&gt;, a bacterial infection just under the skin.&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt=&quot;burster.jpg&quot; src=&quot;http://damienkatz.net/pics/burster.jpg&quot; width=&quot;400&quot; height=&quot;225&quot; class=&quot;mt-image-none&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;Similar to what I had&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;I've since been feeling like shit as I've been achy and running a mild fever while my body fights if off. Today is the first day I felt human. Ahh, so nice! The doctors said to do warm compresses and come back to the ER if I had a fever, but I'm all &quot;what-evar&quot;. I want to live, but not that badly.&lt;/p&gt;
+
+&lt;p&gt;Anyway, we are now moved to Asheville and thanks to the extra hard work of my wife, we are already mostly unpacked. So far we are really loving Asheville. Charlotte can bite me (oh yeah, it did).&lt;/p&gt;</description>
+	<pubDate>Thu, 05 Jun 2008 06:14:07 +0000</pubDate>
+</item>
+<item>
+	<title>Erlang Eclipse IDE: Erlide 0.3.54</title>
+	<guid>http://sourceforge.net/forum/forum.php?forum_id=830868</guid>
+	<link>http://sourceforge.net/forum/forum.php?forum_id=830868</link>
+	<description>This is probably the last release before 0.4. We have a lot of improvements, mainly regarding:&lt;br /&gt;- stability&lt;br /&gt;- performance (compiling, parsing)&lt;br /&gt;- navigation (go to function/macro definition/included file)&lt;br /&gt;- indenting code&lt;br /&gt;- preferences for many settings were added&lt;br /&gt;- several bugs were fixed&lt;br /&gt;- I'm sure I'm forgetting some nice features too, but on the other hand mentioning everything would shrink the pleasure of the discovery :-)&lt;br /&gt;&lt;br /&gt;Update site is at &lt;a href=&quot;http://erlide.sourceforge.net/update&quot;&gt;http://erlide.sourceforge.net/update&lt;/a&gt; or you can download from &lt;a href=&quot;http://sourceforge.net/project/platformdownload.php?group_id=58889&amp;sel_platform=4078&quot;&gt;http://sourceforge.net/project/platformdownload.php?group_id=58889&amp;amp;sel_platform=4078&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;If you encounter problems, go to Window-&amp;gt;Preferences-&amp;gt;Erlang and press the &amp;quot;Report problem&amp;quot; button. Fill the description of the issue and the logs from the latest session will be attached to a trouble report that you can retrieve from your home directory (the file is named &amp;lt;username&amp;gt;_&amp;lt;timestamp&amp;gt;.txt). Please attach this file when reporting (I'll try to make it submit it automatically, but there are some OS issues)&lt;br /&gt;&lt;br /&gt;Enjoy! (&lt;a href=&quot;http://sourceforge.net/forum/forum.php?forum_id=830868&quot;&gt;0 comments&lt;/a&gt;)</description>
+	<pubDate>Mon, 02 Jun 2008 21:06:59 +0000</pubDate>
+	<author>vladdu@users.sourceforge.net (Vlad Dumitrescu)</author>
+</item>
+<item>
+	<title>Damien Katz: Moving</title>
+	<guid>tag:damienkatz.net,2008://1.477</guid>
+	<link>http://damienkatz.net/2008/05/moving.html</link>
+	<description>&lt;p&gt;My family and I are in the process of moving from Charlotte NC to Asheville this weekend. Moving sucks, but hopefully Asheville is worth it.&lt;/p&gt;
+
+&lt;p&gt;In other news, CouchDB is getting close to a 0.8.0 release. I checked in the grouped reduce support yesterday and we just need to some more tweaks and bug fixes in general before release.&lt;/p&gt;</description>
+	<pubDate>Fri, 30 May 2008 19:24:53 +0000</pubDate>
+</item>
+<item>
+	<title>ejabberd@jabber.ru: ejabberd 2.0.1 (rereleased) - Bugfixes, R12, PubSub, registration limit</title>
+	<guid>http://www.ejabberd.im/3056 at http://www.ejabberd.im</guid>
+	<link>http://www.ejabberd.im/ejabberd-2.0.1</link>
+	<description>&lt;blockquote&gt;&lt;b&gt;Update: &lt;/b&gt; the original release didn't include all the files. Make sure to download a file that includes the suffix &quot;_2&quot;: ejabberd-2.0.1_2&lt;/blockquote&gt;
+
+source package does not include the correct files. It will be fixed today and I'll update this newspost.
+
+&lt;p&gt;ejabberd 2.0.1 revision has been &lt;a href=&quot;http://www.process-one.net/en/ejabberd/release_notes/release_note_ejabberd_201&quot;&gt;released&lt;/a&gt;. It has been three months since the first release in the 2.0.x line.
+&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://www.ejabberd.im/ejabberd-2.0.1&quot;&gt;read more&lt;/a&gt;&lt;/p&gt;</description>
+	<pubDate>Wed, 21 May 2008 23:36:48 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: CouchDB Happenings</title>
+	<guid>tag:damienkatz.net,2008://1.475</guid>
+	<link>http://damienkatz.net/2008/05/couchdb-happenings.html</link>
+	<description>Jan Lehnardt: &lt;a href=&quot;http://jan.prima.de/~jan/plok/archives/140-More-Tales-From-the-Strange-World-of-Non-Relational-Data-Storage.html&quot;&gt;More Tales From the Strange World of Non-Relational Data Storage&lt;/a&gt;</description>
+	<pubDate>Sun, 18 May 2008 17:56:30 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: CouchDB Incremental Reduce</title>
+	<guid>tag:damienkatz.net,2008://1.474</guid>
+	<link>http://damienkatz.net/2008/05/couchdb-incremental-reduce.html</link>
+	<description>I just checked in the first cut of incremental reduce for CouchDB into the Apache repository. So right now it allows you do a full reduction of all view values between the optional start key or end key. The cost of both view update and query time is logarithmic cost.&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;What's missing is the ability group reductions, such that if there are 100 rows with 5 different keys between the start and end key, you can optionally get 5 different reduced values instead of a single value. I'll probably check that piece in next week. A few more bug fixes and interface changes and we'll finalize the 0.8.0 release hopefully next week.&lt;/div&gt;</description>
+	<pubDate>Thu, 15 May 2008 22:09:21 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: Catapult Operator</title>
+	<guid>tag:damienkatz.net,2008://1.473</guid>
+	<link>http://damienkatz.net/2008/05/catapult-operator.html</link>
+	<description>&lt;blockquote&gt;&lt;div&gt;If you lived in the Dark Ages, and you were a catapult operator, I bet the most common question people would ask is, 'Can't you make it shoot farther?' No. I'm sorry. That's as far as it shoots. - Jack Handey&lt;/div&gt;&lt;/blockquote&gt;</description>
+	<pubDate>Fri, 09 May 2008 19:48:58 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: HDR</title>
+	<guid>tag:65.181.143.42,2008://1.472</guid>
+	<link>http://damienkatz.net/2008/05/hdr.html</link>
+	<description>This is my first ever try at HDR photography.&lt;div&gt;&lt;br /&gt;&lt;div&gt;&lt;span class=&quot;mt-enclosure mt-enclosure-image&quot;&gt;&lt;a href=&quot;http://damienkatz.net/pics/DSC01592_3_4_tonemapped.jpg&quot;&gt;&lt;img alt=&quot;DSC01592_3_4_tonemapped.jpg&quot; src=&quot;http://damienkatz.net/pics/DSC01592_3_4_tonemapped-thumb-450x336.jpg&quot; width=&quot;450&quot; height=&quot;336&quot; class=&quot;mt-image-none&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;This is a real store on Old Statesville road near our house in Charlotte NC. I used our &lt;a href=&quot;http://www.amazon.com/Sony-Cybershot-DSC-N2-Digital-Optical/dp/B000DZKNM2&quot;&gt;Sony Cyber-shot DSC-N2&lt;/a&gt; with its built-in exposure burst mode and the trial version of &lt;a href=&quot;http://www.hdrsoft.com/&quot;&gt;Photomatix Pro &lt;/a&gt;(you can see the trialware watermarks) to merge the multiple exposures into an HDR image.&lt;/div&gt;&lt;/div&gt;</description>
+	<pubDate>Fri, 09 May 2008 00:33:37 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: CouchDB Roundup</title>
+	<guid>tag:65.181.143.42,2008://1.471</guid>
+	<link>http://damienkatz.net/2008/04/couchdb-news.html</link>
+	<description>&lt;p&gt;Jan summarizes recent happenings: &lt;a href=&quot;http://jan.prima.de/~jan/plok/archives/129-Another-week-or-two-in-CouchDB.html&quot;&gt;Another week (or two) in CouchDB&lt;/a&gt;&lt;/p&gt;</description>
+	<pubDate>Mon, 05 May 2008 23:53:59 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: Gwendolyn</title>
+	<guid>tag:65.181.143.42,2008://1.469</guid>
+	<link>http://damienkatz.net/2008/04/gwendolyn.html</link>
+	<description>&lt;p&gt;&lt;span class=&quot;mt-enclosure mt-enclosure-image&quot;&gt;&lt;a href=&quot;http://damienkatz.net/pics/Photo%20154.jpg&quot;&gt;&lt;img alt=&quot;Photo 154.jpg&quot; src=&quot;http://damienkatz.net/pics/Photo 154-thumb-400x300.jpg&quot; width=&quot;400&quot; height=&quot;300&quot; class=&quot;mt-image-none&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;Me and my oldest. I'm under blankie.&lt;/p&gt;</description>
+	<pubDate>Mon, 05 May 2008 23:53:58 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: Roseanna</title>
+	<guid>tag:65.181.143.42,2008://1.468</guid>
+	<link>http://damienkatz.net/2008/04/roseanna.html</link>
+	<description>&lt;p&gt;&lt;span class=&quot;mt-enclosure mt-enclosure-image&quot;&gt;&lt;a href=&quot;http://damienkatz.net/pics/Photo%20109.jpg&quot;&gt;&lt;img alt=&quot;Photo 109.jpg&quot; src=&quot;http://damienkatz.net/pics/Photo 109-thumb-400x300.jpg&quot; width=&quot;400&quot; height=&quot;300&quot; class=&quot;mt-image-none&quot; /&gt;&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;Me and my littlest, about 2 minutes ago.&lt;/p&gt;</description>
+	<pubDate>Mon, 05 May 2008 23:53:58 +0000</pubDate>
+</item>
+<item>
+	<title>Damien Katz: Forgive me, El Guapo</title>
+	<guid>tag:65.181.143.42,2008://1.466</guid>
+	<link>http://damienkatz.net/2008/04/forgive-me-el-guapo.html</link>
+	<description>&lt;p&gt;I know that I, Jefe, do not have your superior intellect and education. But could it be that once again, you are angry at something else, and are looking to take it out on me?&lt;/p&gt;</description>
+	<pubDate>Mon, 05 May 2008 23:53:58 +0000</pubDate>
+</item>
+<item>
+	<title>Erlang Eclipse IDE: Erlide 0.3.49.200804271817</title>
+	<guid>http://sourceforge.net/forum/forum.php?forum_id=816735</guid>
+	<link>http://sourceforge.net/forum/forum.php?forum_id=816735</link>
+	<description>* A long-time standing bug has been fixed, where the text went out of synch with the internal model and caused weird behaviour for the outline and other features.&lt;br /&gt;* The indentation code is much better, I'd say it's almost done.&lt;br /&gt;* Some stability issues have been fixed.&lt;br /&gt;&lt;br /&gt;Enjoy! (&lt;a href=&quot;http://sourceforge.net/forum/forum.php?forum_id=816735&quot;&gt;0 comments&lt;/a&gt;)</description>
+	<pubDate>Sun, 27 Apr 2008 17:54:16 +0000</pubDate>
+	<author>vladdu@users.sourceforge.net (Vlad Dumitrescu)</author>
+</item>
+<item>
+	<title>Erlang Announce List: Erlang announce mailing list :: Erlang/OTP R12B-2 has been released</title>
+	<guid>http://www.trapexit.org/forum/viewtopic.php?p=42858#42858</guid>
+	<link>http://www.trapexit.org/forum/viewtopic.php?p=42858#42858</link>
+	<description>Author: Anonymous&lt;br /&gt;
+Subject: Erlang/OTP R12B-2 has been released&lt;br /&gt;
+Posted: Wed Apr 09, 2008 10:35 am (GMT 0)&lt;br /&gt;
+Topic Replies: 0&lt;br /&gt;&lt;br /&gt;
+&lt;span class=&quot;postbody&quot;&gt;Bug fix release : otp_src_R12B-2
+&lt;br /&gt;
+Build date      : 2008-04-09
+&lt;br /&gt;
+
+&lt;br /&gt;
+This is bug fix release 2 for the R12B release.
+&lt;br /&gt;
+
+&lt;br /&gt;
+You can find the README file for the release at
+&lt;br /&gt;
+
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_src_R12B-2.readme&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_src_R12B-2.readme&lt;/a&gt;
+&lt;br /&gt;
+
+&lt;br /&gt;
+The source distribution and binary distribution for Windows can be
+&lt;br /&gt;
+downloaded from
+&lt;br /&gt;
+
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_src_R12B-2.tar.gz&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_src_R12B-2.tar.gz&lt;/a&gt;
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_win32_R12B-2.exe&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_win32_R12B-2.exe&lt;/a&gt;
+&lt;br /&gt;
+
+&lt;br /&gt;
+Beginning with this release, the distribution can also be downloaded
+&lt;br /&gt;
+using the BitTorrent protocol. Use the following torrent files to
+&lt;br /&gt;
+download the source distribution and binary distribution for Windows:
+&lt;br /&gt;
+
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_src_R12B-2.tar.gz.torrent&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_src_R12B-2.tar.gz.torrent&lt;/a&gt;
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_win32_R12B-2.exe.torrent&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_win32_R12B-2.exe.torrent&lt;/a&gt;
+&lt;br /&gt;
+
+&lt;br /&gt;
+Note: To unpack the TAR archive you need a GNU TAR compatible program.
+&lt;br /&gt;
+
+&lt;br /&gt;
+For installation instructions please read the README file that is part
+&lt;br /&gt;
+of the distribution.
+&lt;br /&gt;
+
+&lt;br /&gt;
+The on-line documentation can be found at: &lt;a href=&quot;http://www.erlang.org/doc/&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/doc/&lt;/a&gt;
+&lt;br /&gt;
+You can also download the complete HTML documentation or the Unix manual files
+&lt;br /&gt;
+
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_doc_html_R12B-2.tar.gz&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_doc_html_R12B-2.tar.gz&lt;/a&gt;
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_doc_man_R12B-2.tar.gz&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_doc_man_R12B-2.tar.gz&lt;/a&gt;
+&lt;br /&gt;
+
+&lt;br /&gt;
+We also want to thank those that sent us patches, suggestions and bug
+&lt;br /&gt;
+reports,
+&lt;br /&gt;
+
+&lt;br /&gt;
+The OTP Team
+&lt;br /&gt;
+-- 
+&lt;br /&gt;
+Bj
+&lt;/span&gt;&lt;br /&gt;</description>
+	<pubDate>Wed, 09 Apr 2008 10:46:15 +0000</pubDate>
+</item>
+<item>
+	<title>Erlang Eclipse IDE: Erlide 0.3.43</title>
+	<guid>http://sourceforge.net/forum/forum.php?forum_id=806726</guid>
+	<link>http://sourceforge.net/forum/forum.php?forum_id=806726</link>
+	<description>Maintenance release&lt;br /&gt;* fixed an outline bug&lt;br /&gt;from 0.3.42:&lt;br /&gt;* updated a NPE when opening files&lt;br /&gt;* eclipse starts even if the erlang installation isn't properly configured (but of course the functionality isn't available). After reconfiguring, a restart is required. (&lt;a href=&quot;http://sourceforge.net/forum/forum.php?forum_id=806726&quot;&gt;0 comments&lt;/a&gt;)</description>
+	<pubDate>Thu, 03 Apr 2008 08:27:40 +0000</pubDate>
+	<author>vladdu@users.sourceforge.net (Vlad Dumitrescu)</author>
+</item>
+<item>
+	<title>Erlang Eclipse IDE: Erlide 0.3.40</title>
+	<guid>http://sourceforge.net/forum/forum.php?forum_id=806026</guid>
+	<link>http://sourceforge.net/forum/forum.php?forum_id=806026</link>
+	<description>It's been too long since last... there are many improvements, I will only name the ones I remember:&lt;br /&gt;&lt;br /&gt;* R12 should now be supported (but not for developing erlide itself)&lt;br /&gt;* console is better, and has even syntax highlighting&lt;br /&gt;* ETS tables with lexical and parsing data are removed when editor is closed &lt;br /&gt;* lexical scanning is done more lazily (saving memory)&lt;br /&gt;* caching is done for documentation and file structure (&amp;quot;go to function&amp;quot;)&lt;br /&gt;* included files are handled properly (definitions are found)&lt;br /&gt;* simple completion of module names in editor&lt;br /&gt;&lt;br /&gt;Enjoy!&lt;br /&gt;Vlad (&lt;a href=&quot;http://sourceforge.net/forum/forum.php?forum_id=806026&quot;&gt;0 comments&lt;/a&gt;)</description>
+	<pubDate>Tue, 01 Apr 2008 20:21:58 +0000</pubDate>
+	<author>vladdu@users.sourceforge.net (Vlad Dumitrescu)</author>
+</item>
+<item>
+	<title>RabbitMQ Announcements: [rabbitmq-announce] RabbitMQ 1.3.0 released</title>
+	<guid>http://lists.rabbitmq.com/pipermail/rabbitmq-announce/2008-April/000010.html</guid>
+	<link>http://lists.rabbitmq.com/pipermail/rabbitmq-announce/2008-April/000010.html</link>
+	<pubDate>Tue, 01 Apr 2008 00:00:00 +0000</pubDate>
+</item>
+<item>
+	<title>ErlyBird: ErlyBird 0.16.0 Released</title>
+	<guid>http://sourceforge.net/forum/forum.php?forum_id=794555</guid>
+	<link>http://sourceforge.net/forum/forum.php?forum_id=794555</link>
+	<description>ErlyBird 0.16.0 Released - An Erlang IDE based on NetBeans&lt;br /&gt;&lt;br /&gt;I'm pleased to announce ErlyBird 0.16.0, an Erlang IDE based on NetBeans. This is an important feature release in size of 25M. If you have latest NetBeans nightly build installed, you can also install ErlyBird modules via update center.&lt;br /&gt;&lt;br /&gt;CHANGELOG:&lt;br /&gt;&lt;br /&gt;    * Project metadata file is changed, please see Notes&lt;br /&gt;    * Instant rename (put caret on variable or function name, press CTRL+R)&lt;br /&gt;    * Go-To-Declaration to macros that are defined included header files&lt;br /&gt;    * Fixed: Go-To-Declaration to -inlcudelib won't work again after this include header file was opened in editor once&lt;br /&gt;    * Fixed: syntax broken for packaged import attribute&lt;br /&gt;    * Fixed: syntax broken for wild attribute&lt;br /&gt;    * Completion suggestion will not search other projects&lt;br /&gt;    * Track GSF changes, reindex performance was improved a lot; Can live with other GSF based language support now (Ruby, Groovy etc)&lt;br /&gt;&lt;br /&gt;Java JRE 5.0+ is required.&lt;br /&gt;&lt;br /&gt;To download, please go to: &lt;a href=&quot;http://sourceforge.net/project/showfiles.php?group_id=192439&quot;&gt;http://sourceforge.net/project/showfiles.php?group_id=192439&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;To install:&lt;br /&gt;&lt;br /&gt;   1. Unzip erlybird-bin-0.16.0-ide.zip to somewhere.&lt;br /&gt;   2. Make sure 'erl.exe' or 'erl' is under your environment path&lt;br /&gt;   3. For Windows user, execute 'bin/erlybird.exe'. For *nix user, 'bin/erlybird'.&lt;br /&gt;   4. Check/set your OTP path. From [Tools]-&amp;gt;[Options], click on 'Erlang', then 'Erlang Installation' tab, fill in the full path of your 'erl.exe' or 'erl' file. For instance: &amp;quot;C:/erl/bin/erl.exe&amp;quot;&lt;br /&gt;   5. The default -Xmx option for jvm is set to 256M, ErlyBird now works good with less memory, such as -Xmx128M. If you want to increase/decrease it, please open the config file that is located at etc/erlybird.conf, set -J-Xmx of 'default_options'.&lt;br /&gt;&lt;br /&gt;When run ErlyBird first time, the OTP libs will be indexed. The indexing time varies from 10 to 30 minutes deponding on your computer.&lt;br /&gt;&lt;br /&gt;Notes:&lt;br /&gt;&lt;br /&gt;   1. Since project metadata format is changed, to open old ErlyBird created project, you should modify project.xml which is located at your project folder: nbproject/project.xml, change line:&lt;br /&gt;&lt;br /&gt;      &amp;lt;type&amp;gt;org.netbeans.modules.languges.erlang.project&amp;lt;/type&amp;gt;&lt;br /&gt;&lt;br /&gt;      to:&lt;br /&gt;&lt;br /&gt;      &amp;lt;type&amp;gt;org.netbeans.modules.erlang.project&amp;lt;/type&amp;gt;&lt;br /&gt;&lt;br /&gt;   2. If you have previous version ErlyBird installed, you should delete the old cache files which are located at:&lt;br /&gt;          * *nix: &amp;quot;${HOME}/.erlybird/dev&amp;quot;&lt;br /&gt;          * mac os x: &amp;quot;${HOME}/Library/Application Support/erlybird/dev&amp;quot;&lt;br /&gt;          * windows: &amp;quot;C:\Documents and Settings\yourusername\.erlybird\dev&amp;quot; or some where&lt;br /&gt;&lt;br /&gt;The status of ErlyBird is still Alpha, feedbacks and bug reports are welcome. (&lt;a href=&quot;http://sourceforge.net/forum/forum.php?forum_id=794555&quot;&gt;0 comments&lt;/a&gt;)</description>
+	<pubDate>Thu, 06 Mar 2008 07:15:45 +0000</pubDate>
+	<author>dcaoyuan@users.sourceforge.net (Caoyuan Deng)</author>
+</item>
+<item>
+	<title>ejabberd@jabber.ru: ejabberd 2.0.0: PubSub, PEP, more clustering, Proxy65, HTTP-Bind and much more</title>
+	<guid>http://www.ejabberd.im/2854 at http://www.ejabberd.im</guid>
+	<link>http://www.ejabberd.im/ejabberd-2.0.0</link>
+	<description>&lt;p&gt;ejabberd 2.0.0 was finally released. Check the &lt;a href=&quot;http://www.process-one.net/en/news/article/ejabberd_200_has_been_released/&quot;&gt;announcement&lt;/a&gt; for details and download links.&lt;/p&gt;
+&lt;p&gt;It has been 15 months since the last ejabberd release that included new features or improvements. This means that ejabberd 2.0.0 includes a large number of new features, improvements and bugfixes. Just to name a few: more clustering features, updated Pub-Sub service with PEP support, file transfer proxy, integrated HTTP file server, HTTP binding, and PAM authentication.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.ejabberd.im/ejabberd-2.0.0&quot;&gt;read more&lt;/a&gt;&lt;/p&gt;</description>
+	<pubDate>Wed, 20 Feb 2008 20:52:09 +0000</pubDate>
+</item>
+<item>
+	<title>ejabberd@jabber.ru: Final call to translators for ejabberd 2.0.0</title>
+	<guid>http://www.ejabberd.im/2846 at http://www.ejabberd.im</guid>
+	<link>http://www.ejabberd.im/node/2846</link>
+	<description>&lt;p&gt;&lt;strong&gt;Update 2&lt;/strong&gt;: Updated the information about complete and uncomplete translations.&lt;br /&gt;
+&lt;strong&gt;Update&lt;/strong&gt;: There is also a &lt;a href=&quot;http://www.ejabberd.im/files/ejabberd/ejabberd-langs-1190.zip&quot;&gt;zip with all .translate files&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Two months ago there was a call to translators to prepare ejabberd 2.0.0. Since then, ejabberd 2.0.0-beta1 and rc1 were published, with bug fixes and small improvements. Some of those changes also added, removed or modified translatable strings.&lt;/p&gt;
+&lt;p&gt;Now I call again to translators. The good news is that most languages only miss 5 or 10 strings :)&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.ejabberd.im/node/2846&quot; target=&quot;_blank&quot;&gt;read more&lt;/a&gt;&lt;/p&gt;</description>
+	<pubDate>Thu, 14 Feb 2008 12:50:48 +0000</pubDate>
+</item>
+<item>
+	<title>Erlang Announce List: Erlang announce mailing list :: Erlang/OTP R12B-1 has been released</title>
+	<guid>http://www.trapexit.org/forum/viewtopic.php?p=39066#39066</guid>
+	<link>http://www.trapexit.org/forum/viewtopic.php?p=39066#39066</link>
+	<description>Author: Anonymous&lt;br /&gt;
+Subject: Erlang/OTP R12B-1 has been released&lt;br /&gt;
+Posted: Wed Feb 06, 2008 3:14 pm (GMT 0)&lt;br /&gt;
+Topic Replies: 0&lt;br /&gt;&lt;br /&gt;
+&lt;span class=&quot;postbody&quot;&gt;Bug fix release : otp_src_R12B-1
+&lt;br /&gt;
+Build date      : 2008-02-06
+&lt;br /&gt;
+
+&lt;br /&gt;
+This is bug fix release 1 for the R12B release.
+&lt;br /&gt;
+You can download the full source distribution from
+&lt;br /&gt;
+ 
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_src_R12B-1.tar.gz&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_src_R12B-1.tar.gz&lt;/a&gt;
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_src_R12B-1.readme&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_src_R12B-1.readme&lt;/a&gt;
+&lt;br /&gt;
+
+&lt;br /&gt;
+Note: To unpack the TAR archive you need a GNU TAR compatible program.
+&lt;br /&gt;
+
+&lt;br /&gt;
+For installation instructions please read the README that is part of
+&lt;br /&gt;
+the distribution.
+&lt;br /&gt;
+
+&lt;br /&gt;
+The Windows binary distribution can be downloaded from
+&lt;br /&gt;
+
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_win32_R12B-1.exe&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_win32_R12B-1.exe&lt;/a&gt;
+&lt;br /&gt;
+
+&lt;br /&gt;
+
+&lt;br /&gt;
+On-line documentation can be found at &lt;a href=&quot;http://www.erlang.org/doc/.&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/doc/.&lt;/a&gt;
+&lt;br /&gt;
+You can also download the complete HTML documentation or the Unix manual files
+&lt;br /&gt;
+
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_doc_html_R12B-1.tar.gz&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_doc_html_R12B-1.tar.gz&lt;/a&gt;
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_doc_man_R12B-1.tar.gz&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_doc_man_R12B-1.tar.gz&lt;/a&gt;
+&lt;br /&gt;
+
+&lt;br /&gt;
+We also want to thank those that sent us patches, suggestions and bug
+&lt;br /&gt;
+reports,
+&lt;br /&gt;
+
+&lt;br /&gt;
+The OTP Team
+&lt;br /&gt;
+
+&lt;br /&gt;
+-- 
+&lt;br /&gt;
+Bj
+&lt;/span&gt;&lt;br /&gt;</description>
+	<pubDate>Wed, 06 Feb 2008 15:15:40 +0000</pubDate>
+</item>
+<item>
+	<title>ejabberd@jabber.ru: ejabberd 2.0.0-rc1 released</title>
+	<guid>http://www.ejabberd.im/2796 at http://www.ejabberd.im</guid>
+	<link>http://www.ejabberd.im/ejabberd-2.0.0-rc1</link>
+	<description>&lt;p&gt;ejabberd 2.0.0 has been in the works since more than a year ago. This release will include an impressive amount of new features, improvements and bug fixes. Just to name two: more clustering features and updated Pub-Sub service with PEP support.&lt;/p&gt;
+&lt;p&gt;Please read with detail the &lt;a href=&quot;http://svn.process-one.net/ejabberd/branches/ejabberd-2.0.x/doc/release_notes_2.0.0.txt&quot;&gt;Release Notes&lt;/a&gt; for a list of changes and important notes.&lt;/p&gt;
+&lt;p&gt;But the final release of ejabberd 2.0.0 is not ready yet. Right now it's time for Release Candidate 1.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.ejabberd.im/ejabberd-2.0.0-rc1&quot;&gt;read more&lt;/a&gt;&lt;/p&gt;</description>
+	<pubDate>Fri, 18 Jan 2008 18:38:51 +0000</pubDate>
+</item>
+<item>
+	<title>ejabberd@jabber.ru: ejabberd 2.0.0-beta1 released</title>
+	<guid>http://www.ejabberd.im/2751 at http://www.ejabberd.im</guid>
+	<link>http://www.ejabberd.im/ejabberd-2.0.0-beta1</link>
+	<description>&lt;p&gt;ejabberd 2.0.0-beta1 has been released. Check the &lt;a href=&quot;http://www.process-one.net/en/news/article/ejabberd_200_beta1_has_been_released/&quot;&gt;announcement&lt;/a&gt; for details and download links.&lt;/p&gt;
+&lt;p&gt;It has been 15 months since the last ejabberd release that included new features or improvements. This means that the upcoming ejabberd 2.0.0 will include a large number of new features, improvements and bugfixes. &lt;/p&gt;
+&lt;p&gt;The purpose of this beta release is to find bugs in the 2.0.0 code base before releasing the final version. This beta version should not be used for production servers.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.ejabberd.im/ejabberd-2.0.0-beta1&quot;&gt;read more&lt;/a&gt;&lt;/p&gt;</description>
+	<pubDate>Mon, 24 Dec 2007 19:57:04 +0000</pubDate>
+</item>
+<item>
+	<title>ErlyBird: ErlyBird 0.15.2 released</title>
+	<guid>http://sourceforge.net/forum/forum.php?forum_id=764505</guid>
+	<link>http://sourceforge.net/forum/forum.php?forum_id=764505</link>
+	<description>I'm pleased to announce ErlyBird 0.15.2, an Erlang IDE based on NetBeans. This is an important feature release. This release will only provide all-in-one IDE package, which is in size of 17.9M.&lt;br /&gt;&lt;br /&gt;CHANGELOG:&lt;br /&gt;&lt;br /&gt;    * Supported OTP/Erlang R12B new syntax.&lt;br /&gt;    * A new Emacs standard color theme.&lt;br /&gt;    * Fixed some formatter bugs.&lt;br /&gt;    * Better syntax error message.&lt;br /&gt;    * Various bugs fixes.&lt;br /&gt;&lt;br /&gt;To switch color theme, open [Tools]-&amp;gt;[Options], click on 'Fonts &amp;amp; Colors', choose 'Profile' drop-down box.&lt;br /&gt;&lt;br /&gt;Java JRE 5.0+ is required.&lt;br /&gt;&lt;br /&gt;To download, please go to: &lt;a href=&quot;http://sourceforge.net/project/showfiles.php?group_id=192439&quot;&gt;http://sourceforge.net/project/showfiles.php?group_id=192439&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;To install:&lt;br /&gt;&lt;br /&gt;   1. Unzip erlybird-bin-0.15.2-ide.zip to somewhere.&lt;br /&gt;   2. Make sure 'erl.exe' or 'erl' is under your environment path&lt;br /&gt;   3. For Windows user, execute 'bin/erlybird.exe'. For *nix user, 'bin/erlybird'.&lt;br /&gt;   4. Check/set your OTP path. From [Tools]-&amp;gt;[Options], click on 'Erlang', then 'Erlang Installation' tab, fill in the full path of your 'erl.exe' or 'erl' file. For instance: &amp;quot;C:/erl/bin/erl.exe&amp;quot;&lt;br /&gt;   5. The default -Xmx option for jvm is set to 256M, ErlyBird now works good with less memory, such as -Xmx128M. If you want to increase/decrease it, please open the config file that is located at etc/erlybird.conf, set -J-Xmx of 'default_options'.&lt;br /&gt;&lt;br /&gt;When run ErlyBird first time, the OTP libs will be indexed. The indexing time varies from 10 to 30 minutes deponding on your computer.&lt;br /&gt;&lt;br /&gt;Notice: If you have previous version ErlyBird installed, it's recommended to delete the old cache files which are located at:&lt;br /&gt;&lt;br /&gt;    * *nix: &amp;quot;${HOME}/.erlybird/dev&amp;quot;&lt;br /&gt;    * mac os x: &amp;quot;${HOME}/Library/Application Support/erlybird/dev&amp;quot;&lt;br /&gt;    * windows: &amp;quot;C:\Documents and Settings\yourusername\.erlybird\dev&amp;quot; or some where&lt;br /&gt;&lt;br /&gt;The status of ErlyBird is still Alpha, feedbacks and bug reports are welcome. (&lt;a href=&quot;http://sourceforge.net/forum/forum.php?forum_id=764505&quot;&gt;0 comments&lt;/a&gt;)</description>
+	<pubDate>Thu, 13 Dec 2007 19:30:55 +0000</pubDate>
+	<author>dcaoyuan@users.sourceforge.net (Caoyuan Deng)</author>
+</item>
+<item>
+	<title>Erlang Announce List: Erlang announce mailing list :: Erlang/OTP R12B-0 has been released</title>
+	<guid>http://www.trapexit.org/forum/viewtopic.php?p=35562#35562</guid>
+	<link>http://www.trapexit.org/forum/viewtopic.php?p=35562#35562</link>
+	<description>Author: Anonymous&lt;br /&gt;
+Subject: Erlang/OTP R12B-0 has been released&lt;br /&gt;
+Posted: Wed Dec 05, 2007 8:43 am (GMT 0)&lt;br /&gt;
+Topic Replies: 0&lt;br /&gt;&lt;br /&gt;
+&lt;span class=&quot;postbody&quot;&gt;Major relese    : otp_src_R12B-0
+&lt;br /&gt;
+Build date      : 2007-12-04
+&lt;br /&gt;
+
+&lt;br /&gt;
+R12B-0 is a major new release of Erlang/OTP.
+&lt;br /&gt;
+You can download the full source distribution from
+&lt;br /&gt;
+ 
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_src_R12B-0.tar.gz&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_src_R12B-0.tar.gz&lt;/a&gt;
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_src_R12B-0.readme&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_src_R12B-0.readme&lt;/a&gt;
+&lt;br /&gt;
+
+&lt;br /&gt;
+Note: To unpack the TAR archive you need a GNU TAR compatible program.
+&lt;br /&gt;
+
+&lt;br /&gt;
+For installation instructions please read the README that is part of
+&lt;br /&gt;
+the distribution.
+&lt;br /&gt;
+
+&lt;br /&gt;
+The Windows binary distribution can be downloaded from
+&lt;br /&gt;
+
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_win32_R12B-0.exe&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_win32_R12B-0.exe&lt;/a&gt;
+&lt;br /&gt;
+
+&lt;br /&gt;
+
+&lt;br /&gt;
+On-line documentation can be found at &lt;a href=&quot;http://www.erlang.org/doc/.&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/doc/.&lt;/a&gt;
+&lt;br /&gt;
+You can also download the complete HTML documentation or the Unix manual files
+&lt;br /&gt;
+
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_doc_html_R12B-0.tar.gz&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_doc_html_R12B-0.tar.gz&lt;/a&gt;
+&lt;br /&gt;
+  &lt;a href=&quot;http://www.erlang.org/download/otp_doc_man_R12B-0.tar.gz&quot; target=&quot;_blank&quot;&gt;http://www.erlang.org/download/otp_doc_man_R12B-0.tar.gz&lt;/a&gt;
+&lt;br /&gt;
+
+&lt;br /&gt;
+We also want to thank those that sent us patches, suggestions and bug
+&lt;br /&gt;
+reports,
+&lt;br /&gt;
+
+&lt;br /&gt;
+The OTP Team
+&lt;br /&gt;
+
+&lt;br /&gt;
+-- 
+&lt;br /&gt;
+Bj
+&lt;/span&gt;&lt;br /&gt;</description>
+	<pubDate>Wed, 05 Dec 2007 08:45:25 +0000</pubDate>
+</item>
+<item>
+	<title>ejabberd@jabber.ru: Call to translators for ejabberd 2.0.0</title>
+	<guid>http://www.ejabberd.im/2724 at http://www.ejabberd.im</guid>
+	<link>http://www.ejabberd.im/node/2724</link>
+	<description>&lt;p&gt;The messages shown by ejabberd to the users and administrators are written in English. Many people have contributed translations for &lt;a href=&quot;http://www.ejabberd.im/localization&quot;&gt;other 16 languages&lt;/a&gt;. A new version of ejabberd will be published in the following days, so it is time for a &lt;a href=&quot;http://www.process-one.net/en/blogs/article/ejabberd_20_beta_is_approaching_calling_for_translators/&quot;&gt;call to translators&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Those are the languages that still need an update, the lines that remain to be complete, and the state of the translation:&lt;/p&gt;
+&lt;pre&gt;ca.msg  39 -- contacting Vicent Alberola&lt;p&gt;&lt;a href=&quot;http://www.ejabberd.im/node/2724&quot;&gt;read more&lt;/a&gt;&lt;/p&gt;&lt;/pre&gt;</description>
+	<pubDate>Tue, 04 Dec 2007 22:23:10 +0000</pubDate>
+</item>
+<item>
+	<title>Erlang Eclipse IDE: Erlide 0.3.36</title>
+	<guid>http://sourceforge.net/forum/forum.php?forum_id=759260</guid>
+	<link>http://sourceforge.net/forum/forum.php?forum_id=759260</link>
+	<description>Available on the update site &lt;a href=&quot;http://erlide.sourceforge.net/update&quot;&gt;http://erlide.sourceforge.net/update&lt;/a&gt; &lt;br /&gt;&lt;br /&gt;Bugfixes and new features:&lt;br /&gt;* Improved outline, less crashes and better synchronizing with the editor&lt;br /&gt;* Improved double-click and paren-matching&lt;br /&gt;* External erl-modules for navigation can be specified in project properties&lt;br /&gt;* Error- and warning-icons in navigator (&lt;a href=&quot;http://sourceforge.net/forum/forum.php?forum_id=759260&quot;&gt;0 comments&lt;/a&gt;)</description>
+	<pubDate>Wed, 28 Nov 2007 15:04:09 +0000</pubDate>
+	<author>jakobc@users.sourceforge.net (Jakob C)</author>
+</item>
+
+</channel>
+</rss>

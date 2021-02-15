@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<rss version="2.0">
+  <channel>
+    <title>The Weather Channel: Your Local Weather Outlook--Stockholm, Sweden</title>
+    <link>http://www.weather.com/weather/local/SWXX0031?cm_ven=LWO&amp;cm_cat=rss&amp;par=LWO_rss&amp;cm_pla=city_page&amp;cm_ite=cc2&amp;site=city_page</link>
+    <description><![CDATA[Local Weather Outlook for Stockholm, Sweden. Since 1982, The Weather Channel has brought timely weather information to the world. Now via our Local Weather Outlook RSS feed we can keep you up-to-date on the latest weather affecting the cities of your choice including: current local conditions, local Doppler radar, pollen trends, regional video forecasts with expert commentary, and extended forecast details delivered right to your desktop. The Weather Channel...Bringing Weather To Life]]></description>
+    <language><![CDATA[en-us]]></language>
+    <copyright><![CDATA[Copyright © 2006, The Weather Channel Interactive, Inc.]]></copyright>
+    <pubDate>Thu, 11 Sep 2008 10:05:04 GMT</pubDate>
+    <lastBuildDate>Thu, 11 Sep 2008 10:05:04 GMT</lastBuildDate>
+    <docs><![CDATA[http://blogs.law.harvard.edi/tech/rss]]></docs>
+    <ttl>30</ttl>
+    <image>
+      <title><![CDATA[The Weather Channel: Local Weather Outlook ]]></title>
+      <url><![CDATA[http://image.weather.com/web/common/logos/twci_logo_110x104.jpg?cm_ven=LWO&cm_pla=logo&cm_ite=homepage&site=logo&cm_cat=rss&par=LWO_rss]]></url>
+      <link><![CDATA[http://www.weather.com?cm_ven=LWO&cm_pla=logo&cm_ite=homepage&site=logo&cm_cat=rss&par=LWO_rss]]></link>
+      <description><![CDATA[Local Weather Outlook from The Weather Channel]]></description>
+    </image>
+    <item>
+      <guid isPermaLink="false">0.9237905396946947</guid>
+      <pubDate>Thu, 11 Sep 2008 10:05:04 GMT</pubDate>
+      <title><![CDATA[Current Weather Conditions In Stockholm, Sweden]]></title>
+      <link><![CDATA[http://www.weather.com/weather/local/SWXX0031?cm_pla=city_page&cm_ite=cc&site=city_page&cm_ven=LWO&cm_cat=rss&par=LWO_rss]]></link>
+      <description><![CDATA[<img src="http://image.weather.com/web/common/wxicons/31/28.gif?12122006" alt="" />Mostly Cloudy, and 52 &deg; F. For more details?]]></description>
+    </item>
+    <item>
+      <guid isPermaLink="false">1.7482749906240287</guid>
+      <pubDate>Thu, 11 Sep 2008 10:05:04 GMT</pubDate>
+      <title><![CDATA[Your Local Doppler Radar]]></title>
+      <link><![CDATA[http://www.weather.com/weather/map/SWXX0031?cm_ven=LWO&cm_pla=map&site=map&cm_ite=doplr_sat&cm_cat=rss&par=LWO_rss]]></link>
+      <description><![CDATA[This map shows the location and intensity of precipitation in your area. The color of the precipitation corresponds to the rate at which it is falling.  This map is updated every 15 minutes.]]></description>
+    </item>
+    <item>
+      <guid isPermaLink="false">0.23195485086163414</guid>
+      <pubDate>Thu, 11 Sep 2008 10:05:04 GMT</pubDate>
+      <title><![CDATA[Pollen Trend for Stockholm, Sweden]]></title>
+      <link><![CDATA[http://www.weather.com/outlook/health/allergies/weather/tenday/SWXX0031?cm_ven=LWO&cm_pla=city_page&cm_ite=10day_pollen&site=city_page&cm_cat=rss&par=LWO_rss]]></link>
+      <description><![CDATA[N/A. View complete PollenCast?]]></description>
+    </item>
+    <item>
+      <guid isPermaLink="false">1.0263106977955294</guid>
+      <pubDate>Thu, 11 Sep 2008 10:05:04 GMT</pubDate>
+      <title><![CDATA[Video: Your Regional Weather Forecast]]></title>
+      <link><![CDATA[http://www.weather.com/multimedia/videoplayer.html?collection=topstory&clip=365&cm_ven=LWO&cm_pla=video&site=video&cm_ite=eur&cm_cat=rss&par=LWO_rss]]></link>
+      <description><![CDATA[Watch what the experts at The Weather Channel® have to say about the weather trends in your area.]]></description>
+    </item>
+    <item>
+      <guid isPermaLink="false">4.404673029404744</guid>
+      <pubDate>Thu, 11 Sep 2008 10:05:04 GMT</pubDate>
+      <title><![CDATA[ADV: Upgrade to weather.com Gold!]]></title>
+      <link><![CDATA[http://www.weather.com/services/weathergold.html?cm_ven=LWO&cm_pla=ad&cm_ite=gold&site=adv_gold&cm_cat=rss&from=rss&refer=rss&par=LWO_rss]]></link>
+      <description><![CDATA[Get advanced storm tracking maps and weather for 10 cities in one-click, all with no ads!  Start your free trial now.]]></description>
+    </item>
+    <item>
+      <guid isPermaLink="false">0.7211779299753187</guid>
+      <pubDate>Thu, 11 Sep 2008 10:05:04 GMT</pubDate>
+      <title><![CDATA[Your Weekend Forecast For Stockholm, Sweden]]></title>
+      <link><![CDATA[http://www.weather.com/weather/weekend/SWXX0031?cm_ven=LWO&cm_pla=city_page&cm_ite=weekend&site=city_page&cm_cat=rss&locid=SWXX0031&par=LWO_rss]]></link>
+      <description><![CDATA[Chance of Precipitation: Fri: 10% / Sat: 10% / Sun: 10%. For complete forecast details...]]></description>
+    </item>
+    <item>
+      <guid isPermaLink="false">3.8014813169500155</guid>
+      <pubDate>Thu, 11 Sep 2008 10:05:04 GMT</pubDate>
+      <title><![CDATA[Your 10-Day Forecast for Stockholm, Sweden]]></title>
+      <link><![CDATA[http://www.weather.com/weather/tenday/SWXX0031?cm_ven=LWO&cm_pla=city_page&cm_ite=10-day&site=city_page&cm_cat=rss&locid=SWXX0031&par=LWO_rss]]></link>
+      <description><![CDATA[Today: Partly Cloudy & High 57&deg;F / Low 48&deg;F.---- Fri: Partly Cloudy & High 55&deg;F / Low 45&deg;F.---- Sat: Partly Cloudy & High 58&deg;F / Low 43&deg;F.---- Sun & Beyond.... For more details?]]></description>
+    </item>
+  </channel>
+</rss>

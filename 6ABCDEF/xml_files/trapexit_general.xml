@@ -1,0 +1,1905 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+
+<channel>
+	<title>Planet Trapexit - Erlang/OTP News</title>
+	<link>http://planet.trapexit.org</link>
+	<language>en</language>
+	<description>Planet Trapexit - Erlang/OTP News - http://planet.trapexit.org</description>
+
+<item>
+	<title>Me Dev, You Jane: Erlang Tutorial: Sysinfo Server</title>
+	<guid>http://medevyoujane.com/blog/2008/9/10/erlang-tutorial-sysinfo-server.html</guid>
+	<link>http://medevyoujane.com/blog/2008/9/10/erlang-tutorial-sysinfo-server.html</link>
+	<description>&lt;p&gt;Say you have been doing some erlang basics and are ready to start an actual program. Luckily your manager has just asked you to create a server that listens for telnet a connection and has an interface to get the environment variables on the running system. Oh and it needs 99.9999999% uptime. I know what you are thinking. &lt;em&gt;&quot;By gosh this is perfect for erlang&quot;&lt;/em&gt; was what you thought right?&lt;/p&gt;
+
+&lt;p&gt;Well before you start any real software development in Erlang you &lt;strong&gt;really&lt;/strong&gt; should start by reading the &lt;a href=&quot;http://www.erlang.se/doc/programming_rules.shtml&quot;&gt;Programming Rules and Conventions&lt;/a&gt; on Ericsson's website. This should be your bible. Go ahead and read it now. Don't worry I'll wait.....&lt;/p&gt;
+
+&lt;p&gt;Back? Good. Now we can start this tutorial.&lt;/p&gt;
+
+&lt;h3&gt;Housekeeping&lt;/h3&gt;
+
+&lt;p&gt;We start by creating a directory for our application. In that directory we create the subdirectories &lt;em&gt;doc&lt;/em&gt;, &lt;em&gt;ebin&lt;/em&gt; and &lt;em&gt;src&lt;/em&gt;. Now we create a file in the project root called &lt;em&gt;Emakefile&lt;/em&gt; to ease the compilation of the software. Open up &lt;em&gt;Emakefile&lt;/em&gt; and add the following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{'src/sysinfo_server.erl', [{outdir, &quot;ebin&quot;}]}.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This basically lists our modules for compilation and tells Erlang to put the finished product into the &lt;em&gt;ebin&lt;/em&gt; subdirectory. &lt;/p&gt;
+
+&lt;h3&gt;Iteration 1: A Basic Server&lt;/h3&gt;
+
+&lt;p&gt;Now lets take a look at the &lt;em&gt;src/sysinfo_server.erl&lt;/em&gt; file. First declare the exports and add the start functions.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;-module(sysinfo_server)
+-export ([start/0, start/1, accept_connection/1, responder_loop/1]).
+
+start() -&amp;gt;
+    start(8023).
+
+start(Port) -&amp;gt;
+    {ok, ListeningSocket} = gen_tcp:listen(Port, 
+       [list, {packet, 0}, {active, false}, {reuseaddr, true}]),
+    accept_connection(ListeningSocket).
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In &lt;em&gt;start/1&lt;/em&gt; we open up the socket using &lt;strong&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/gen_tcp.html#listen-2&quot;&gt;gen_tcp:listen/2&lt;/a&gt;&lt;/strong&gt; with the first parameter the port we want to use followed by the tcp options. I will not go in to details for the options but you can read about them in the &lt;strong&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/gen_tcp.html&quot;&gt;gen_tcp&lt;/a&gt;&lt;/strong&gt; module. We then pass the created socket to the the &lt;em&gt;accept_connection/1&lt;/em&gt; loop that handles accepting incoming connections.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;accept_connection(ListeningSocket) -&amp;gt;
+    {ok, Socket} = gen_tcp:accept(ListeningSocket),
+    spawn_link(?MODULE, responder_loop, [Socket]),
+    accept_connection(ListeningSocket).
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here we take the socket and wait for a connection to it with the command &lt;strong&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/gen_tcp.html#accept-1&quot;&gt;gen_tcp:accept/1&lt;/a&gt;&lt;/strong&gt;. Thing to remember about &lt;em&gt;gen_tcp:accept/1&lt;/em&gt; command is that it waits forever for a connection and does not execute the next line until that connection is created. When we get the connection we use &lt;strong&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/erlang.html#spawn_link-3&quot;&gt;spawn_link/3&lt;/a&gt;&lt;/strong&gt; to create a seperate process running the &lt;em&gt;responder_loop/1&lt;/em&gt; loop that will handle all the communication to that client. The function then calls itself and waits for the next connection. Always keep this part simple. This way if something fails it will fail in &lt;em&gt;responder_loop/1&lt;/em&gt; thus only failing the single socket but our loop that accepts new connections is unlikely to fail and other socket continue to communicate. Lets now get to the responder loop.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;responder_loop(Socket) -&amp;gt;
+    case gen_tcp:recv(Socket, 0) of
+        {ok, &quot;exit\r\n&quot;} -&amp;gt;
+            gen_tcp:send(Socket, &quot;Exiting \r\n&quot;),
+            gen_tcp:close(Socket);
+        {ok, Other} -&amp;gt;
+            gen_tcp:send(Socket, Other),
+            responder_loop(Socket);
+        {error, closed} -&amp;gt;
+            ok
+    end.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here we take the data from &lt;strong&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/gen_tcp.html#recv-2&quot;&gt;gen_tcp:recv&lt;/a&gt;&lt;/strong&gt;. The data includes the return character so we need to include that. If it matches &quot;exit\r\n&quot; we close the socket after sending a message back. Otherwise we echo the data back with &lt;strong&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/gen_tcp.html#send-2&quot;&gt;gen_tcp:send/2&lt;/a&gt;&lt;/strong&gt; and recurse. Lets try it out by building the code and running it. Enter the following into the terminal at the project root.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;bash$ erl -make
+bash$ erl -pa ebin -run sysinfo_server start
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now using a telnet client telnet to localhost at port 8023. You should be able to get echoed back all that you type and type exit to break the connection. Close the server by typing in &lt;code&gt;q().&lt;/code&gt; in the erlang shell.&lt;/p&gt;
+
+&lt;h3&gt;Iteration 2: Improving the server&lt;/h3&gt;
+
+&lt;p&gt;First thing we are going to do is add a function that helps us to get the environment variable. As it is not a part of the data communication and might be a reusable function we decide to put it into it's another module called &lt;em&gt;sysinfo_tools.erl&lt;/em&gt;. Start by adding it to the &lt;em&gt;Emakefile&lt;/em&gt; by adding an identical line to what defines &lt;em&gt;sysinfo_server&lt;/em&gt;. Now create &lt;strong&gt;src/sysinfo_tools.erl&lt;/strong&gt; and add the following.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;-module (sysinfo_tools).
+-export ([get_env/1]).
+
+get_env(Var) -&amp;gt;
+[CleanVar|_Rest] = string:tokens(Var, &quot;\r\n\t &quot;),
+case os:getenv(CleanVar) of
+  false -&amp;gt; &quot;No Such Env&quot;;
+  Result -&amp;gt; Result
+end.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is pretty simple. We take the input &lt;em&gt;Var&lt;/em&gt; and remove all unwanted characters from it. We then call the &lt;strong&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/os.html#getenv-1&quot;&gt;os:getenv/1&lt;/a&gt;&lt;/strong&gt; function to retreive the environment variable. If it does not exist we return the value &quot;No Such Env&quot; or just simply return the value. no magic here so now we can get to the interesting part.&lt;/p&gt;
+
+&lt;p&gt;Now lets turn back to &lt;em&gt;src/sysinfo_server.erl&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;First step is adding a function to assist us with sending data to the client. We want to run it with a list of strings and at the end it prints out a nice prompt for the user. So add this function.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;send_lines(Socket,[]) -&amp;gt;
+    gen_tcp:send(Socket, &quot;\r\nEnvGet&amp;gt; &quot;);
+send_lines(Socket,[First|Rest]) -&amp;gt;
+    gen_tcp:send(Socket,First),
+    gen_tcp:send(Socket,&quot;\r\n&quot;),
+    send_lines(Socket,Rest).
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;send_lines/2&lt;/em&gt; takes a socket and a list as parameters. It prints out the first element and loops back with the rest. Finally when the list is empty it prints out a prompt and exits. Lets put it in use by changing &lt;em&gt;accept_connection/1&lt;/em&gt; so it looks like this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;accept_connection(ListeningSocket) -&amp;gt;
+    {ok, Socket} = gen_tcp:accept(ListeningSocket),
+    send_lines(Socket, [&quot;Welcome to the EnvGet Service&quot;, 
+        &quot;Available commands are: list, get &amp;lt;env&amp;gt; and exit&quot;]),
+    spawn_link(?MODULE, responder_loop, [Socket]),
+    accept_connection(ListeningSocket).
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we want to add the list and get commands along with changing the code to use &lt;em&gt;send_lines/2&lt;/em&gt; so that the respoder loop looks like this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;responder_loop(Socket) -&amp;gt;
+    case gen_tcp:recv(Socket, 0) of
+        {ok, &quot;get &quot;++Var} -&amp;gt;
+            Result = sysinfo_tools:get_env(Var),
+            send_lines(Socket, [Result]),
+            ?MODULE:responder_loop(Socket);
+        {ok, &quot;list\r\n&quot;} -&amp;gt;
+            Result = os:getenv(),
+            send_lines(Socket, Result),
+            ?MODULE:responder_loop(Socket);
+        {ok, &quot;exit\r\n&quot;} -&amp;gt;
+            send_lines(Socket, [&quot;Exiting&quot;]),
+            gen_tcp:close(Socket);
+        {ok, _Other} -&amp;gt;
+            send_lines(Socket, [&quot;Unknown Command&quot;]),
+            ?MODULE:responder_loop(Socket);
+        {error, closed} -&amp;gt;
+            ok
+    end.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Well. First we take a look at the get command. Here we try to match a string that starts with &quot;get &quot; and add the rest to the variable &lt;strong&gt;Var&lt;/strong&gt;. We then call our handy &lt;em&gt;sysinfo_tools:get_env/1&lt;/em&gt; function that gets the data for us. Next we try to match the command &quot;list&quot;. We call &lt;strong&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/os.html#getenv-0&quot;&gt;os:getenv/0&lt;/a&gt;&lt;/strong&gt; and pass it on to the user. Since &lt;em&gt;os:getenv/0&lt;/em&gt;'s output is a list of strings we don't put brackets around like usually.&lt;/p&gt;
+
+&lt;p&gt;Now. Let's compile and run.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;bash$ erl -make
+bash$ erl -pa ebin -run sysinfo_server start
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Try it out by telneting to locahost:8023 and trying out the commands &quot;list&quot; and &quot;get HOME&quot;. It should work like a charm.&lt;/p&gt;
+
+&lt;p&gt;Well. Done for now. We would propably want to add a lot more before production. Like code reloading so the server doesn't have to go down for upgrades but that is a job for a later tutorial.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://medevyoujane.com/storage/tutorial-data/erlang/SysInfoServer.zip&quot;&gt;download the code&lt;/a&gt; if you have any problems.&lt;/p&gt;</description>
+	<pubDate>Wed, 10 Sep 2008 23:34:20 +0000</pubDate>
+</item>
+<item>
+	<title>Trapexit's Erlang Blog Filter: &quot;disco&quot;, a new map-reduce framework - in erlang+python</title>
+	<guid>tag:typepad.com,2003:post-55305820</guid>
+	<link>http://www.p16blog.com/p16/2008/09/disco-a-new-map-reduce-framework---in-erlangpython.html</link>
+	<description>&lt;div&gt;Woo! Another alternative to [Hadoop](http://wiki.apache.org/lucene-hadoop/) crawls out of Nokia Labs: [Disco - discoproject.org](http://discoproject.org/) It's yet another [Map-Reduce framework](http://en.wikipedia.org/wiki/MapReduce). This time the core is written in Erlang, and tasks are implemented in Python. Data transfer between nodes happens simply via HTTP. There's no DFS implemented at all yet. It seems intended to run on Amazon EC2, where you'd just use S3 as your data store. This feels like it might be a good fit for our needs, since [we're](http://daylife.com/) a Python shop, and I'd rather hack on Erlang than Java. :)
+&lt;/div&gt;</description>
+	<pubDate>Mon, 08 Sep 2008 11:38:13 +0000</pubDate>
+</item>
+<item>
+	<title>Caoyuan's Blog: Things To Do in Coming Months</title>
+	<guid>http://blogtrader.org/page/dcaoyuan/entry/things_to_do_in_the</guid>
+	<link>http://blogtrader.org/page/dcaoyuan/entry/things_to_do_in_the</link>
+	<description>&lt;p&gt;
+As the beta of Scala for NetBeans released, I found I have several things to do in the coming months.
+&lt;p&gt;
+First, I'll keep the Scala plugins going on, I'll try to re-implement the Project supporting, which, may be an extension of current NetBeans' plain Java Project, that is, you just create plain JSE or JEE project, then add Scala source files to this project, you may mix Java/Scala in one project. Another perception is, it's time to re-write whole things in Scala itself? I have a featured Scala IDE now, or, the chicken, I should make eggs via this chicken instead of duck.
+&lt;p&gt;
+Second, we get some contracts on mobile application for Banking, which, will be implemented via our current Atom/Atom Publish Protocol web service platform. The platform is written in Erlang, but, with more and more business logical requirements, maybe we should consider some Scala things?
+&lt;p&gt;
+Third, oh, it's about AIOTrade, I'v left it at corner for almost one and half year, I said it would be re-written in Scala someday, I really hope I have time. I got some requests to support drawing charts for web application, it actually can, if you understand the source code, I just wrote an example recently, I may post an article on how to do that.  
+&lt;p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;</description>
+	<pubDate>Sat, 06 Sep 2008 20:01:13 +0000</pubDate>
+</item>
+<item>
+	<title>Kevin Scaldeferri's Weblog: More Erlang Beust Challenge Results (incl. HiPE)</title>
+	<guid>http://kevin.scaldeferri.com/blog/2008/09/04/BeustChallenge2.html</guid>
+	<link>http://kevin.scaldeferri.com/blog/2008/09/04/BeustChallenge2.html</link>
+	<description>&lt;p&gt;I’ve been tinkering a little more with the Beust Challenge,
+  following up on my &lt;a href=&quot;http://kevin.scaldeferri.com/blog/2008/09/02/BeustChallenge.html&quot;&gt;previous post&lt;/a&gt;.
+  There are a couple significant new developments to report.&lt;/p&gt;
+&lt;p&gt;First, Hynek (Pichi) Vychodil wrote a &lt;a href=&quot;http://pichis-blog.blogspot.com/2008/09/beust-challenge-in-erlang.html&quot;&gt;faster
+    version using a permutation generator&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Second, I also ported the first “CrazyBob” solution using a bit
+  mask to Erlang.&lt;/p&gt;
+&lt;p&gt;Third, I discovered that my overly literal ports were actually
+  slowing things down.  The CrazyBob code uses an unspecified Listener
+class that receives the numbers in the series, and presumably computes
+the actual results from there.  (Aside, I cannot actually benchmark
+  against the Java code because I haven’t found what this
+  implementation is.)  I fudged this in my original ports by simply
+  spawning a process, which then discarded all the messages it
+  received.  After I noticed that the code was pegging &lt;i&gt;both&lt;/i&gt; of
+  my CPUs, though, I realized that message passing might actually be
+  the bottleneck in my code.  Turns out this was the case, and
+  removing the listener process and just computing the results in the
+  main process actually sped things up substantially.&lt;/p&gt;
+&lt;p&gt;Finally, I got access to a machine with HiPE enabled.&lt;/p&gt;
+&lt;p&gt;So... here’s the results.  First on my MacBook Pro, without
+  HiPE:&lt;/p&gt;
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;log(Max)&lt;/th&gt;
+    &lt;th&gt;&lt;a href=&quot;http://kevin.scaldeferri.com/dist/beust.erl&quot;&gt;Original&lt;/a&gt;&lt;/th&gt;
+    &lt;th&gt;&lt;a href=&quot;http://kevin.scaldeferri.com/dist/bitmask2.erl&quot;&gt;bitmask&lt;/a&gt;&lt;/th&gt;
+    &lt;th&gt;&lt;a href=&quot;http://kevin.scaldeferri.com/dist/fastbeust2.erl&quot;&gt;crazybob&lt;/a&gt;&lt;/th&gt;
+    &lt;th&gt;&lt;a href=&quot;http://pichis-blog.blogspot.com/2008/09/beust-challenge-in-erlang.html&quot;&gt;pichi&lt;/a&gt;&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;4      &lt;/td&gt;&lt;td&gt;8ms     &lt;/td&gt;&lt;td&gt;2ms     &lt;/td&gt;&lt;td&gt;3ms    &lt;/td&gt;&lt;td&gt;3ms   &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;5      &lt;/td&gt;&lt;td&gt;65ms    &lt;/td&gt;&lt;td&gt;11ms    &lt;/td&gt;&lt;td&gt;13ms   &lt;/td&gt;&lt;td&gt;14ms   &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;6      &lt;/td&gt;&lt;td&gt;632ms   &lt;/td&gt;&lt;td&gt;52ms    &lt;/td&gt;&lt;td&gt;69ms   &lt;/td&gt;&lt;td&gt;62ms  &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;7      &lt;/td&gt;&lt;td&gt;6.7s    &lt;/td&gt;&lt;td&gt;253ms   &lt;/td&gt;&lt;td&gt;303ms  &lt;/td&gt;&lt;td&gt;272ms   &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;8      &lt;/td&gt;&lt;td&gt;72s     &lt;/td&gt;&lt;td&gt;1.0s    &lt;/td&gt;&lt;td&gt;1.0s   &lt;/td&gt;&lt;td&gt;945ms   &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;9      &lt;/td&gt;&lt;td&gt;18m     &lt;/td&gt;&lt;td&gt;4.7s    &lt;/td&gt;&lt;td&gt;3.6s   &lt;/td&gt;&lt;td&gt;2.8s    &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;10     &lt;/td&gt;&lt;td&gt;(3h)    &lt;/td&gt;&lt;td&gt;13s     &lt;/td&gt;&lt;td&gt;7.8s   &lt;/td&gt;&lt;td&gt;5.3s    &lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;The bitmask solution starts out the fastest, but loses out in the
+  end to the more clever solutions.  pichi edges out the
+  crazybob solution by about a third.&lt;/p&gt;
+&lt;p&gt;Now on Linux 2.6 with HiPE:&lt;/p&gt;
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;log(Max)&lt;/th&gt;
+    &lt;th&gt;&lt;a href=&quot;http://kevin.scaldeferri.com/dist/beust.erl&quot;&gt;Original&lt;/a&gt;&lt;/th&gt;
+    &lt;th&gt;&lt;a href=&quot;http://kevin.scaldeferri.com/dist/bitmask2.erl&quot;&gt;bitmask&lt;/a&gt;&lt;/th&gt;
+    &lt;th&gt;&lt;a href=&quot;http://kevin.scaldeferri.com/dist/fastbeust2.erl&quot;&gt;crazybob&lt;/a&gt;&lt;/th&gt;
+    &lt;th&gt;&lt;a href=&quot;http://pichis-blog.blogspot.com/2008/09/beust-challenge-in-erlang.html&quot;&gt;pichi&lt;/a&gt;&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;4      &lt;/td&gt;&lt;td&gt;4ms     &lt;/td&gt;&lt;td&gt;&amp;lt;1ms &lt;/td&gt;&lt;td&gt;1ms    &lt;/td&gt;&lt;td&gt;2ms   &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;5      &lt;/td&gt;&lt;td&gt;50ms    &lt;/td&gt;&lt;td&gt;1ms     &lt;/td&gt;&lt;td&gt;6ms    &lt;/td&gt;&lt;td&gt;7ms   &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;6      &lt;/td&gt;&lt;td&gt;608ms   &lt;/td&gt;&lt;td&gt;7ms     &lt;/td&gt;&lt;td&gt;34ms   &lt;/td&gt;&lt;td&gt;37ms  &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;7      &lt;/td&gt;&lt;td&gt;6.9s    &lt;/td&gt;&lt;td&gt;35ms    &lt;/td&gt;&lt;td&gt;160ms  &lt;/td&gt;&lt;td&gt;174ms  &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;8      &lt;/td&gt;&lt;td&gt;78s     &lt;/td&gt;&lt;td&gt;147ms   &lt;/td&gt;&lt;td&gt;619ms  &lt;/td&gt;&lt;td&gt;563ms  &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;9      &lt;/td&gt;&lt;td&gt;(18m)   &lt;/td&gt;&lt;td&gt;460ms   &lt;/td&gt;&lt;td&gt;1.8s   &lt;/td&gt;&lt;td&gt;1.4s   &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;10     &lt;/td&gt;&lt;td&gt;(3h)    &lt;/td&gt;&lt;td&gt;1.1s    &lt;/td&gt;&lt;td&gt;4.2s   &lt;/td&gt;&lt;td&gt;2.4s   &lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;And our new winner is... bitmask!  HiPE barely helps the original
+  brute-force solutions at all, while crazybob and pichi gain about a
+  factor of two.  bitmask, on the other hand, picks up an order of
+  magnitude, and is now only a factor of 3 slower than the posted
+  results for the Java crazybob solution (with unknown differences in
+  hardware).&lt;/p&gt;
+&lt;p&gt;Conclusion: Erlang doesn’t suck!&lt;/p&gt;
+
+  &lt;p&gt;&lt;a href=&quot;http://kevin.scaldeferri.com/blog/2008/09/04/BeustChallenge2.html#comments&quot;&gt;Comments&lt;/a&gt;&lt;p&gt;&lt;/p&gt;&lt;/p&gt;</description>
+	<pubDate>Fri, 05 Sep 2008 00:21:44 +0000</pubDate>
+</item>
+<item>
+	<title>Hypothetical Labs: Quick Bits</title>
+	<guid>http://weblog.hypotheticalabs.com/?p=295</guid>
+	<link>http://weblog.hypotheticalabs.com/?p=295</link>
+	<description>&lt;ol&gt;
+&lt;li&gt;The next episode of &lt;a href=&quot;http://www.pragprog.com/screencasts/v-kserl/erlang-in-practice&quot;&gt;Erlang In Practice&lt;/a&gt; is in the can. The episode covers using OTP&amp;#8217;s &lt;code&gt;gen_server&lt;/code&gt; behavior. It&amp;#8217;s by far the longest episode of the series &amp;#8212; clocking in at slightly over an hour &amp;#8212; and just barely scratches the surface of what&amp;#8217;s possible. If you like what you see and want to use &lt;code&gt;gen_server&lt;/code&gt; in your own projects (and I hope you do), I strongly recommend reading the &lt;code&gt;gen_server&lt;/code&gt; documentation. The episode should be available for purchase a bit later today.&lt;/li&gt;
+&lt;li&gt;I&amp;#8217;ve pushed a set of updates to my Git &lt;a href=&quot;http://github.com/kevsmith/hypotheticalabs/tree/master&quot;&gt;repo&lt;/a&gt; to fix an error caused by color-scheme.el. Check it &lt;a href=&quot;http://weblog.hypotheticalabs.com/git@github.com:kevsmith/hypotheticalabs.git&quot;&gt;out&lt;/a&gt; if you&amp;#8217;re interested in a low-pain Erlang programming environment. If you run into problems, please send me mail. My goal is to make this as easy to set up as possible.&lt;/li&gt;
+&lt;li&gt;I&amp;#8217;ve submitted an Erlang talk proposal to &lt;a href=&quot;http://www.codemash.org/&quot;&gt;CodeMash&lt;/a&gt;. I&amp;#8217;m crossing my fingers I get picked to speak.&lt;/li&gt;
+&lt;/ol&gt;</description>
+	<pubDate>Tue, 02 Sep 2008 22:02:37 +0000</pubDate>
+</item>
+<item>
+	<title>Kevin Scaldeferri's Weblog: Erlang &amp;amp; the Beust Challenge</title>
+	<guid>http://kevin.scaldeferri.com/blog/2008/09/02/BeustChallenge.html</guid>
+	<link>http://kevin.scaldeferri.com/blog/2008/09/02/BeustChallenge.html</link>
+	<description>&lt;p&gt;During my time off between jobs, I decided to spend some time doing
+fun hacking.  For the last couple days, that’s meant doing a little
+  benchmarking with Erlang.  Recently, there was a &lt;a href=&quot;http://beust.com/weblog/archives/000491.html&quot;&gt;challenge
+    posted by Cedric Beust&lt;/a&gt;.  In the &lt;a href=&quot;http://beust.com/weblog/archives/000493.html&quot;&gt;wrap-up&lt;/a&gt; he
+lamented that the one Erlang solution posted was “a bit frightening”
+  and neither concise nor fast.  Part of this conclusion, I think, was due to the
+  poor formatting of blog comments, and part because the comment
+  submitter included a whole lot of test code and also reimplemented
+  some library functions for no obvious reason.  I modified it to use
+  the standard libraries where appropriate, and made a couple other
+  minor optimizations and got about a 3x speed-up.  It’s still much, much
+  slower than the top submission, which is because the top submission
+  is clever, and this is still a brute-force implementation.&lt;/p&gt;
+&lt;p&gt;I then set out to port the “crazybob” solution to Erlang to see how
+much better we can do.  The Java version uses a hand-rolled linked
+  list to keep track of the available digits.  I decided to use a
+  gb_set for my version.  For small N it’s a bit slower than the
+  brute-force version, but the scaling is much better.  For N=10^10,
+  it runs in about 26s on my laptop.  This is still something like
+  50-100 times slower than the Java version, but I’m also not using
+  HiPE, which might close the gap a bit.&lt;/p&gt;
+&lt;p&gt;I suspect this is not the fastest possible Erlang implementation,
+  because the heavy use of gb_sets is undoubtedly causing a lot of
+  memory churn.  It’s been pointed out that this is basically a
+  problem of generating permutations, which ought to be possible to do
+with near constant memory usage.&lt;/p&gt;
+&lt;p&gt;Here are the results of my benchmarking, and the code.  For each
+  data point, I ran the code 3 times and took the middle value.  For
+  the brute force versions the timings were very consistent, while the
+“fast” version had 10-20% variation between the run, presumably due to
+vagaries of memory allocation.  I did not actually run the brute force
+algorithms for 10^10; the values are generated by extrapolating
+  linearly.&lt;/p&gt;
+&lt;p&gt;Update: Hynek (Pichi) Vychodil wrote a &lt;a href=&quot;http://pichis-blog.blogspot.com/2008/09/beust-challenge-in-erlang.html&quot;&gt;faster
+    version&lt;/a&gt;, bringing us within a factor of 10 or so of Java
+  (and still not using HiPE).  Oddly, there’s a bigger speedup for this
+  version on my machine (26s vs 5s) than on Hynek’s (18s vs 8s).&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;See important updates in the &lt;a href=&quot;http://kevin.scaldeferri.com/blog/2008/09/04/BeustChallenge2.html&quot;&gt;following
+      post&lt;/a&gt;&lt;/b&gt;&lt;/p&gt; 
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;log(Max)&lt;/th&gt;
+    &lt;th&gt;&lt;a href=&quot;http://kevin.scaldeferri.com/dist/beust.erl&quot;&gt;Original&lt;/a&gt;&lt;/th&gt;
+    &lt;th&gt;&lt;a href=&quot;http://kevin.scaldeferri.com/dist/beust4.erl&quot;&gt;stdlib&lt;/a&gt;&lt;/th&gt;
+    &lt;th&gt;&lt;a href=&quot;http://kevin.scaldeferri.com/dist/fastbeust.erl&quot;&gt;crazybob&lt;/a&gt;&lt;/th&gt;
+    &lt;th&gt;&lt;a href=&quot;http://pichis-blog.blogspot.com/2008/09/beust-challenge-in-erlang.html&quot;&gt;pichi&lt;/a&gt;&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;4      &lt;/td&gt;&lt;td&gt;8ms     &lt;/td&gt;&lt;td&gt;5ms     &lt;/td&gt;&lt;td&gt;48ms   &lt;/td&gt;&lt;td&gt;3ms   &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;5      &lt;/td&gt;&lt;td&gt;65ms    &lt;/td&gt;&lt;td&gt;36ms    &lt;/td&gt;&lt;td&gt;85ms   &lt;/td&gt;&lt;td&gt;14ms   &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;6      &lt;/td&gt;&lt;td&gt;632ms   &lt;/td&gt;&lt;td&gt;295ms   &lt;/td&gt;&lt;td&gt;597ms  &lt;/td&gt;&lt;td&gt;62ms  &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;7      &lt;/td&gt;&lt;td&gt;6.7s    &lt;/td&gt;&lt;td&gt;2.6s    &lt;/td&gt;&lt;td&gt;3.0s   &lt;/td&gt;&lt;td&gt;272ms   &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;8      &lt;/td&gt;&lt;td&gt;72s     &lt;/td&gt;&lt;td&gt;25s     &lt;/td&gt;&lt;td&gt;8.8s   &lt;/td&gt;&lt;td&gt;945ms   &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;9      &lt;/td&gt;&lt;td&gt;18m     &lt;/td&gt;&lt;td&gt;6m      &lt;/td&gt;&lt;td&gt;16s    &lt;/td&gt;&lt;td&gt;2.8s    &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;10     &lt;/td&gt;&lt;td&gt;(3h)    &lt;/td&gt;&lt;td&gt;(1h)    &lt;/td&gt;&lt;td&gt;26s    &lt;/td&gt;&lt;td&gt;5.3s    &lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+  &lt;p&gt;&lt;a href=&quot;http://kevin.scaldeferri.com/blog/2008/09/02/BeustChallenge.html#comments&quot;&gt;Comments&lt;/a&gt;&lt;p&gt;&lt;/p&gt;&lt;/p&gt;</description>
+	<pubDate>Tue, 02 Sep 2008 21:22:25 +0000</pubDate>
+</item>
+<item>
+	<title>Web 2.0 and beyond: I want chrome !</title>
+	<guid>tag:blogger.com,1999:blog-3729811.post-2299839984042702937</guid>
+	<link>http://www.rsaccon.com/2008/09/i-want-chrome.html</link>
+	<description>But there is no date yet when it becomes available for Mac.</description>
+	<pubDate>Tue, 02 Sep 2008 14:30:34 +0000</pubDate>
+	<author>noreply@blogger.com (Roberto Saccon)</author>
+</item>
+<item>
+	<title>Me Dev, You Jane: My top 5 Favourite Erlang Functions</title>
+	<guid>http://medevyoujane.com/blog/2008/9/2/my-top-5-favourite-erlang-functions.html</guid>
+	<link>http://medevyoujane.com/blog/2008/9/2/my-top-5-favourite-erlang-functions.html</link>
+	<description>&lt;p&gt;Well.. After playing around in Erlang for a short while I wanted to share some newly discovered gems. These are my new favourite functions. I challenge some more experienced Erlang programmers to post theirs. I selected here some debugging tools that you just use in the shell but there are a lot more gems available.&lt;/p&gt;
+
+&lt;h3&gt;nc/1 and nc/2&lt;/h3&gt;
+
+&lt;p&gt;Remember &lt;code&gt;c().&lt;/code&gt;? The command you use to compile code from the Erlang shell. Well &lt;em&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/c.html#nc-1&quot;&gt;nc/1&lt;/a&gt;&lt;/em&gt; compiles and loads the code in all connected nodes. The source doesn't even need to exist in the remote nodes. Just try it by creating a bunch of nodes and typing &lt;code&gt;nc(modulename).&lt;/code&gt; in one of them.&lt;/p&gt;
+
+&lt;h3&gt;l/1 and nl/1&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/c.html#l-1&quot;&gt;l/1&lt;/a&gt;&lt;/em&gt; simply runs &lt;em&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/code.html#purge-1&quot;&gt;code:purge/1&lt;/a&gt;&lt;/em&gt; and &lt;em&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/code.html#load_file-1&quot;&gt;code:load_file/1&lt;/a&gt;&lt;/em&gt; to remove code for a module marked as old. &lt;em&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/c.html#nl-1&quot;&gt;nl/1&lt;/a&gt;&lt;/em&gt; does the same except on all connected nodes. Note that &lt;em&gt;code:purge/1&lt;/em&gt; removes old code even if it is in use. Also consider &lt;em&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/code.html#soft_purge-1&quot;&gt;code:soft_purge/1&lt;/a&gt;&lt;/em&gt; that only removes old code if no processes use it.&lt;/p&gt;
+
+&lt;h3&gt;i/0 and ni/0&lt;/h3&gt;
+
+&lt;p&gt;Another friend for the &lt;em&gt;c&lt;/em&gt; module. &lt;em&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/c.html#i-0&quot;&gt;i/0&lt;/a&gt;&lt;/em&gt; gives you a list of processes and some good info on them. A valuable tool. Like you propably guessed the &lt;em&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/c.html#ni-0&quot;&gt;ni/0&lt;/a&gt;&lt;/em&gt; function does the same for all the connected nodes.&lt;/p&gt;
+
+&lt;h3&gt;slave:start/2&lt;/h3&gt;
+
+&lt;p&gt;When you need to quickly start a bunch of slave nodes you should use &lt;em&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/slave.html#start-2&quot;&gt;slave:start/2&lt;/a&gt;&lt;/em&gt;. I'm not sure on the difference on those nodes and the regular but it still is a valueable tool when testing things.&lt;/p&gt;
+
+&lt;h3&gt;toolbar:start/0&lt;/h3&gt;
+
+&lt;p&gt;There are loads of valuable GUI tools for debugging in Erlang. &lt;em&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/toolbar.html#start-0&quot;&gt;toolbar:start/0&lt;/a&gt;&lt;/em&gt; gives you a quick access to many of them such as the Mnesia Table Visualizer, Process Manager, The Debugger and the Application Monitor. The Table Visualizer by itself is something I use daily. You can also make your own tools into the toolbar. On a related note also check out &lt;em&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/webtool.html#start-0&quot;&gt;webtool:start/0&lt;/a&gt;&lt;/em&gt; and open up http://127.0.0.1:8888/ and check out how to &lt;a href=&quot;http://www.erlang.org/doc/apps/webtool/webtool_chapter.html&quot;&gt;make your own webtool&lt;/a&gt;.&lt;/p&gt;</description>
+	<pubDate>Tue, 02 Sep 2008 12:56:54 +0000</pubDate>
+</item>
+<item>
+	<title>Tony Arcieri: Reia and HiPE: no longer hype</title>
+	<guid>urn:uuid:a25320d2-741e-49f0-aa23-5031bbfc5bd4</guid>
+	<link>http://tonyarcieri.org/articles/2008/08/30/reia-and-hipe-no-longer-hype</link>
+	<description>&lt;p&gt;If you&amp;#8217;ve taken a look through &lt;a href=&quot;http://reia-lang.org&quot;&gt;reia-lang.org&lt;/a&gt; you may have noticed several references to Reia using High Performance Erlang, otherwise known as HiPE.&amp;nbsp; This is a Just-In-Time (JIT) compiler for Erlang which actually produces native code.&amp;nbsp; JIT is a long sought after feature in virtual machines as it allows the typical &amp;quot;virtual CPU&amp;quot; module of VMs to be bypassed entirely with program instructions running directly on the physical CPU.&amp;nbsp; In other words: speed!&lt;/p&gt;
+
+&lt;p&gt;Well, those statements were more about planned support for HiPE, even if they made it seem it already existed.&amp;nbsp; Well, no longer: Reia will now automatically take advantage of HiPE if support is present in your Erlang VM.&lt;/p&gt;
+
+&lt;p&gt;Erlang is typically regarded as a slow language, but that sort of description always needs to be taken with a grain of salt: in what regard is it slow, and compared to what?&amp;nbsp; Looking at the &lt;a href=&quot;http://shootout.alioth.debian.org/gp4/benchmark.php?test=all&amp;lang=all&quot;&gt;Computer Language Benchmarks Game&lt;/a&gt;, Erlang manages to beat out the popular dynamic scripting languages by a considerable margin, including Perl, PHP, Python, and Ruby.&amp;nbsp; Compared to these languages Erlang seems relatively fast.&lt;/p&gt;
+
+&lt;p&gt;The way Reia is presently implemented it usurps a number of the performance enhancements the Erlang compiler can normally achieve, and also saddles the runtime with a number of slow features such as a method dispatch system.&amp;nbsp; Reia will never be as fast as Erlang, but that said, Reia can already leverage the performance enhancements a JIT compiler brings to the table.&lt;/p&gt;</description>
+	<pubDate>Sat, 30 Aug 2008 21:38:00 +0000</pubDate>
+</item>
+<item>
+	<title>Programming in the 21st Century: Macho Programming</title>
+	<guid>http://prog21.dadgum.com/34.html</guid>
+	<link>http://prog21.dadgum.com/34.html</link>
+	<description>Back before I completely lost interest in debates about programming topics, I remember reading an online discussion that went like this:
+&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Raving Zealot:&lt;/b&gt; Garbage collection is FASTER than manual memory management!
+&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Experienced Programmer:&lt;/b&gt; You mean that garbage collection is faster than using &lt;tt&gt;malloc&lt;/tt&gt; and &lt;tt&gt;free&lt;/tt&gt; to manage 
+a heap.  You can use pools and static allocation, and they'll be faster and more predictable than garbage collection.
+&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Raving Zealot:&lt;/b&gt; You need to get over your attitude that programming is a MACHO and RECKLESS endeavor!  If you use a garbage collected language, NOTHING can go wrong.  You're PROTECTED from error, and not reliant on your MACHONESS.
+&lt;br /&gt;&lt;br /&gt;What struck me about this argument, besides that people actually argue about such things, is how many other respected activities don't have anywhere near the same level of paranoia about protection from mistakes.  On the guitar--or any musical instrument--you can play any note at any time, even if it's out of key or, more fundamentally, not played correctly (wrong finger placement or pressure or accidentally muting the string).  And people play instruments live, in-concert in front of thousands of people this way, knowing that the solo is improvised in Dorian E, and there's no physical barrier preventing a finger from hitting notes that aren't in that mode.  The same goes for sculpting, or painting, or carpentry...almost anything that requires skill.
+&lt;br /&gt;&lt;br /&gt;(And building chickadee houses isn't universally considered a MACHO hobby, even though it involves the use of POWER TOOLS which can LOP OFF FINGERS.)
+&lt;br /&gt;&lt;br /&gt;In these activities, mistakes are usually obvious and immediate: you played the wrong note, you cut a board to the wrong length, there's blood everywhere.  In macho programming, a mistake can be silent, only coming to light when there's a crash in another part of the code--even days later--or when the database gets corrupted.  Stupidly trivial code can cause this, like:
+&lt;pre&gt;array[index] = true;
+&lt;/pre&gt;when &lt;tt&gt;index&lt;/tt&gt; is -1.  And yet with this incredible potential for error, people still build operating systems and giant applications and massively multiplayer games in C and C++.  Clearly there's a lot of machoness out there, or it's simply that time and debugging and testing--and the acceptance that there will be bugs--can overcome what appear to be technical impossibilities.  It's hand-rolling matrix multiplication code for a custom digital signal processor vs. &quot;my professor told me that assembly language is impossible for humans to use.&quot;
+&lt;br /&gt;&lt;br /&gt;Would I prefer to ditch all high-level improvements, in exchange for programming being the technical equivalent of rock climbing?  NO!  You can romanticize it all you want, but when I wrote 8-bit games I clearly remember thinking how much more pleasant it was to tinker in BASIC than to spend hours coding up some crazy 6502 code that would lock-up the entire computer time after time (the bug would be that changing a loop index from 120 to 130 made it initially be negative, so the loop would end after one iteration, or some other obscurity).
+&lt;br /&gt;&lt;br /&gt;What both this retro example and the C one-liner have in common is that the core difficulty stems less from the language itself than because code is being turned loose directly on hardware, so crashes are really crashes, and the whole illusion that your source code is actually the program being executed disappears.  Problems are debugged at the hardware level, with data breakpoints and trapped CPU exceptions and protected memory pages (this is how debuggers &lt;i&gt;work&lt;/i&gt;).
+&lt;br /&gt;&lt;br /&gt;It's a project suitable as part of a single semester undergraduate class to write an interpreter for your favorite low-level language.  Write it in Scheme or Erlang or Scala.  Use symbolic addresses, not a big array of integers, to represent memory.  Keep track of address offsets, instead of doing the actual math.  Have functions return lists of memory addresses that have been read from or modified.  Keep everything super simple and clean.  The goal is to be able to enter expressions or functions and see how they behave, which is a whole lot nicer than tripping address exceptions.
+&lt;br /&gt;&lt;br /&gt;All of a sudden, even hardcore machine code isn't nearly so scary.  Write a dangerous function, get back a symbolic representation of what it did.  Mistakes are now simply wrong notes, provided you keep your functions small. It's still not easy, but macho has become safe.
+&lt;br /&gt;&lt;br /&gt;(If you liked this, you might enjoy &lt;a href=&quot;http://prog21.dadgum.com/6.html&quot;&gt;Sending Modern Languages Back to 1980s Game Programmers&lt;/a&gt;.)</description>
+	<pubDate>Sat, 30 Aug 2008 06:00:00 +0000</pubDate>
+</item>
+<item>
+	<title>Process-one Blogs: ejabberd 2.0.2</title>
+	<guid>http://www.process-one.net/en/blogs/article/ejabberd_202/#When:16:44:00Z</guid>
+	<link>http://www.process-one.net/en/blogs/article/ejabberd_202/</link>
+	<description>ejabberd 2.0.2 is now ready for download. &lt;p&gt;This version is a maintenance release containing 49 bugfixes and improvements. You can read the &lt;a href=&quot;http://www.process-one.net/en/ejabberd/release_notes/release_note_ejabberd_202&quot;&gt;Release notes&lt;/a&gt; for more details.&lt;/p&gt;
+
+&lt;p&gt;The new code can be downloaded from &lt;a href=&quot;http://www.process-one.net/en/ejabberd/downloads&quot;&gt;ejabberd download&lt;/a&gt; page.&lt;/p&gt;
+
+&lt;p&gt;This release follows the ejabberd 2.0.1 beta release launched in july 2008. Thank you all for your feedback !&lt;/p&gt;</description>
+	<pubDate>Fri, 29 Aug 2008 15:44:00 +0000</pubDate>
+</item>
+<item>
+	<title>Hypothetical Labs: OpenMP? Really?</title>
+	<guid>http://weblog.hypotheticalabs.com/?p=294</guid>
+	<link>http://weblog.hypotheticalabs.com/?p=294</link>
+	<description>&lt;p&gt;&lt;em&gt;Warning: I&amp;#8217;m not that familiar with OpenMP so many of my opinions might be wrong. Feel free to educate me by leaving a comment &lt;img src=&quot;http://weblog.hypotheticalabs.com/wp-includes/images/smilies/icon_smile.gif&quot; alt=&quot;:-)&quot; class=&quot;wp-smiley&quot; /&gt; &lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;I had a conversation on IRC this morning comparing &lt;a href=&quot;http://www.openmp.org&quot;&gt;OpenMP&lt;/a&gt; and Erlang. I&amp;#8217;m not that familiar with OpenMP so I did a bit of reading. Wikipedia&amp;#8217;s OpenMP &lt;a href=&quot;http://en.wikipedia.org/wiki/OpenMP&quot;&gt;page&lt;/a&gt; features this bit of code which illustrates how to use OpenMP to parallelize a reduce-style function:&lt;/p&gt;
+&lt;pre&gt;
+ #define N 10000 /*size of a*/
+ void calculate(int); /*The function that calculates the elements of a*/
+ long w;
+ double a[N];
+ calculate(a);
+ sum = 0.0;
+ /*forks off the threads and starts the work-sharing construct*/
+ #pragma omp parallel for private(w) reduction(+:sum) schedule(static,1)
+ for(i = 0; i  N; i++)
+    {
+      w = i*i;
+      sum = sum + w*a[i];
+    }
+ printf(&quot;\n %lf&quot;,sum);
+&lt;/pre&gt;
+&lt;p&gt;My first reaction is &amp;#8212; are they serious? The pragma line alone makes my eyes bleed. I might be spending too much time in Erlang-land but the example illustrates how poorly shared-memory scales in highly concurrent environments like the 100 core CPU Intel wants you to buy in a few years.&lt;/p&gt;
+&lt;p&gt;Here&amp;#8217;s what I think would be the equivalent Erlang version:&lt;/p&gt;
+&lt;pre&gt;
+-module(sum).
+-compile([export_all]).
+
+%% Accumulator process to gather up the values
+%% returned from the individual workers and
+%% sum them up
+accumulator(Parent, Sum, Remaining) when Remaining &gt; 1 -&gt;
+  receive
+    {result, Value} -&gt;
+      accumulator(Parent, Sum + Value, Remaining - 1)
+  end;
+accumulator(Parent, Sum, Remaining) when Remaining == 1 -&gt;
+  receive
+    {result, Value} -&gt;
+      %% Once all the values are received
+      %% send them off to the process waiting
+      %% on the final result
+      Parent ! {sum, Sum + Value}
+  end.
+
+calculate(Data) -&gt;
+  Owner = self(),
+  AccumPid = spawn(fun() -&gt; accumulator(Owner, 0, length(Data)) end),
+
+  %% Iterate over the list and start a process for each element
+  lists:foldl(fun(D, Position) -&gt;
+		 spawn(fun() -&gt; AccumPid ! {result, D + (Position * Position)} end),
+		 Position + 1 end,
+	     0,
+	     Data),
+
+  %% Wait to receive the results from the accumulator process
+  receive
+    {sum, Sum} -&gt;
+      Sum
+  end.
+&lt;/pre&gt;
+&lt;p&gt;I like this version better for a couple of reasons. First, the parallelization model is fairly explicit. To see where each process is created just look for the calls to spawn/1. OpenMP might be just as explicit but that means learning their pragma directives and understanding the interactions between them. Which is easier to understand? This : &lt;code&gt;#pragma omp parallel for private(w) reduction(+:sum) schedule(static,1)&lt;/code&gt; or this: &lt;code&gt;spawn(fun() -&gt; AccumPid ! {result, D+ (Position * Position)} end)&lt;/code&gt;. I think the function call is an easier notation to read.&lt;/p&gt;
+&lt;p&gt;The second thing I like about the Erlang example is the complete lack of shared memory. OpenMP appears to require the developer to specify the scope of any parallelized shared data so I guess it can do the appropriate locking around those variables. Erlang&amp;#8217;s shared-nothing model, while it might feel a little foreign at first, requires no  such metadata. I think it makes the code less verbose and certainly easier to read.&lt;/p&gt;
+&lt;p&gt;Do I think OpenMP has a place in the looming multi-core future? In the near and medium-term I think so. Computing relies on C-level code in a huge way. Anything which helps that code scale to multiple cores is a welcome development. Am I planning on using OpenMP in my own development projects. No. Erlang&amp;#8217;s feature set and concurrency model is a much better fit for my development needs.&lt;/p&gt;
+&lt;p&gt;Longer term, though, I think the future for approaches like OpenMP are less clear. My personal hope is that we&amp;#8217;ll find a way to make higher-level languages like Erlang &amp;#8212; which support concurrency natively &amp;#8212; run at C speeds. The language most likely won&amp;#8217;t be Erlang but I hope it will be a lot like it.&lt;/p&gt;</description>
+	<pubDate>Fri, 29 Aug 2008 15:35:07 +0000</pubDate>
+</item>
+<item>
+	<title>Hypothetical Labs: Erlang is like Ruby in 02?</title>
+	<guid>http://weblog.hypotheticalabs.com/?p=293</guid>
+	<link>http://weblog.hypotheticalabs.com/?p=293</link>
+	<description>&lt;p&gt;&amp;#8220;Erlang reminds me of Ruby during its early days&amp;#8221;.&lt;/p&gt;
+&lt;p&gt;I&amp;#8217;ve heard this comment several times in the past few months from several of my friends and co-workers. I wonder how true it really is. Raleigh, NC &amp;#8212; where I live &amp;#8212; lags more tech-friendly areas such as Portland, Boston, and Silicon Valley by a year at least. For example, Ruby has finally arrived in the local job market in the past year. If Erlang follows Ruby&amp;#8217;s trend, and I&amp;#8217;ve no supporting data to say that&amp;#8217;s the case, Erlang should start becoming popular around here in about two years. Thus, my local view colors my perception of national trends.&lt;/p&gt;
+&lt;p&gt;So, I do wonder what Erlang demand looks like in the larger context. I remember watching the number of people paid to work using Ruby steadily grow at RubyConf. Is the same thing happening with Erlang? There have been some high-profile Erlang stories like:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Facebook writes FBChat using Erlang&lt;/li&gt;
+&lt;li&gt;Amazon uses Erlang to implement SimpleDB&lt;/li&gt;
+&lt;li&gt;Damien Katz is hired by IBM to work full-time on CouchDB (written almost entirely in Erlang)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Are these outliers or more indicative or a building groundswell of interest in Erlang? Are there many freelance Erlang developers making a decent living? If not, what are the factors limiting Erlang&amp;#8217;s popularity? Lack of talent? Resistance to new languages or something else?&lt;/p&gt;
+&lt;p&gt;I&amp;#8217;d really like to understand what the larger market looks like for Erlang. I&amp;#8217;m quite fond of the language and I want to see it grow and succeed.&lt;/p&gt;
+&lt;p&gt;Please feel free to leave a comment on this post if you want to contribute to this discussion. Between us all we can build a picture of where Erlang is and where it&amp;#8217;s headed.&lt;/p&gt;</description>
+	<pubDate>Wed, 27 Aug 2008 14:45:46 +0000</pubDate>
+</item>
+<item>
+	<title>Process-one Blogs: Instant Messaging as a social research tool: Study revives six degrees theory</title>
+	<guid>http://www.process-one.net/en/imtrends/article/instant_messaging_as_a_social_research_tool_study_revives_six_degrees_theor/#When:07:43:00Z</guid>
+	<link>http://www.process-one.net/en/imtrends/article/instant_messaging_as_a_social_research_tool_study_revives_six_degrees_theor/</link>
+	<description>According to a recent study by Microsoft into instant messaging habits it takes only six steps to link everyone together. &lt;p&gt;The research carried out by Microsoft researchers Eric Horvitz and Jure Leskovec studied 30 billion instant messages sent using Microsoft Messenger during June 2006 and found that any two people were linked by seven or fewer acquaintances.&lt;/p&gt;
+ 
+&lt;p&gt;As reported by BBC News, Horvitz says &quot;What we are seeing suggests that there may be a social connectivity constant for humanity.&quot;&lt;/p&gt;
+ 
+&lt;p&gt;This research is further evidence of the social and collaborative benefits instant messaging can offer both in and outside of the enterprise through linking more and more people together.&lt;/p&gt;
+ 
+&lt;p&gt;You can get more details on the article from BBC News: &lt;a href=&quot;http://news.bbc.co.uk/go/pr/fr/-/1/hi/technology/7539329.stm&quot;&gt;Study revives six degrees theory&lt;/a&gt;.&lt;/p&gt;</description>
+	<pubDate>Mon, 25 Aug 2008 06:43:00 +0000</pubDate>
+</item>
+<item>
+	<title>Me Dev, You Jane: Erlang - Make, Rake and Emake</title>
+	<guid>http://medevyoujane.com/blog/2008/8/21/erlang-make-rake-and-emake.html</guid>
+	<link>http://medevyoujane.com/blog/2008/8/21/erlang-make-rake-and-emake.html</link>
+	<description>&lt;p&gt;When it comes to building your Erlang application there is no shortage of possibilities.&lt;/p&gt;
+
+&lt;h3&gt;Directory Setup&lt;/h3&gt;
+
+&lt;p&gt;The bare setup of the simplest Erlang program are 2 directories. Namely &lt;em&gt;src&lt;/em&gt; and &lt;em&gt;ebin&lt;/em&gt;. For beginners these are the ones you will most likely use for your first few programs. There are a few others however. Lets go over the whole list.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;./bin&lt;/strong&gt; 
+&lt;em&gt;In here you will put shell applications to, for example, start your application.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;./doc&lt;/strong&gt; 
+&lt;em&gt;Your Generated Documents.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;./ebin&lt;/strong&gt; 
+&lt;em&gt;Compiled erlang source code for the vm.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;./include&lt;/strong&gt;
+&lt;em&gt;Used for include files.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;./priv&lt;/strong&gt;
+&lt;em&gt;Used for application specific files. For example, C executables are placed here.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;./src&lt;/strong&gt; 
+&lt;em&gt;Your source code goes here.&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3&gt;Make-ing&lt;/h3&gt;
+
+&lt;p&gt;There are 3 main methods of building Erlang programs. Make, Emake and Rake. I generally dislike makefiles so I will focus on the later 2.&lt;/p&gt;
+
+&lt;h3&gt;EMake&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://www.erlang.org/doc/man/make.html&quot;&gt;EMake&lt;/a&gt; is Erlangs own make utility. It's quite simple but not very powerful. To get started you can create a file called &lt;em&gt;Emakefile&lt;/em&gt; in your project root and list your sourcefiles.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{'src/myerlang.erl', [{outdir, &quot;ebin&quot;}]}.
+{'src/myerlang_app.erl', [{outdir, &quot;ebin&quot;}]}.
+{'src/myerlang_supervisor.erl', [{outdir, &quot;ebin&quot;}]}.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now you can build your Erlang program by typing in you terminal &lt;code&gt;erl -make&lt;/code&gt;. Often we the also use a &lt;em&gt;Makefile&lt;/em&gt; to trigger the erlang make. The reason is that sometimes we want to add more commands to do various management tasks. Take this &lt;em&gt;Makefile&lt;/em&gt; for example.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;all: compile
+
+    compile:
+        @erl -make
+
+    clean:
+        rm -f ebin/*.beam
+        rm -f erl_crash.dump
+
+    run:
+        erl -sname console -pa ebin
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here we have 3 available commands in our Terminal. Entering &lt;code&gt;make&lt;/code&gt; will compile our code and &lt;code&gt;make clean&lt;/code&gt; will remove all the compiled code. &lt;code&gt;make run&lt;/code&gt; will start an erlang shell.&lt;/p&gt;
+
+&lt;h3&gt;Rake&lt;/h3&gt;
+
+&lt;p&gt;The method I prefer is using Rakefiles. &lt;a href=&quot;http://rake.rubyforge.org/&quot;&gt;Rake&lt;/a&gt; is a powerful and simple alternative to Make created in Ruby. Here is my Rakefile based on &lt;a href=&quot;http://seangeo.blogspot.com/2007/09/building-erlang-with-rake.html&quot;&gt;Sean's example&lt;/a&gt;. This goes in your project root in a file called &lt;em&gt;Rakefile&lt;/em&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;require 'rake'
+require 'rake/clean'
+
+# Configuration
+START_MODULE = &quot;myerlang&quot;
+TEST_MODULE = &quot;test_myerlang&quot;
+MNESIA_DIR = &quot;/tmp&quot;
+
+
+# No Need to change
+PWD = `pwd`.strip
+INCLUDE = &quot;include&quot;
+ERLC_FLAGS = &quot;-I#{INCLUDE} +warn_unused_vars +warn_unused_import&quot;
+
+SRC = FileList['src/**/*.erl']
+OBJ = SRC.pathmap(&quot;%{src,ebin}X.beam&quot;)
+CLEAN.include(['**/*.dump'])
+CLOBBER.include(['**/*.beam'])
+
+directory 'ebin'
+
+
+rule &quot;.beam&quot; =&amp;gt;  [&quot;%{ebin,src}X.erl&quot;] do |t|
+  sh &quot;erlc -pa ebin -W #{ERLC_FLAGS} -o ebin #{t.source}&quot;
+end
+
+desc &quot;Compile all&quot;
+task :compile =&amp;gt; ['ebin'] + OBJ
+
+desc &quot;Open up a shell&quot;
+task :shell =&amp;gt; [:compile] do
+    sh(&quot;erl -sname #{START_MODULE} -pa #{PWD}/ebin&quot;)
+end
+
+desc &quot;Open up a shell and run #{START_MODULE}:start()&quot; 
+task :run =&amp;gt; [:compile] do
+    sh(&quot;erl -sname #{START_MODULE} -pa #{PWD}/ebin -run #{START_MODULE} start&quot;)
+end
+
+desc &quot;Run Unit Tests&quot; 
+task :test do
+  sh(&quot;erl -noshell -s #{TEST_MODULE} test -s init stop&quot;)
+end
+
+
+desc &quot;Generate Documentation&quot;
+task :doc do
+    sh(&quot;cd doc &amp;amp;&amp;amp; erl -noshell -run edoc files ../#{SRC.join(&quot; ../&quot;)} -run init stop&quot;)
+end
+
+
+task :default =&amp;gt; :compile
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can get a list of functions to run by typing in &lt;code&gt;rake -T&lt;/code&gt; in the project root. As &lt;em&gt;compile&lt;/em&gt; is the default you can just build your code by entering simply &lt;code&gt;rake&lt;/code&gt; in you terminal.&lt;/p&gt;</description>
+	<pubDate>Thu, 21 Aug 2008 11:40:04 +0000</pubDate>
+</item>
+<item>
+	<title>Kevin Scaldeferri's Weblog: Changes</title>
+	<guid>http://kevin.scaldeferri.com/blog/2008/08/20/GoodbyeYahoo.html</guid>
+	<link>http://kevin.scaldeferri.com/blog/2008/08/20/GoodbyeYahoo.html</link>
+	<description>&lt;p&gt;After nearly 6 1/2 years, on Monday I gave notice at Yahoo.  After
+  next week, I’ll be moving on to new things (to be described in a
+  later post).  The short version is that I was not finding happiness
+  or the career opportunities I wanted at Yahoo any more.  The long
+  version... well, you’ll have to come buy me a beer or two if you
+  want that.&lt;/p&gt;
+
+  &lt;p&gt;&lt;a href=&quot;http://kevin.scaldeferri.com/blog/2008/08/20/GoodbyeYahoo.html#comments&quot;&gt;Comments&lt;/a&gt;&lt;p&gt;&lt;/p&gt;&lt;/p&gt;</description>
+	<pubDate>Thu, 21 Aug 2008 05:36:58 +0000</pubDate>
+</item>
+<item>
+	<title>Trapexit News Feed: Trapexit News :: New Quick Check Category!</title>
+	<guid>http://www.trapexit.org/forum/viewtopic.php?p=44077#44077</guid>
+	<link>http://www.trapexit.org/forum/viewtopic.php?p=44077#44077</link>
+	<description>Author: &lt;a href=&quot;http://www.trapexit.org/forum/profile.php?mode=viewprofile&amp;u=183&quot; target=&quot;_blank&quot;&gt;francesco&lt;/a&gt;&lt;br /&gt;
+Subject: New Quick Check Category!&lt;br /&gt;
+Posted: Mon Aug 18, 2008 3:19 pm (GMT 0)&lt;br /&gt;
+Topic Replies: 0&lt;br /&gt;&lt;br /&gt;
+&lt;span class=&quot;postbody&quot;&gt;&lt;span&gt;QuickCheck&lt;/span&gt; is a tool for random testing. Thomas Arts has started a category which includes articles and tutorials on how to use QuickCheck. To view the the articles and add your own &lt;a href=&quot;http://www.trapexit.org/Category:QuickCheck&quot; target=&quot;_blank&quot; class=&quot;postlink&quot;&gt; click here...&lt;/a&gt;
+&lt;/span&gt;&lt;br /&gt;</description>
+	<pubDate>Mon, 18 Aug 2008 15:21:02 +0000</pubDate>
+</item>
+<item>
+	<title>Caoyuan's Blog: Scala for NetBeans Screenshot#12: JUnit integration</title>
+	<guid>http://blogtrader.org/page/dcaoyuan/entry/scala_for_netbeans_screenshot_121</guid>
+	<link>http://blogtrader.org/page/dcaoyuan/entry/scala_for_netbeans_screenshot_121</link>
+	<description>&lt;p&gt;
+There is a Scala JUnit Test template in Scala for NetBeans now, you can create Scala JUnit testing and run testing, see testing result.
+&lt;p&gt;
+Here is an example test file:
+&lt;pre class=&quot;code&quot;&gt;
+ /*
+ * DogTest.scala
+ *
+ * To change this template, choose Tools | Template Manager
+ * and open the template in the editor.
+ */
+
+package scalajunit
+
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+import org.junit.Assert._
+
+class DogTest {
+
+    @Before
+    def setUp() = {
+    }
+
+    @After
+    def tearDown() = {
+    }
+
+    @Test
+    def testHello() = {
+        val dog = new Dog()
+        dog.talk(&quot;Mr. Foo&quot;)
+        assert(true)
+    }
+
+    @Test
+    def testAdding() = {
+        assertEquals(4, 2 + 3)
+    }
+}
+&lt;/pre&gt;
+&lt;p&gt;
+To get JUnit working, upgrade to Scala Project Module version 1.2.14, and re-create a new project for exist old project (if there has been one). Under the &quot;Test Packages&quot;, create your testing packages, right click on package node, select create &quot;Scala JUnit Test&quot;.
+&lt;p&gt;
+To run tests, right-click on project node, choose &quot;Test&quot;.
+&lt;p&gt;
+And also, the &lt;b&gt;beta-release&lt;/b&gt; is feature frozen, I'll concentrate on bug-fixes in next 1-2 weeks, and get it ready for public release as beta.
+&lt;p&gt;
+&lt;a href=&quot;http://blogtrader.net/resources/dcaoyuan/ScalaEditor_080725.png&quot;&gt;&lt;img alt=&quot;nn&quot; width=&quot;700&quot; src=&quot;http://blogtrader.net/resources/dcaoyuan/ScalaEditor_080725.png&quot; /&gt;&lt;/a&gt;
+&lt;p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;</description>
+	<pubDate>Sun, 17 Aug 2008 17:26:47 +0000</pubDate>
+</item>
+<item>
+	<title>Me Dev, You Jane: Erlang Introduction (For the Ruby Guy) part 3</title>
+	<guid>http://medevyoujane.com/blog/2008/8/17/erlang-introduction-for-the-ruby-guy-part-3.html</guid>
+	<link>http://medevyoujane.com/blog/2008/8/17/erlang-introduction-for-the-ruby-guy-part-3.html</link>
+	<description>&lt;h3&gt;Processes&lt;/h3&gt;
+
+&lt;p&gt;In Erlang you world revolves around processes. Not to be confused with OS processes. Here we are talking about highly light weight threads that can quickly be started and shut down. These are a lot faster and lighter that threads you may be used to from Ruby and you will use them quite a lot more than usually happens in Ruby. The best part is that this great power of Erlang is one of the simplest things to do. You just simply use the &lt;em&gt;spawn(module, function, [parameters])&lt;/em&gt; command to start a function and it starts it as a process. Really thats it. Lets see an example of this by starting the recurse command from part 2: &lt;code&gt;P1 = spawn(demo,recurse,[[1,2,3]]).&lt;/code&gt;. Now this process started and ended within a second but imagine if this would have been some call to some webserver taking up to a few seconds. There the process would have done it's thing and the creating function continues doing it's thing without having to hang around for results.&lt;/p&gt;
+
+&lt;p&gt;This is how you should do your Erlang programs. You should avoid as much as you can having your program waiting for some action to complete. Instead you should have a bunch of processes communicating with each other.&lt;/p&gt;
+
+&lt;h3&gt;Sending and Receiving Messages&lt;/h3&gt;
+
+&lt;p&gt;Now. It's not enough in most cases to just spawn the process and let it run until it finishes. Often you must talk to that process and as they do not share memory with each other they need to talk to each other by passing messages. Luckily this also is as simple as it gets.&lt;/p&gt;
+
+&lt;p&gt;The return value of a spawn function is the Pid of the Process. In the example before we bound the Pid to variable &lt;em&gt;P1&lt;/em&gt;. We then could just send a message to it simply by saying &lt;code&gt;P1 ! [1,2,3,4].&lt;/code&gt;. If we expect a response back we often send our own Pid within the message and we can get the Pid of current process with the command &lt;em&gt;self()&lt;/em&gt;. In that case the message might look like &lt;code&gt;P1 ! {helloworld, self()}.&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;It's no use sending a message if the receiving process is not listening. Enter the &lt;em&gt;receive&lt;/em&gt; consturct. The receiver waits for a message and when it receives that message it tries matching it to a pattern and runs the corresponding actions. Lets look at a receive block.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;receive
+  [Head|TheRest] -&amp;gt;
+    io:format(&quot;Got a list with the head: ~p ~n&quot;,[Head]);
+  {helloworld, CallingPid} -&amp;gt;
+    io:format(&quot;Got a hello world. Saying hello back. ~p ~n&quot;),
+    CallingPid ! {response, &quot;Hi Back&quot;};
+  MatchAll -&amp;gt;
+    io:format(&quot;Error: Dont know what do do with ~p ~n&quot;,[MatchAll])
+end.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here we have 3 possible messages to receive. This works in general much like when we define multiple versions of the same function. &lt;/p&gt;
+
+&lt;h3&gt;Registering&lt;/h3&gt;
+
+&lt;p&gt;One thing that I will mention before giving an example of using processes is the concept of registering process under a name. Often it's not convienient to store a Pid in a variable since variables only exist within a function. There we register the Pid under a name with the command &lt;em&gt;register(Name, Pid)&lt;/em&gt;. For example we could call &lt;code&gt;register(servername, P1).&lt;/code&gt; and from now on we can always make the call &lt;code&gt;servername ! {helloworld, self()}.&lt;/code&gt; from anywhere inside that node.&lt;/p&gt;
+
+&lt;h3&gt;A Simple Example of Processes&lt;/h3&gt;
+
+&lt;p&gt;Lets take a look at an example code. Lets open our demo.erl from &lt;a href=&quot;http://medevyoujane.com/blog/2008/8/10/erlang-introduction-for-the-ruby-guy-part-2.html&quot;&gt;Part 2&lt;/a&gt; and add &lt;em&gt;start_server/0, start_server/0, remote_convert/1, server_loop/0&lt;/em&gt; to the exports. Go to the end of the file and enter the following code:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;start_server() -&amp;gt;
+  Pid = spawn(demo, server_loop, []),
+  register(converter, Pid).
+
+stop_server() -&amp;gt;
+  converter ! shutdown
+  unregister(converter).
+
+server_loop() -&amp;gt;
+  receive
+    {convert, cm, Value, CallingPid} -&amp;gt;
+      CallingPid ! {inch, Value / 2.54},
+      server_loop();
+    {convert, inch, Value, CallingPid} -&amp;gt;
+      CallingPid ! {cm, Value * 2.54},
+      server_loop();
+    shutdown -&amp;gt;
+      true;
+    MatchAll -&amp;gt;
+      io:format(&quot;Got a message I don't understand. ~n&quot;),
+      server_loop()
+  end.
+
+remote_convert({Unit, Value}) -&amp;gt;
+  converter ! {convert, Unit, Value, self()},
+  receive
+    {NewUnit, NewValue} -&amp;gt;
+      io:format(&quot;Result: ~p ~p~n&quot;, [NewUnit,NewValue]);
+    error -&amp;gt;
+      ok
+  end.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Lets take a look what happens here. We start by compiling and running &lt;code&gt;demo:start_server().&lt;/code&gt; that spawns &lt;em&gt;server_loop/0&lt;/em&gt; as a process and registers the Pid as &lt;em&gt;converter&lt;/em&gt;. Next up is &lt;em&gt;stop_server/0&lt;/em&gt; that sends a message to the server asking it to shutdown. Third is &lt;em&gt;server_loop/0&lt;/em&gt; has a receive block that waits for 4 matching messages. First 2 are tuples requesting a unit conversion. It converts and sends a message back and then calls itself so it can wait for the next message. The shutdown message really does nothing except not calling for the loop to repeat. MatchAll will handle all other messages and write out an error.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;remote_convert/1&lt;/em&gt; then manages calling the server and then waits for a message back. Lets try it out by running &lt;code&gt;demo:convert({inch,1}).&lt;/code&gt; and you should get a message back.&lt;/p&gt;</description>
+	<pubDate>Sun, 17 Aug 2008 14:04:07 +0000</pubDate>
+</item>
+<item>
+	<title>Trapexit's Erlang Blog Filter: You Have to Experience It</title>
+	<guid>http://steve.vinoski.net/blog/?p=94</guid>
+	<link>http://steve.vinoski.net/blog/2008/08/16/you-have-to-experience-it/</link>
+	<description>&lt;p&gt;I&amp;#8217;ve noticed that frequently in technical discussions, the strongest disagreements seem to come from people with little to no actual experience with the technology they&amp;#8217;re arguing against. How can that be? For example:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;Test-First Development&lt;/em&gt;. I wish I had a dollar for every time I&amp;#8217;ve suggested to a developer that &lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://www.extremeprogramming.org/rules/testfirst.html&quot;&gt;writing their tests before or along with writing their code&lt;/a&gt; will make the code not only easier to write but also more robust coming out of the gate, and I get back responses like, &amp;#8220;What? That&amp;#8217;s crazy! How can you write tests before you have any code? That doesn&amp;#8217;t make any sense!&amp;#8221; Having an initial reaction like that isn&amp;#8217;t such a big deal, as I&amp;#8217;ve seen numerous developers who have such reactions actually try the &amp;#8220;test first&amp;#8221; approach and quickly become strong advocates who wonder how they ever did without it. The point is, though, that &lt;em&gt;they actually tried it&lt;/em&gt;. Arguing with them before they tried it always turned out to be a total waste of time. No amount of words seemed to convince them. They had to experience it before they understood it.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;Erlang syntax&lt;/em&gt;. Erlang is getting more and more attention these days, and rightfully so, but a typical reaction from those who have written little to no Erlang code is that the language&amp;#8217;s syntax is too weird, too hard to read and write, etc. Is the syntax different? Yes. Is it weird or difficult? No, not at all &amp;mdash; in fact, it&amp;#8217;s actually very simple and regular when compared to popular general-purpose imperative languages. Spend a day or two writing some real Erlang code, and I guarantee you that any initial dislike you might have for its syntax will disappear.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;REST&lt;/em&gt;. If you search the blog of any REST proponent, including this one, you&amp;#8217;re sure to find all kinds of comments from detractors who argue against REST despite never having used it to develop any real systems. Similarly, the blogs of many WS-* advocates who have never tried using REST contain all kinds of reasons why REST can&amp;#8217;t possibly work. Check out the comments in &lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://damienkatz.net/2008/08/rest-i-just-dont-get-it.html&quot;&gt;Damien Katz&amp;#8217;s recent &amp;#8220;REST, I just don&amp;#8217;t get it&amp;#8221; posting&lt;/a&gt;, for example; you have useful ones from those who have obviously used REST and understand its benefits, and then you have other comments that argue against REST while simultaneously showing a great misunderstanding of it. Those detractors would do well to read &lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://www.dehora.net/journal/2008/08/15/rest-as-an-engineering-discipline/&quot;&gt;Bill de hÓra&amp;#8217;s excellent response&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Also interesting about these three particular cases is that I don&amp;#8217;t personally know of anyone who&amp;#8217;s actually tried the approaches and decided against them. In a &lt;a rel=&quot;nofollow&quot;&gt;posting last November&lt;/a&gt;, for example, I asked for comments from anyone who had actually tried REST for real and with an open mind, but decided that it was inferior to WS-* and so abandoned it. Either nobody read that posting or no such people exist. I&amp;#8217;m fairly confident it&amp;#8217;s the latter.&lt;/p&gt;
+&lt;p&gt;There will always be arguments made by people whose livelihood is somehow threatened by the approach they&amp;#8217;re opposing, but I don&amp;#8217;t think that&amp;#8217;s the source of all the opposing arguments. As developers we can&amp;#8217;t possibly try everything, of course, because there just isn&amp;#8217;t enough time. It&amp;#8217;s inevitable that we&amp;#8217;ll sometimes have to resort to researching an approach via only reading, questions and discussion and decide against it without prototyping. But ultimately we developers owe it to ourselves and our employers to keep ourselves objectively informed so that we can take advantage of new approaches whenever appropriate. When a whole bunch of smart developers have success with a particular approach, I don&amp;#8217;t see how any responsible developer can actively and vocally oppose it without first objectively trying the approach and experiencing it firsthand.&lt;/p&gt;</description>
+	<pubDate>Sat, 16 Aug 2008 06:29:35 +0000</pubDate>
+</item>
+<item>
+	<title>Caoyuan's Blog: Scala for Netbeans Beta Is Ready, Working with NetBeans 6.5 Beta</title>
+	<guid>http://blogtrader.org/page/dcaoyuan/entry/scala_for_netebeans_beat_is</guid>
+	<link>http://blogtrader.org/page/dcaoyuan/entry/scala_for_netebeans_beat_is</link>
+	<description>&lt;p&gt;
+&gt;&gt;&gt; &lt;b&gt;Updated Aug 15:&lt;/b&gt;&lt;br /&gt;
+&lt;b&gt;For Windows Vista users:&lt;/b&gt; 
+There is a &lt;a href=&quot;http://www.netbeans.org/issues/show_bug.cgi?id=135547&quot;&gt;known bug #135547&lt;/a&gt; that may have been fixed in trunk but not for NetBeans 6.5 Beta, which causes exception of &quot;NullPointerException at org.openide.filesystems.FileUtil.normalizeFileOnWindows&quot; when create Scala project. If you are Vista user and like to have a try on Scala plugins, you may need to download a recent nightly build version of NetBeans. Since I have none Vista environment, I'm not sure about above message.
+&lt;br /&gt;======
+
+&lt;p&gt;
+I'm pleased to announce that the first beta of Scala for NetBeans is released, followed NetBeans 6.5 beta releasing. The availability and installation instructions can be found at &lt;a href=&quot;http://wiki.netbeans.org/Scala&quot;&gt;http://wiki.netbeans.org/Scala&lt;/a&gt;.
+&lt;p&gt;
+Features:
+&lt;ul&gt;
+&lt;li&gt;Full featured Scala editor
+&lt;ul&gt;
+&lt;li&gt;syntax and semantic coloring&lt;/li&gt;
+&lt;li&gt;outline navigator&lt;/li&gt;
+&lt;li&gt;code folding&lt;/li&gt;
+&lt;li&gt;mark occurrences&lt;/li&gt;
+&lt;li&gt;go to declaration&lt;/li&gt;
+&lt;li&gt;instant rename&lt;/li&gt;
+&lt;li&gt;indentation&lt;/li&gt;
+&lt;li&gt;formatting&lt;/li&gt;
+&lt;li&gt;pair matching&lt;/li&gt;
+&lt;li&gt;error annotations&lt;/li&gt;
+&lt;li&gt;code completion&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Project management (build/run/debug project)&lt;/li&gt;
+&lt;li&gt;Debugger&lt;/li&gt;
+&lt;li&gt;Interactive console&lt;/li&gt;
+&lt;li&gt;JUnit integration&lt;/li&gt;
+&lt;li&gt;Maven integration (works with &lt;a href=&quot;http://www.liftweb.net&quot;&gt;Lift Web Framework&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;
+There are some &lt;a href=&quot;http://wiki.netbeans.org/ScalaIssues&quot;&gt;known issues&lt;/a&gt;. Bug reports are welcome.
+&lt;p&gt;
+Installation on NetBeans 6.5 beta:
+&lt;ol&gt;
+&lt;li&gt;Get the NetBeans 6.5 beta or later version from: &lt;a href=&quot;http://download.netbeans.org/netbeans/6.5/beta/&quot;&gt;http://download.netbeans.org/netbeans/6.5/beta/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Get the Scala plugins beta binary from: &lt;a href=&quot;http://plugins.netbeans.org/PluginPortal/faces/PluginDetailPage.jsp?pluginid=11854&quot;&gt;http://plugins.netbeans.org/PluginPortal/faces/PluginDetailPage.jsp?pluginid=11854&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Unzip Scala plugin binary to somewhere&lt;/li&gt;
+&lt;li&gt;Open NetBeans, go to &quot;Tools&quot; -&gt; &quot;Plugins&quot;, click on &quot;Downloaded&quot; tab title, click on &quot;Add Plugins...&quot;
+button, choose the directory where the Scala plugins are unzipped, select all listed *.nbm files, following the instructions. Restart IDE.&lt;/li&gt;
+&lt;/ol&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;</description>
+	<pubDate>Sat, 16 Aug 2008 04:26:23 +0000</pubDate>
+</item>
+<item>
+	<title>Socklabs Blog: Erlyflux going into the freezer</title>
+	<guid>tag:blog.socklabs.com,2008:entry-1553</guid>
+	<link>http://blog.socklabs.com/2008/08/erlyflux_going_into_the_freeze/</link>
+	<description>&lt;p&gt;A while ago I started a project called ErlyFlux. The goal was to create a suite of web apps for World of Warcraft guilds to manage and integrate things like a forum, wiki, dkps, calendar and so forth. In the end it was working really well for our guild and all was good.&lt;/p&gt;
+
+&lt;p&gt;Carolyn and I aren't in that guild anymore and they decided that they didn't want to trouble us with hosting the stuff for them and moved to their own, much simpler, forum. Thats all fine and good and no feelings were damaged in the process. Without the guild using it however, the project started to become stagnant and didn't get much development time.&lt;/p&gt;
+
+&lt;p&gt;With that said, I'm taking it off of github and posting project's source code as-is. If your guild is interested in using it please contact me for setup and admin information. I'd like to continue development on an as-needed basis but it has a pretty low priority as of right now.&lt;/p&gt;
+
+&lt;p&gt;Download link: &lt;a href=&quot;http://blog.socklabs.com/erlyflux.tgz&quot;&gt;erlyflux.tgz&lt;/a&gt;&lt;/p&gt;</description>
+	<pubDate>Fri, 15 Aug 2008 03:54:49 +0000</pubDate>
+</item>
+<item>
+	<title>Torbjorn Tornkvist: Dart - A simple web framework</title>
+	<guid>http://blog.tornkvist.org/blog.yaws?id=1218638102346188</guid>
+	<link>http://blog.tornkvist.org/blog.yaws?id=1218638102346188</link>
+	<description>&lt;p&gt;Just before summer I uploaded a little application to erlware.org named &lt;em&gt;dart&lt;/em&gt;. As an example, I can now generate a simple web-app for doing visitor registration in our reception.&lt;/p&gt;
+
+&lt;p&gt;Dart make use of the ewgi interface which makes it possible to plugin other SW that also conforms to ewgi. The example in the documentation show how to hook in authentication.&lt;/p&gt;
+
+&lt;p&gt;Check it out and let me know if you think it is of any use.&lt;/p&gt;
+
+&lt;p&gt;Cheers, Tobbe&lt;/p&gt;</description>
+	<pubDate>Wed, 13 Aug 2008 14:35:02 +0000</pubDate>
+</item>
+<item>
+	<title>Me Dev, You Jane: Erlang Introduction (For the Ruby Guy) part 2</title>
+	<guid>http://medevyoujane.com/blog/2008/8/10/erlang-introduction-for-the-ruby-guy-part-2.html</guid>
+	<link>http://medevyoujane.com/blog/2008/8/10/erlang-introduction-for-the-ruby-guy-part-2.html</link>
+	<description>&lt;p&gt;Here is the second installment of the introduction to Erlang. In the &lt;a href=&quot;http://medevyoujane.com/blog/2008/8/6/erlang-introduction-for-the-ruby-guy-part-1.html&quot;&gt;first part&lt;/a&gt; I introduced you to some of the basics in the Erlang language and now it is time to get to know more of the fun parts of the language. Like the first part this is not supposed to be a tutorial. I am simplifying things here and there is a lot more you should know if you want to do an actual program in erlang. I highly recommend that you check out Kevin's &lt;a href=&quot;http://pragprog.com/screencasts/v-kserl/erlang-in-practice&quot;&gt;Erlang in Practice&lt;/a&gt; screencast, Joe Armstrong's &lt;a href=&quot;http://www.pragprog.com/titles/jaerlang/programming-erlang&quot;&gt;Programming Erlang&lt;/a&gt; book or the excellent documentation on the &lt;a href=&quot;http://www.erlang.org/doc/&quot;&gt;erlang website&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3&gt;Funs&lt;/h3&gt;
+
+&lt;p&gt;Funs are basically blocks. And much like you do in Ruby you will use funs a lot. A simple example of a fun would be:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Double = fun(X) -&amp;gt; X*2 end.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then you could make the call &lt;code&gt;Double(10).&lt;/code&gt; and the result would be &lt;em&gt;20&lt;/em&gt;. Much like you do in Ruby you will often use Funs as parameters to functions. An example of a function that takes a fun is &lt;em&gt;lists:map&lt;/em&gt;. This is a non object oriented version of Ruby's Array.map. It's first parameter is the fun to be run on each element and the next element is the list itself. Here we would make the call:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;lists:map(fun(X) -&amp;gt; X*2 end, [1,2,3]).
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To create a new list with each element multiplied by 2. Another way to get the same result are by using list comprehensions.&lt;/p&gt;
+
+&lt;h3&gt;List Comprehension&lt;/h3&gt;
+
+&lt;p&gt;List Comprehensions are a great feature to create lists or manipulate lists. Lets start with the simple expression &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[X*2 || X &amp;lt;- [1,2,3]].
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This would create a new list with each element doubled. In english this would read &quot;&lt;em&gt;double each X where X is [1,2,3]&lt;/em&gt;&quot;. What is before || is called the expression and what comes after is referred to as the qualifiers. There can be multiple qualifiers like the example &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[X || X &amp;lt;- [1,2,3,4], X &amp;gt; 2].
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This would give out the result [3,4]. Here we the english term would be &quot;&lt;em&gt;display X where X is [1,2,3,4] and X is greater than 2&lt;/em&gt;&quot;. &lt;/p&gt;
+
+&lt;p&gt;A great example of how to use this can be read at &lt;a href=&quot;http://en.wikibooks.org/wiki/Erlang_Programming/List_Comprehensions&quot;&gt;WikiBooks&lt;/a&gt;. Here they give an example of using list comprehensions to solve an equation. The output of:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[ {X,Y} || X &amp;lt;- [1,2,3,4], Y &amp;lt;- [1,2,3,4], X*X == Y].
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Would be &lt;em&gt;[{1,1},{2,4}]&lt;/em&gt; and should be read &quot;&lt;em&gt;A tuple with the values X and Y where X is [1,2,3,4] and Y is [1,2,3,4] and where X time X equals Y&lt;/em&gt;&quot;. And how cool is that.&lt;/p&gt;
+
+&lt;p&gt;A type of list comprehension is also used in the powerful mnesia database system to query results instead of SQL. I highly recommend that you get to know it well.&lt;/p&gt;
+
+&lt;h3&gt;Modules and Functions&lt;/h3&gt;
+
+&lt;p&gt;The modules are really a collection of functions if you simplify things. There are differences of course since it's not objects you are working with. Lets just start with a simple module  from the Erlang website. You can put this in a file called &lt;em&gt;demo.erl&lt;/em&gt; and run the command &lt;code&gt;erl&lt;/code&gt; in the same directory. You then compile the file typing &lt;code&gt;c(demo).&lt;/code&gt; in the Eshell and run it by entering &lt;code&gt;demo:double(2).&lt;/code&gt; to get the result &lt;em&gt;4&lt;/em&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;-module(demo).
+-export([double/1]).
+
+double(X) -&amp;gt;
+  times(X, 2).
+
+times(X, N) -&amp;gt;
+  X * N.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The first line is the name of the module. This must match the filename with the .erl extension excluded. &lt;/p&gt;
+
+&lt;p&gt;The second line is a list of what functions are exported. Only exported functions can be called from other modules. The list includes the function name and its &lt;em&gt;arity&lt;/em&gt;. The arity states the number of parameters the function calls. If you want to export both functions the line would read &lt;code&gt;-export([double/1,times/2]).&lt;/code&gt;. Note that you can have 2 functions with the same name but different arity and you would then have to export both versions.&lt;/p&gt;
+
+&lt;p&gt;Next up are the functions. This is pretty self explanatory. First up is the functions &lt;em&gt;double&lt;/em&gt; that take one parameter and calls the second function &lt;em&gt;times&lt;/em&gt;. Times takes 2 parameters and multiplies together. &lt;/p&gt;
+
+&lt;p&gt;One thing to notice is the dot (.) at the end. The dot says that this function is done. If this was a multi line function each line would end with a comma (,) except the last line that would end on either a dot or a semicolon (;) if the same function with the same arity is defined. Now this may sound a but confusing but lets look at how it works. The boss has asked me to change the double function that the whole company stands or falls with so that it would give me an error message if I decide to be a fool and double the number 0. If I were in ruby I might just add an if statement inside the function but this is erlang and things are done differently. Lets delete the whole double function and replace it with the following and recompile:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;double(0) -&amp;gt;
+  io:format(&quot;Only a fool would double a zero ~n&quot;),
+  0;
+double(X) -&amp;gt;
+  times(X, 2).
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here we see basically the same function twice. What happens here is really the same as the pattern matching in part 1. if we make he call &lt;code&gt;demo:double(2).&lt;/code&gt; the erlang system first tries to match with double(0). Since 0 == 2 can not match it goes down do double(N). There it sees that it it can make true the statement X == 2 if X holds the value 2 and runs that function. Here we also see the the uses of commas and semicolons. First line in &lt;em&gt;double(0)&lt;/em&gt; prints out a message to STDOUT and then the comma says that another statement is to follow. Then put out a single &lt;em&gt;0&lt;/em&gt; because like in ruby the last statement is the return value of the function. This is followed by a semicolon to say that the function is over but that the same function will return but for a different value (It's actually not that simple but it's the simplest way to explain the behavior). Then at the end we have a period to say that all version of the function is over. &lt;/p&gt;
+
+&lt;p&gt;Another common way of usage is using tuples. Lets add convert/1 to our exports at the start of the file, add the following to the end of the file and recompile.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;convert({cm, Value}) -&amp;gt;
+  {inch, Value / 2.54};
+convert({inch, Value}) -&amp;gt;
+  {cm, Value * 2.54}.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here we call &lt;em&gt;convert/1&lt;/em&gt; with a tuple. The first element in the tuple is the current unit of length and the second element is the value in that unit. It then returns a tuple with the new unit and the converted value. So the call &lt;code&gt;demo:convert({inch, 1}).&lt;/code&gt; would give the result &lt;em&gt;{cm, 2.54000}&lt;/em&gt;. Here we see in a great manner why we often have the first element in the tuple define what the whole tuple is like I mentioned in part 1.&lt;/p&gt;
+
+&lt;h3&gt;Recursing Functions&lt;/h3&gt;
+
+&lt;p&gt;One thing that, if you would do in ruby, would call for a lynching mob after you are recursive functions. In Erlang it's standard practice. Functions quite frequently call themselves. Lets look at an example of recursion by adding this to our demo.erl. Don't forget to export &lt;em&gt;recurse/1&lt;/em&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;recurse([]) -&amp;gt;
+    io:format(&quot;All done.~n&quot;);
+recurse([First|TheRest]) -&amp;gt;
+    io:format(&quot;Value: ~p ~n&quot;, [First]),
+    recurse(TheRest).
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;When we call this with an list like so: &lt;code&gt;demo:recurse([1,2,3]).&lt;/code&gt;. it will first try to match with &lt;em&gt;recurse([])&lt;/em&gt; and be unable to do so since it's not an empty list. It will however match with the second function and create 2 variables. The variable &lt;em&gt;First&lt;/em&gt; will hold the first value in the list and will be printed out but &lt;em&gt;TheRest&lt;/em&gt; will hold the rest of the list. Then it calls itself again with the shortened &lt;em&gt;TheRest&lt;/em&gt; list. In the end the list will be empty and match the first definition of &lt;em&gt;recurse/1&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h3&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;This should be good for now. Next article will go into processes mainly and give a little overview over the OTP principles.&lt;/p&gt;</description>
+	<pubDate>Sun, 10 Aug 2008 20:29:11 +0000</pubDate>
+</item>
+<item>
+	<title>Socklabs Blog: erlang_facebook 0.1r1</title>
+	<guid>tag:blog.socklabs.com,2008:entry-1552</guid>
+	<link>http://blog.socklabs.com/2008/08/erlang_facebook_01r1/</link>
+	<description>&lt;p&gt;This morning I wrote a small Erlang library to interface with the Facebook Platform API. I've been using something similar in I Play WoW and finally got around to cleaning it up and putting it out there. It is inspired by &lt;a href=&quot;http://beerriot.com/bryan.html&quot;&gt;Brian Fink&lt;/a&gt;'s &lt;a href=&quot;http://code.google.com/p/erlang2facebook/&quot;&gt;erlang2facebook&lt;/a&gt; project but doesn't use any of it's code.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;a href=&quot;http://github.com/ngerakines/erlang_facebook/&quot;&gt;http://github.com/ngerakines/erlang_facebook/&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The big different is that with this module you don't have to bake your API key and secret into the module. The library is based on the gen_server behavior (like most of the other API libraries I write) and is very flexible. Out of the box it can handle a very small number of Facebook Platform API methods directly but also provides a simple way to use API methods that the library doesn't know about. See the &lt;a href=&quot;http://github.com/ngerakines/erlang_facebook/tree/master/README.markdown&quot;&gt;README.markdown&lt;/a&gt; file for more information and a few small examples.&lt;/p&gt;
+
+&lt;p&gt;This is only a release candidate and shouldn't be used in a production setting quite yet. The interface is bound to change and there are a number of incomplete features.&lt;/p&gt;
+
+&lt;p&gt;This module also requires the &lt;a href=&quot;http://hg.opensource.lshift.net/erlang-rfc4627/&quot;&gt;rfc4627&lt;/a&gt; JSON module because it uses JSON as the default format for Facebook Platform API requests.&lt;/p&gt;
+
+&lt;p&gt;The 'TODO' list includes better out of the box Facebook Platform API method support, xml response parsing, better error handling and real documentation.&lt;/p&gt;
+
+&lt;p&gt;This project is open source under the MIT license. &lt;/p&gt;</description>
+	<pubDate>Sun, 10 Aug 2008 16:43:36 +0000</pubDate>
+</item>
+<item>
+	<title>Socklabs Blog: Updates to erlang_twitter</title>
+	<guid>tag:blog.socklabs.com,2008:entry-1551</guid>
+	<link>http://blog.socklabs.com/2008/08/updates_to_erlang_twitter/</link>
+	<description>&lt;p&gt;I've been on a real 3rd party client library kick lately. So far I've got Erlang modules for couchdb, the World of Warcraft Armory and Twitter on GitHub. I've also got libraries for Delicious, Last.FM and an improved Facebook library in development, soon to be released.&lt;/p&gt;
+
+&lt;p&gt;The changes to erlang_twitter include an overhaul of the gen_server behavior being used. Now clients support multiple accounts, throttling and Identi.ca.&lt;/p&gt;</description>
+	<pubDate>Sun, 10 Aug 2008 06:31:14 +0000</pubDate>
+</item>
+<item>
+	<title>Hypothetical Labs: Episode 6: New Code Bundle</title>
+	<guid>http://weblog.hypotheticalabs.com/?p=290</guid>
+	<link>http://weblog.hypotheticalabs.com/?p=290</link>
+	<description>&lt;p&gt;Thanks to Tom Ayerst for &lt;a href=&quot;http://forums.pragprog.com/forums/73/topics/778&quot;&gt;finding&lt;/a&gt; a bug in the code bundle for episode 6. At least I know my viewers are paying attention, that&amp;#8217;s for sure.&lt;/p&gt;
+&lt;p&gt;I&amp;#8217;ve updated the code bundle to fix Tom&amp;#8217;s bug. If you&amp;#8217;ve downloaded the code recently you&amp;#8217;ll want to pick up the newer bundle from your PragProg account.&lt;/p&gt;</description>
+	<pubDate>Fri, 08 Aug 2008 09:47:03 +0000</pubDate>
+</item>
+<item>
+	<title>Hypothetical Labs: Easy Erlang Doc Access</title>
+	<guid>http://weblog.hypotheticalabs.com/?p=289</guid>
+	<link>http://weblog.hypotheticalabs.com/?p=289</link>
+	<description>&lt;p&gt;Recipe for easy Erlang manpage access:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Create a bookmark pointing to the URL:&amp;nbsp;&amp;nbsp;&lt;code&gt;http://www.erlang.org/doc/man/%s.html&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Edit the bookmark and give it the keyword &amp;#8216;erl&amp;#8217;&lt;/li&gt;
+&lt;li&gt;Test it out by typing &lt;code&gt;erl file&lt;/code&gt;  in Firefox&amp;#8217;s address field. You should see the manpage for the file module appear in your browser.
+&lt;/li&gt;&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;Note: This only works in Firefox&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;This is a trick I learned a while ago when I was programming mostly in Java. I needed to refer to Javadocs all the time and having this shortcut was a real timesaver. I carried this over when I started working heavily with Erlang. It&amp;#8217;s a trick which has saved me a fair bit of time.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Update: Thanks to Mr. John Hornbeck for pointing out a typo in the URL&lt;/em&gt;&lt;/p&gt;</description>
+	<pubDate>Thu, 07 Aug 2008 17:23:57 +0000</pubDate>
+</item>
+<item>
+	<title>Web 2.0 and beyond: Online publishing with Issuu.com</title>
+	<guid>tag:blogger.com,1999:blog-3729811.post-6632181450685946960</guid>
+	<link>http://www.rsaccon.com/2008/08/online-publishing-with-issuucom.html</link>
+	<description>Issuu has an interesting solution for online publishing of print magazines and other publications. It is partially in flash, I usually don't like Flash, but their Flash stuff is really well done. And they take interesting approaches for the surrounding stuff of a web app as well, take a look at their documentation: http://platform.issuu.com, it's all google groups pages !</description>
+	<pubDate>Thu, 07 Aug 2008 11:59:59 +0000</pubDate>
+	<author>noreply@blogger.com (Roberto Saccon)</author>
+</item>
+<item>
+	<title>Socklabs Blog: Erlounge @ Yahoo</title>
+	<guid>tag:blog.socklabs.com,2008:entry-1550</guid>
+	<link>http://blog.socklabs.com/2008/08/erlounge_yahoo/</link>
+	<description>&lt;p&gt;I'm organizing an Erlounge event hosted at Yahoo's Sunnyvale, CA campus. This event is for Erlang developers, users and anyone interested in what is going on in the field. The event is on Thursday, August 21st from 6:00 pm to 8:00 pm. Please refer to the &lt;a href=&quot;http://upcoming.yahoo.com/event/977428/&quot;&gt;Upcoming.org event page&lt;/a&gt; or the original &lt;a href=&quot;http://www.erlang.org/pipermail/erlang-questions/2008-August/037119.html&quot;&gt;post to the mailing list&lt;/a&gt; for more information.&lt;/p&gt;</description>
+	<pubDate>Wed, 06 Aug 2008 21:49:11 +0000</pubDate>
+</item>
+<item>
+	<title>Me Dev, You Jane: Installing Erlang and a few libraries on Mac OS X</title>
+	<guid>http://medevyoujane.com/blog/2008/8/6/installing-erlang-and-a-few-libraries-on-mac-os-x.html</guid>
+	<link>http://medevyoujane.com/blog/2008/8/6/installing-erlang-and-a-few-libraries-on-mac-os-x.html</link>
+	<description>&lt;h3&gt;Install Erlang&lt;/h3&gt;
+
+&lt;p&gt;Lets start with installing the basic &lt;a href=&quot;http://erlang.org/&quot;&gt;Erlang&lt;/a&gt; runtime.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd /tmp
+curl http://erlang.org/download/otp_src_R12B-4.tar.gz | tar zx
+cd otp_src_R12B-4
+./configure --enable-hipe  --enable-darwin-universal
+make
+sudo make install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To verify that everything is installed enter the command &lt;code&gt;erl&lt;/code&gt;. You should be greeted with the erlang shell. You can exit it by entering the shortcut &quot;&lt;code&gt;q().&lt;/code&gt;&quot; without the quotes (remember the period).&lt;/p&gt;
+
+&lt;h3&gt;Install a Few Must Have Libraries&lt;/h3&gt;
+
+&lt;p&gt;Now lets install a few libraries that it is likely that you will want to try out.
+Lets start with entering the Erlang library location:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd /usr/local/lib/erlang/lib
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The first thing we want is the the &lt;a href=&quot;http://code.google.com/p/mochiweb/&quot;&gt;Mochiweb&lt;/a&gt; library. Mochiweb is a simple but powerful http server. &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo svn co http://mochiweb.googlecode.com/svn/trunk/ mochiweb-trunk
+cd mochiweb-trunk
+sudo make
+cd ..
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Next is the &lt;a href=&quot;https://support.process-one.net/doc/display/CONTRIBS/EUnit&quot;&gt;EUnit&lt;/a&gt; library. EUnit is a powerful unit testing library for Erlang.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo svn co http://svn.process-one.net/contribs/trunk/eunit eunit-trunk
+cd eunit-trunk
+sudo make
+cd ..
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you have some legacy data you need to access in a MySQL database you will need the MySQL library. For new projects you propably are going to want to use &lt;a href=&quot;http://www.erlang.org/doc/apps/mnesia/index.html&quot;&gt;Mnesia&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo svn co http://erlang-mysql-driver.googlecode.com/svn/trunk/ mysql-trunk
+cd mysql-trunk
+sudo mkdir ebin
+sudo erlc -o ebin src/mysql.erl
+sudo erlc -o ebin src/mysql_auth.erl
+sudo erlc -o ebin src/mysql_conn.erl 
+sudo erlc -o ebin src/mysql_recv.erl
+cd ..
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now everything should be set up and ready. Lets try it by entering the following commands in the &lt;code&gt;erl&lt;/code&gt; shell:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mochiweb:module_info().
+eunit:module_info().
+mysql:module_info().
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If any are not installed correctly you will receive single line with an exception error.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;EDIT 2008-09-03&lt;/strong&gt;:
+  Updated for R12B-4&lt;/p&gt;</description>
+	<pubDate>Wed, 06 Aug 2008 21:34:42 +0000</pubDate>
+</item>
+<item>
+	<title>Me Dev, You Jane: Erlang Introduction (For the Ruby Guy) part 1</title>
+	<guid>http://medevyoujane.com/blog/2008/8/6/erlang-introduction-for-the-ruby-guy-part-1.html</guid>
+	<link>http://medevyoujane.com/blog/2008/8/6/erlang-introduction-for-the-ruby-guy-part-1.html</link>
+	<description>&lt;p&gt;The purpose here is to write a basic beginners info for erlang. It's not in any way a tutorial but it's aim is to peak your interest in the language. This is aimed at Ruby programmers and tries to give a good overview of the basic differences and similarities. Both in programming and thinking. &lt;/p&gt;&lt;p&gt;Erlang is a wonderful tool to learn and gives you the same enjoyable programming experience as most have with Ruby. And it's a great match to use them together in a product. Ruby for the front end to ease making a good user experience with trusty old Erlang in the background making sure everything is rock stable. &lt;/p&gt;&lt;p&gt;The power of Erlang lies in it's ability to be scalable and stable. To put it bluntly. If your Erlang application is unstable and does not scale well then you have done something wrong. &lt;/p&gt;&lt;h3&gt;The Shell&lt;/h3&gt;&lt;p&gt;We start off on a familiar ground. The main Erlang executable is the command erl. This should instantly feel as home to Rubyist and remind of trusty old irb. What it can not do however is create the modules and functions. It can only call them. However it's powerful and you should expect to spend a lot of your time inside there. Remember to end your statements with a period to execute them.&lt;/p&gt;&lt;h3&gt;Variables&lt;/h3&gt;&lt;p&gt;Variable start with a capital letter. The first thing that shocks people is the fact that you can only set a variables once. Thus typing &lt;span&gt;&lt;em&gt;Var1 = 1&lt;/em&gt;&lt;/span&gt; and then immediately &lt;span&gt;&lt;em&gt;Var1 = 2&lt;/em&gt;&lt;/span&gt;. would give you an error. Think of it as a strength though rather than a problem. The simple, money back, guarantee is that this will never be a problem for you and you won't need to think about this since functions are short and variables only exist inside the function. What usually happens is that people start actually liking having the variables single-assigned since it tends to simplify things and reduce errors.&lt;/p&gt;&lt;h3&gt;Atoms are Symbols&lt;/h3&gt;&lt;p&gt;Atoms start with a downcase letter or are enclosed in single quotes. They can not hold any value and represent only themselves. They are basically the same as symbols in Ruby. One thing to remember is that atoms do not disappear from memory after being created so if you in some way create them dynamically you may fill up your memory after a while. This may not sound like a problem at first but remember that your goal is probably to create an application that will run for months or even years without being restarted.&lt;/p&gt;&lt;h3&gt;Lists and Tuples&lt;/h3&gt;&lt;p&gt;Lists and Tuples are similar in many ways. Both represent a collection of elements. The difference is that lists have variable number of elements while tuples have fixed number of elements. Lists are defined between &lt;em&gt;[...]&lt;/em&gt; while tuples are between &lt;em&gt;{...}&lt;/em&gt; I read somewhere that lists are like arrays while tuples are like hashes. That is 100% totally incorrect. Tuples are nothing like hashes. The most common use of tuples you will see is that the first element is a atom that explains the rest of the tuple. For example the tuple &lt;span&gt;&lt;em&gt;{error, 404, &quot;File Not Found&quot;}&lt;/em&gt;&lt;/span&gt;. Often you will also use a list of tuples. For example &lt;span&gt;&lt;em&gt;[{person,&quot;Steve&quot;},{person,&quot;Joe&quot;}]&lt;/em&gt;&lt;/span&gt;. How this all matters is best explained in the next section.&lt;/p&gt;&lt;h3&gt;Matching (or how = is not =)&lt;/h3&gt;&lt;p&gt;The equal sign behaves quite a bit different from what you are probably used to. It's behavior is called Pattern Matching. What it does is to try to make the statement true and the simplest example is &lt;span&gt;&lt;em&gt;X = 1&lt;/em&gt;&lt;/span&gt;. Here erlang finds that the only way to make the statement true is if the variable &lt;span&gt;&lt;em&gt;X&lt;/em&gt;&lt;/span&gt; stores the value &lt;span&gt;&lt;em&gt;1&lt;/em&gt;&lt;/span&gt;. Here we also see the difference in using tuples and lists. If we make the statement &lt;span&gt;&lt;em&gt;{error, ErrorCode, ErrorMessage} = {error, 404, &quot;File Not Found&quot;}&lt;/em&gt;&lt;/span&gt; it will find that to make this statement true it has to assign the variable &lt;span&gt;&lt;em&gt;ErrorCode&lt;/em&gt;&lt;/span&gt; to &lt;span&gt;&lt;em&gt;&quot;404&quot;&lt;/em&gt;&lt;/span&gt; and &lt;span&gt;&lt;em&gt;ErrorMessage&lt;/em&gt;&lt;/span&gt; to &lt;span&gt;&lt;em&gt;&quot;File Not Found&quot;&lt;/em&gt;&lt;/span&gt;. Pretty nifty eh? With lists you can do things like &lt;span&gt;&lt;em&gt;[FirstElement|TheRest] = [1,2,3,4]&lt;/em&gt;&lt;/span&gt;. Here the variable &lt;span&gt;&lt;em&gt;FirstElement&lt;/em&gt;&lt;/span&gt; will become &lt;span&gt;&lt;em&gt;1&lt;/em&gt;&lt;/span&gt; and &lt;span&gt;&lt;em&gt;TheRest&lt;/em&gt;&lt;/span&gt; will become &lt;span&gt;&lt;em&gt;[2,3,4]&lt;/em&gt;&lt;/span&gt;.&lt;/p&gt;&lt;h3&gt;Conclusion&lt;/h3&gt;&lt;p&gt;This is it for now. In the next article I will explain amongst other things modules and functions along with the real power of Erlang that lies in processes.&lt;/p&gt;&lt;p&gt;Or if you want to dive into actually learning Erlang I would recommend Kevin Smith's excellent screencast &lt;a href=&quot;http://pragprog.com/screencasts/v-kserl/erlang-in-practice&quot;&gt;Erlang in Practice&lt;/a&gt;.&lt;/p&gt;&lt;p&gt; &lt;/p&gt;</description>
+	<pubDate>Wed, 06 Aug 2008 19:41:27 +0000</pubDate>
+</item>
+<item>
+	<title>Dukes of Erl: scaling mnesia with local_content</title>
+	<guid>tag:blogger.com,1999:blog-6265608756663924839.post-887772750525041697</guid>
+	<link>http://dukesoferl.blogspot.com/2008/08/scaling-mnesia-with-localcontent.html</link>
+	<description>so we've been spending the last two weeks trying to scale our mnesia application for a whole bunch of new traffic that's about to show up.  previously we had to run alot of ec2 instances since we were using ets (RAM-based) storage; once we solved that we started to wonder how many machines we could turn off.&lt;br /&gt;&lt;br /&gt;initial indications were disappointing in terms of capacity.  none of cpu, network, memory, or disk i/o seemed particularly taxed.  for instance, even though raw sequential performance on an ec2 instance can hit 100mb/s, we were unable to hit above 1mb/s of disk utilization.  one clue: we did get about 6mb/s of disk utilization when we started a node from scratch.  in that case, 100 parallel mnesia_loader processes grab table copies from remote nodes.  thus even under an unfavorable access pattern (writing 100 different tables at once), the machines were capable of more.&lt;br /&gt;&lt;br /&gt;one problem we suspected was the registered process mnesia_tm, since all table updates go through this process.  the mnesia docs do say that it is &quot;primarily intended to be a memory-resident database&quot;.  so one thought was that mnesia_tm was hanging out waiting for disk i/o to finish and this was introducing latency and lowering throughput; with ets tables, updates are cpu bound so this design would not be so problematic.  (we already have tcerl using the async_thread_pool, but that just means the emulator can do something else, not the mnesia_tm process in particular).  thus, we added an option to &lt;a href=&quot;http://code.google.com/p/tcerl/&quot;&gt;tcerl&lt;/a&gt; to not wait for the return value of the linked-in driver before returning from an operation (and therefore not to check for errors).  that didn't have much impact on i/o utilization.&lt;br /&gt;&lt;br /&gt;we'd long ago purged transactions from the serving path, but we use sync_dirty alot.  we thought maybe mnesia_tm was hanging out waiting for acknowledgements from remote mnesia_tm processes and this was introducing latency and lowering throughput.  so we tried async_dirty.  well that helped, except that under load the message queue length for the mnesia_tm process began to grow and eventually we would have run out of memory.&lt;br /&gt;&lt;br /&gt;then we discovered local_content, which causes a table to have the same definition everywhere, but different content.  as a side effect, replication is short-circuited.  so with very minor code changes we tested this out and saw a significant performance improvement.  of course, we couldn't do this to every table we have; only for data for which we were ok with losing if the node went down.  however it's neat because now there are several types of data that can be managed within mnesia, in order of expense:&lt;br /&gt;&lt;ol&gt;&lt;li&gt;transactional data.  distributed transactions are extremely expensive, but sometimes necessary.&lt;/li&gt;&lt;li&gt;highly available data.  when dirty operations are ok, but multiple copies of the data have to be kept, because the data should persist across node failures.&lt;br /&gt;&lt;/li&gt;&lt;li&gt;useful data.  dirty operations are ok, and it's ok to lose some of the data if a node fails.&lt;/li&gt;&lt;/ol&gt;the &lt;a href=&quot;http://www1.erlang.org/doc/efficiency_guide/tablesDatabases.html&quot;&gt;erlang efficiency guide&lt;/a&gt; says &quot;For non-persistent database storage, prefer Ets tables over Mnesia local_content tables.&quot;, i.e., bypass mnesia for fastest results.  so we might do that, but right now it's convenient to have these tables acting like all our other tables.&lt;br /&gt;&lt;br /&gt;interestingly, i/o utilization didn't go up that much even though overall capacity improved alot.  we're writing about 1.5 mb/s now to local disks.  instead we appear cpu bound now; we don't know why yet.</description>
+	<pubDate>Wed, 06 Aug 2008 19:54:10 +0000</pubDate>
+	<author>noreply@blogger.com (Paul Mineiro)</author>
+</item>
+<item>
+	<title>Tony Arcieri: Reia: Now creating modules on-the-fly</title>
+	<guid>urn:uuid:26aada5c-2dce-49bc-963c-34d01fbb61ef</guid>
+	<link>http://tonyarcieri.org/articles/2008/08/05/reia-now-creating-modules-on-the-fly</link>
+	<description>&lt;p&gt;One of the complaints I&amp;#8217;ve heard about so many languages is an inability to do certain things from the interactive interpreter which you can do otherwise in content loaded from files.&amp;nbsp; Erlang does not allow module declarations from the interactive interpreter.&amp;nbsp; And while it&amp;#8217;s &lt;a href=&quot;http://ulf.wiger.net/weblog/2007/11/21/extending-the-erlang-shell-part-2/&quot;&gt;not entirely impossible&lt;/a&gt;, it&amp;#8217;s indicative of a wide gulf between the language as evaluated on the fly and a language which is fundamentally designed to be compiled.&lt;/p&gt;
+
+&lt;p&gt;I greatly enjoyed how Ruby allows you do to virtually anything from the interactive interpreter that you otherwise could in normal program code, including defining functions as well as declaring modules and classes.&amp;nbsp; I sought to do the same in &lt;a href=&quot;http://reia-lang.org/&quot;&gt;Reia&lt;/a&gt;, my dynamic scripting language for Erlang&amp;#8217;s VM.&amp;nbsp; Reia now allows on-the-fly module declarations from anywhere, including both scripts and the interactive interpreter.&amp;nbsp; For example, the &lt;a href=&quot;http://github.com/tarcieri/reia/tree/master&quot;&gt;latest version on github&lt;/a&gt; allows you to do declare a module from the interactive interperer like this:&lt;/p&gt;
+
+&lt;pre&gt;
+  &gt;&gt; module Foo
+&amp;nbsp; ..&amp;nbsp;&amp;nbsp; def bar
+&amp;nbsp; ..&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; 42
+&amp;nbsp; .. 
+&amp;nbsp; =&amp;gt; ~ok
+&amp;nbsp; &amp;gt;&amp;gt; Foo.bar()
+&amp;nbsp; =&amp;gt; 42 
+
+&lt;/pre&gt;
+
+&lt;p&gt;This declares a Reia module named &amp;#8216;Foo&amp;#8217; and defines one function under it, which returns 42.&amp;nbsp; After being declared, the &amp;#8216;Foo&amp;#8217; module is compiled to BEAM bytecode and loaded directly into Erlang&amp;#8217;s code server.&amp;nbsp; The &amp;quot;~ok&amp;quot; you see returned (which is Reia syntax for an atom called &amp;#8216;ok&amp;#8217;) is actually coming from the &lt;a href=&quot;http://yarivsblog.com/articles/2006/08/14/smerl-simple-metaprogramming-for-erlang/&quot;&gt;Smerl&lt;/a&gt; library by Yariv Sadan, and indicates that the module was successfully compiled and loaded into the code server.&amp;nbsp; Smerl allows for simple metaprogramming in Erlang by allowing you to build &amp;quot;meta modules&amp;quot; on-the-fly which then outputs all the Erlang forms needed to pass to compile:forms in order to buld a BEAM (or HiPE) module.&lt;/p&gt;
+
+&lt;p&gt;When Reia evaluates module declarations, it first compiles the Reia code to Erlang forms then passes them to Smerl to build modules, which invokes the Erlang compiler and loads the resulting bytecode into the Erlang code server.&amp;nbsp; The end result: on-the-fly module declaration.&amp;nbsp; You can call methods from compiled Reia modules just as you would any Erlang function, just keeping in mind that the module name is capitalized.&amp;nbsp; From eshell, you could call &amp;#8216;Foo&amp;#8217;:bar() to invoke the same function.&lt;/p&gt;
+
+&lt;p&gt;This allows a number of things which Erlang presently does not, and that doesn&amp;#8217;t just mean declaring modules from the interactive interpreter.&amp;nbsp; Reia allows multiple module declarations from the same file, and furthermore provides a toplevel scope which exists outside of modules and is evaluated as the file is being loaded.&amp;nbsp; This means you can declare modules in a file then invoke functions in them immediately afterward, just like the above example from the interactive interpreter.&lt;/p&gt;
+
+&lt;p&gt;There&amp;#8217;s a number of limits at present.&amp;nbsp; All module declarations need to be done from toplevel scope, i.e. you can&amp;#8217;t conditionally declare a module.&amp;nbsp; You also can&amp;#8217;t place statements besides defs inside a module declaration, so you can&amp;#8217;t conditionally declare functions/methods either.&amp;nbsp; However, that said, module declaration is no longer limited to compiled code in Reia.&amp;nbsp; You can now do it anywhere.&lt;/p&gt;
+
+&lt;p&gt;There&amp;#8217;s several possible optimizations down the road.&amp;nbsp; The compiler could be optimized to:&lt;/p&gt;
+
+&lt;ol&gt;
+    &lt;li&gt;Automatically produce HiPE versions of the modules if HiPE is available&lt;/li&gt;
+    &lt;li&gt;Keep a cache of generated BEAM/HiPE bytecode and only recompile if the original source file changes&lt;/li&gt;
+    &lt;li&gt;Precompile multiple modules in the same source file, employing cross-module optimizations&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;</description>
+	<pubDate>Wed, 06 Aug 2008 05:18:00 +0000</pubDate>
+</item>
+<item>
+	<title>Socklabs Blog: Presenting at CUFP</title>
+	<guid>tag:blog.socklabs.com,2008:entry-1549</guid>
+	<link>http://blog.socklabs.com/2008/08/presenting_at_cufp/</link>
+	<description>&lt;p&gt;The post I recently made regarding the use of Erlang in Delicious has gotten a fair amount of attention. To follow up as &quot;not just another erlang blogger&quot;, I'd like to refer people to the CUFP presentation that Mark Zweifel and myself will be giving at CUFP. We will be giving an overview of how, where and why Erlang was used and how it fit our needs. I'll also be covering how Erlang is used in other parts of Yahoo (officially and unofficially). Mark and I might also go through a brief round of Q&amp;amp;A depending on how long the presentation lasts.&lt;/p&gt;
+
+&lt;p&gt;I'm fairly certain that all of the CUFP presentations will be available online once the conference is over. As the conference approaches I'll post a more detailed abstract of the presentation. If you have a question that you'd like answered during the presentation please email me at &lt;a href=&quot;mailto:nick+cufp@gerakines.net&quot;&gt;nick+cufp@gerakines.net&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Please refer to the official &lt;a href=&quot;http://cufp.galois.com/&quot;&gt;CUFP website&lt;/a&gt; and &lt;a href=&quot;http://cufp.galois.com/2008/abstracts.html&quot;&gt;list of presentations&lt;/a&gt; for more information.&lt;/p&gt;</description>
+	<pubDate>Mon, 04 Aug 2008 19:20:52 +0000</pubDate>
+</item>
+<item>
+	<title>Programming in the 21st Century: Understanding What It's Like to Program in Forth</title>
+	<guid>http://prog21.dadgum.com/33.html</guid>
+	<link>http://prog21.dadgum.com/33.html</link>
+	<description>&lt;i&gt;I write Forth code every day. It is a joy to write a few simple words and
+solve a problem. As brain exercise it far surpasses cards, crosswords or
+Sudoku&lt;/i&gt;&lt;br /&gt;&lt;br /&gt;&lt;div align=&quot;right&quot;&gt;--&lt;a href=&quot;http://www.computerworld.com.au/index.php/id;766897508;fp;16;fpid;1&quot;&gt;Chuck
+Moore&lt;/a&gt;, creator of Forth&lt;/div&gt;
+&lt;br /&gt;&lt;br /&gt;I've used and enjoyed Forth quite a bit over the years, though I rarely find
+myself programming in it these days.  Among other projects, I've written
+several standalone tools in Forth, used it for exploratory programming, wrote a
+Forth-like language for handling data assets for a commercial project, and
+wrote two standalone 6502 cross assemblers using the same principles as Forth
+assemblers.
+&lt;br /&gt;&lt;br /&gt;It's easy to show how beautiful Forth can be.  The classic example is:
+&lt;pre&gt;: square dup * ;
+&lt;/pre&gt;There's also Leo Brodie's oft-cited &lt;a href=&quot;http://home.iae.nl/users/mhx/sf1/sf1.html&quot;&gt;washing machine&lt;/a&gt; program.
+But as pretty as these code snippets are, they're the easy, meaningless
+examples, much like the &lt;a href=&quot;http://www.haskell.org/haskellwiki/Introduction#Quicksort_in_Haskell&quot;&gt;two-line
+quicksort in Haskell&lt;/a&gt;.  They're trotted out to show the the strengths of a
+language, then reiterated by new converts.  The primary reason I wrote the &lt;a href=&quot;http://prog21.dadgum.com/23.html&quot;&gt;Purely Functional Retrogames&lt;/a&gt;
+series, is because of the disconnect between advocates saying everything is
+easy without destructive updates, and the utter lack of examples of how to approach
+many kinds of problems in a purely functional way.  The same small set of
+pretty examples isn't enough to understand what it's like to program in a
+particular language or style.
+&lt;br /&gt;&lt;br /&gt;Chuck Moore's Sudoku quote above is one of the most accurate characterizations
+of Forth that I've seen.  Once you truly understand it, you'll better see
+what's fun about the language, and also why it isn't as commonly used.  What
+I'd like to do is to start with a trivially simple problem, one that's
+completely straightforward, even simpler than the infamous &lt;a href=&quot;http://imranontech.com/2007/01/24/using-fizzbuzz-to-find-developers-who-grok-coding/&quot;&gt;FizzBuzz&lt;/a&gt;:
+&lt;br /&gt;&lt;br /&gt;&lt;i&gt;Write a Forth word to add together two integer vectors (a.k.a.  arrays) of three elements each.&lt;/i&gt;
+&lt;br /&gt;&lt;br /&gt;The C version, without bothering to invent custom data types, requires no thought:
+&lt;pre&gt;void vadd(int *v1, int *v2, int *v3)
+{
+       v3[0] = v1[0] + v2[0];
+       v3[1] = v1[1] + v2[1];
+       v3[2] = v1[2] + v2[2];
+}
+&lt;/pre&gt;In Erlang it's:
+&lt;pre&gt;vadd({A,B,C}, {D,E,F}) -&amp;gt; {A+D, B+E, C+F}.
+&lt;/pre&gt;In APL and J the solution is a single character:
+&lt;pre&gt;+
+&lt;/pre&gt;&lt;h3&gt;First Forth Attempt&lt;/h3&gt;
+So now, Forth.  We start with a name and stack picture:
+&lt;pre&gt;: vadd ( v1 v2 v3 -- )
+&lt;/pre&gt;Getting the first value out of v1 is easy enough:
+&lt;pre&gt;rot dup @
+&lt;/pre&gt;&quot;&lt;tt&gt;rot&lt;/tt&gt;&quot; brings v1 to the top, then we grab the first element of
+the array (remember that we need to keep v1 around, hence the &lt;tt&gt;dup&lt;/tt&gt;).
+Hmmm...now we've got four items on the stack:
+&lt;pre&gt;v2 v3 v1 a
+&lt;/pre&gt;&quot;a&quot; is what I'm calling the first element of v1, using the same
+letters as in the Erlang function.  There's no way to get v2 to the
+top of the stack, save the deprecated word &lt;tt&gt;pick&lt;/tt&gt;, so we're
+stuck.
+&lt;h3&gt;Second Forth Attempt&lt;/h3&gt;
+Thinking about this a bit more, the problem is we have too many items
+being dealt with at once, too many items on the stack.  v3 sitting
+there on top is getting in the way, so what if we moved it somewhere
+else for a while?  The return stack is the standard location for a
+temporary value, so let's try it:
+&lt;pre&gt;&amp;gt;r over @ over @ + r&amp;gt; !
+&lt;/pre&gt;Now that works.  We get v3 out of the way, fetch v1 and v2 (keeping
+them around for later use), then bring back v3 and store the result.
+Well, almost, because now v3 is gone and we can't use it for the
+second and third elements.
+&lt;h3&gt;Third Forth Attempt&lt;/h3&gt;
+This isn't as bad as it sounds.  We can just keep v3 over on the
+return stack for the whole function.  Here's an attempt at the full
+version of &lt;tt&gt;vadd&lt;/tt&gt;:
+&lt;pre&gt;: vadd ( v1 v2 v2 -- )
+       &amp;gt;r
+       over @ over @ + r@ !
+       over cell+ @ over cell+ @ + r@ cell+ !
+       over 2 cells + @ over 2 cells + @ + r&amp;gt; 2 cells + !
+       drop drop ;
+&lt;/pre&gt;&lt;tt&gt;cell+&lt;/tt&gt; is roughly the same as &lt;tt&gt;++&lt;/tt&gt; in C.  &quot;&lt;tt&gt;2 cells +&lt;/tt&gt;&quot;
+is equivalent to &quot;&lt;tt&gt;cell+ cell+&lt;/tt&gt;&quot;.  Notice how v3 stays on the
+return stack for most of the function, being fetched with &lt;tt&gt;r@&lt;/tt&gt;.
+ The &quot;&lt;tt&gt;drop drop&lt;/tt&gt;&quot; at the end is to get rid of v1 and v2.  Some
+nicer formatting helps show the symmetry of this word:
+&lt;pre&gt;: vadd ( v1 v2 v2 -- )
+       &amp;gt;r
+       over           @  over           @  + r@           !
+       over cell+     @  over cell+     @  + r@ cell+     !
+       over 2 cells + @  over 2 cells + @  + r&amp;gt; 2 cells + !
+       drop drop ;
+&lt;/pre&gt;This can be made more obvious by defining some vector access words:
+&lt;pre&gt;: 1st ;
+: 2nd cell+ ;
+: 3rd 2 cells + ;
+
+: vadd ( v1 v2 v2 -- )
+       &amp;gt;r
+       over 1st @  over 1st @  + r@ 1st !
+       over 2nd @  over 2nd @  + r@ 2nd !
+       over 3rd @  over 3rd @  + r&amp;gt; 3rd !
+       drop drop ;
+&lt;/pre&gt;A little bit of extra verbosity removes one quirk in the pattern:
+&lt;pre&gt;: vadd ( v1 v2 v2 -- )
+       &amp;gt;r
+          over 1st @  over 1st @  + r@ 1st !
+          over 2nd @  over 2nd @  + r@ 2nd !
+          over 3rd @  over 3rd @  + r@ 3rd !
+       rdrop drop drop ;
+&lt;/pre&gt;And that's it--three element vector addition in Forth.  One solution at least; I can think of several completely different approaches, and I don't claim that this is the most concise of them.  It has some interesting properties, not the least of which is that there aren't any named variables.  On the other hand, all of this puzzling, all this revision...to solve a problem which takes no thought at all in most languages.  And while the C version can be switched from integers to floating point values just by changing the parameter types, that change would require &lt;i&gt;completely rewriting the Forth code&lt;/i&gt;, because there's a separate floating point stack.
+&lt;br /&gt;&lt;br /&gt;Still, it was enjoyable to work this out.   Better than Sudoku?  Yes.</description>
+	<pubDate>Sat, 02 Aug 2008 06:00:00 +0000</pubDate>
+</item>
+<item>
+	<title>Trapexit's Erlang Blog Filter: gcode: Building blocks for Erlang/OTP systems using distributed algorithms</title>
+	<guid>tag:typepad.com,2003:post-53632822</guid>
+	<link>http://www.p16blog.com/p16/2008/08/gcode-building-blocks-for-erlangotp-systems-using-distributed-algorithms.html</link>
+	<description>&lt;div&gt;&lt;p&gt;&lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://code.google.com/p/distributerl/&quot;&gt;distributerl: Building blocks for Erlang/OTP systems using distributed algorithms.&lt;/a&gt;&lt;/p&gt; &lt;p&gt;Hosted on Google Code. Labels: &quot;erlang, distributed, algorithms, vectorclock, consistenthashing, merkletrees, gossip&quot;&lt;/p&gt; &lt;p&gt;Spiffy, will have to keep an eye on this!&lt;/p&gt;
+&lt;/div&gt;</description>
+	<pubDate>Fri, 01 Aug 2008 15:34:51 +0000</pubDate>
+</item>
+<item>
+	<title>Trapexit's Erlang Blog Filter: More scalable datastores: Scalaris, nmdb</title>
+	<guid>tag:typepad.com,2003:post-53632332</guid>
+	<link>http://www.p16blog.com/p16/2008/08/more-scalable-datastores-scalaris-nmdb.html</link>
+	<description>&lt;div&gt;&lt;p&gt;&lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://code.google.com/p/scalaris/&quot;&gt;Scalaris&lt;/a&gt; is a new distributed key-value datastore, recently announced and code posted to Google Code.&lt;/p&gt; &lt;p&gt;It was announced and &lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://video.google.com/videoplay?docid=6981137233069932108&amp;q=erlang%202008&amp;hl=en&quot;&gt;demoed at Erlang eXchange 2008&lt;/a&gt;. Joe Armstrong (father of Erlang) later wrote on his blog: &lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://armstrongonsoftware.blogspot.com/2008/06/itching-my-programming-nerve.html&quot;&gt;&quot;my gut feeling is that what Alexander Reinefeld showed us will be the first killer application in Erlang&quot;&lt;/a&gt;&lt;/p&gt; &lt;p&gt;Armstrong's summary:&lt;/p&gt; &lt;ol&gt;
+&lt;li&gt;They make a peer to peer system based on the chord algorithm&lt;/li&gt;
+&lt;li&gt;They added a replication later using the paxos algorithm&lt;/li&gt;
+&lt;li&gt;They added a transaction layer&lt;/li&gt;
+&lt;li&gt;The injected the wikipedia&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;It went faster that the existing wikipedia&lt;/p&gt; &lt;p&gt;&quot;Applied to Wikipedia, Scalaris serves 2,500 transactions per second with just 16 CPUs, which is better than the public Wikipedia.&quot;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt; &lt;p&gt;One downside: it's presently a memory-only store, so it's quite useless for permanent data storage. (One full power-outage in a data center will obliterate all of your data. Doh!)&lt;/p&gt; &lt;p&gt;&lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://blitiri.com.ar/p/nmdb/&quot;&gt;nmdb&lt;/a&gt; is yet another distributed key-value store, this one implemented in ~5000 lines of C and using &lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://qdbm.sf.net/&quot;&gt;qdbm&lt;/a&gt; or &lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://www.oracle.com/database/berkeley-db/&quot;&gt;berkeley db&lt;/a&gt; as the back-end store. It looks simple and stable. Major limitations: it's distributed, not replicated, so is more like a persistent memcache (like &lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://meta.wikimedia.org/wiki/Tugela_Cache&quot;&gt;Tugela&lt;/a&gt; and &lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://code.google.com/p/memcachedb/&quot;&gt;memcachedb&lt;/a&gt;). There is also a hard 64kB size limit on key+value packets.&lt;/p&gt; &lt;p&gt;As you might have guessed from my articles on this topic -- I am looking a &quot;Bigtable-like&quot; datastore that I can recommend to clients. My criteria are:&lt;/p&gt; &lt;ul&gt;
+&lt;li&gt;It must be reasonably mature: losing data isn't an option!&lt;/li&gt;
+&lt;li&gt;It must be open-source, and the project must &quot;have legs&quot; (not abandoned)&lt;/li&gt;
+&lt;li&gt;It must be fast enough to serve as the primary datastore behind a web service API&lt;/li&gt;
+&lt;li&gt;It must store a few terabytes of data on &amp;lt; 5 machines (not in RAM!), and be able to grow capacity by just adding more machines&lt;/li&gt;
+&lt;/ul&gt; &lt;p&gt;I still haven't found anything I'd recommend. Dang it guys, finish one of these projects! :) Maybe I'll have to build something custom on top of &lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://www.danga.com/mogilefs/&quot;&gt;MogileFS&lt;/a&gt; from scratch after all?&lt;/p&gt;
+&lt;/div&gt;</description>
+	<pubDate>Fri, 01 Aug 2008 15:30:42 +0000</pubDate>
+</item>
+<item>
+	<title>Hypothetical Labs: My Emacs Config</title>
+	<guid>http://weblog.hypotheticalabs.com/?p=287</guid>
+	<link>http://weblog.hypotheticalabs.com/?p=287</link>
+	<description>&lt;p&gt;The popularity of my &amp;#8220;Configuring Emacs for Erlang&amp;#8221; &lt;a href=&quot;http://weblog.hypotheticalabs.com/?p=265&quot;&gt;screencast&lt;/a&gt; seems to have long legs. With the new Ogg version I&amp;#8217;ve passed 1000 downloads since I first put it online a few months ago.&lt;/p&gt;
+&lt;p&gt;To keep the Erlang and Emacs love flowing I&amp;#8217;ve checked in the Emacs config I use to my Github repo. This is mostly the same config built in the screencast. If you liked what you saw but don&amp;#8217;t want to fiddle with doing it yourself you can &lt;code&gt;git clone&lt;/code&gt; the files from my repo: &lt;code&gt;git://github.com/kevsmith/hypotheticalabs.git&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;You can browse the files &lt;a href=&quot;http://github.com/kevsmith/hypotheticalabs/tree/master/emacs&quot;&gt;here&lt;/a&gt; if you&amp;#8217;re curious and don&amp;#8217;t want to commit to a checkout &lt;img src=&quot;http://weblog.hypotheticalabs.com/wp-includes/images/smilies/icon_smile.gif&quot; alt=&quot;:)&quot; class=&quot;wp-smiley&quot; /&gt;&lt;/p&gt;</description>
+	<pubDate>Fri, 01 Aug 2008 13:32:07 +0000</pubDate>
+</item>
+<item>
+	<title>Hypothetical Labs: Erlang Source via Git</title>
+	<guid>http://weblog.hypotheticalabs.com/?p=286</guid>
+	<link>http://weblog.hypotheticalabs.com/?p=286</link>
+	<description>&lt;p&gt;From the erlang-questions mailing list:&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;&amp;#8220;I find Matthew Foemmel&amp;#8217;s &lt;a href=&quot;http://github.com/mfoemmel/erlang-otp&quot;&gt;http://github.com/mfoemmel/erlang-otp/tree git&lt;/a&gt; repository to be very handy for browsing the OTP source, working out when features were added (the history goes back to R6B-0) and so on. Erlang/OTP packaging for debian/macports/&amp;#8230; is much easier to track&lt;br /&gt;
+against this repository too.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;Thanks to Geoff Cant for pointing this out. I wonder what would happen if people started submitting patches to this tree? Hmmm&amp;#8230;..&lt;/p&gt;</description>
+	<pubDate>Fri, 01 Aug 2008 10:30:28 +0000</pubDate>
+</item>
+<item>
+	<title>Socklabs Blog: Delicious is gone! Long live Delicious!</title>
+	<guid>tag:blog.socklabs.com,2008:entry-1547</guid>
+	<link>http://blog.socklabs.com/2008/07/delicious_is_gone_long_live_de/</link>
+	<description>&lt;p&gt;The Delicious team at Yahoo has been hard at work for &lt;em&gt;over a year&lt;/em&gt; working on a complete overhaul of the system and I'm so very proud and happy to announce that their hard work has payed off this week. Delicious has launched it's 2.0 version including a very slick site redesign. Delicious, in its former state, was a huge Perl application on top of Apache and MySQL. Since then, its been completely recreated in a tiered system with quite a bit of PHP and c++ with Erlang sprinkled around in various places.&lt;/p&gt;
+
+&lt;p&gt;I can't count the number of features and internals that have been completely overhauled for performance. There are also several new really cool, and much needed, features. As trivial as it may seem, my all-time favorite is the ability to create aliases for people in your network. No longer do I need to see &quot;b3d0u1n&quot; on my network page or inbox, but now &quot;Mark Zweifel&quot;. Hurray&lt;/p&gt;
+
+&lt;p&gt;So, congratulations to everyone in the Delicious group and who supported them! Today is a great day.&lt;/p&gt;</description>
+	<pubDate>Thu, 31 Jul 2008 22:05:12 +0000</pubDate>
+</item>
+<item>
+	<title>Hypothetical Labs: Thinking About Concurrency Oriented Programming</title>
+	<guid>http://weblog.hypotheticalabs.com/?p=285</guid>
+	<link>http://weblog.hypotheticalabs.com/?p=285</link>
+	<description>&lt;p&gt;I&amp;#8217;m working on a presentation I&amp;#8217;m hoping to give at my local BarCamp this weeekend. The presentation is going to be on Erlang &amp;#8212; surprise, surprise &amp;#8212; and how it makes concurrent programming easy. One of my goals for the talk is to find a way to bridge the conceptual gap between OOP and Concurrency Oriented Programming (COP). I want OO developers to grok the importance of COP without a lot of mental gymnastics.&lt;/p&gt;
+&lt;p&gt;A realization hit me this morning while I was brushing my teeth. I was meditating on the relationship between classes and objects in OO languages and Erlang&amp;#8217;s modules and processes.&lt;/p&gt;
+&lt;p&gt;In most OO languages classes define constructors, destructors or finalizers, interfaces and functions, and member variables. Objects take these definitions and turn them into runtime behaviors. OO Theory 101.&lt;/p&gt;
+&lt;p&gt;I realized if I substituted Erlang&amp;#8217;s modules for classes and processes for objects the same relationship would still hold. Erlang modules define runtime behaviors by way of the functions they define and export. Modules are used to create &amp;#8220;instances&amp;#8221; of themselves by creating processes which use the module. Modules also define a data model by defining the state variables used by the Erlang process.&lt;/p&gt;
+&lt;p&gt;Erlang&amp;#8217;s OTP behaviors are an excellent example of the relationship in action. Behaviors define, well, behaviors by way of the callback functions they define and the management functions they export. They model the class-to-object relationship by creating processes which use the behavior module. Finally, they define a data model because they also define the state variables used by the running process.&lt;/p&gt;
+&lt;p&gt;I think I&amp;#8217;ve intuitively known this for a while because it reflects the way I&amp;#8217;ve been writing Erlang for a while now. I tend to write code where a single module implements a certain &amp;#8220;type&amp;#8221; process. I&amp;#8217;ve noticed code written this way is easier to understand later and much easier to debug for the same reasons OO code written in this style is easier to maintain: data encapsulation, well-defined contracts, and separation of responsibilities.&lt;/p&gt;</description>
+	<pubDate>Thu, 31 Jul 2008 13:30:18 +0000</pubDate>
+</item>
+<item>
+	<title>Caoyuan's Blog: Run/Debug Lift Web App Using Scala/Maven Plugin for NetBeans</title>
+	<guid>http://blogtrader.org/page/dcaoyuan/entry/run_debug_lift_web_app</guid>
+	<link>http://blogtrader.org/page/dcaoyuan/entry/run_debug_lift_web_app</link>
+	<description>&lt;p&gt;
+I'm a newbie to Maven, so I encountered some issues when run/debug Lift apps. The following are tips that I got, it may not be perfect, but at least work.
+&lt;p&gt;
+&lt;h4&gt;1. When pom.xml is changed, and classes not found errors happen on editor, you can close and reopen the project&lt;/h4&gt;
+This is a known issue, that I didn't refresh compiling context when pom.xml changed, thus the classpath dependency may be not refreshed at once, I'll fix this issue in the near future.
+&lt;h4&gt;2. Run project by external Maven instead of embedded Maven of NetBeans plugin&lt;/h4&gt;
+I encountered &quot;java.lang.NoClassDefFoundError org/codehaus/plexus/util/DirectoryScanner&quot; when use embedded NetBeans Maven plugin (3.1.3) when invoke &quot;Run&quot; project, but fortunately, you can custom the binding actions in NetBeans Maven. The steps are:
+&lt;ol&gt;
+&lt;li&gt;Right click project node, choose &quot;Properties&quot;&lt;/li&gt;
+&lt;li&gt;Click on &quot;Actions&quot; in left-pane, choose &quot;Use external Maven for build execution&quot;, and &quot;set external Maven home&quot;&lt;/li&gt;
+&lt;li&gt;Choose &quot;Run project&quot; in right-pane, input &quot;jetty:run&quot;&lt;/li&gt;
+&lt;li&gt;Choose &quot;Debug project&quot; in right-pane, input &quot;jetty:run&quot;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4&gt;3. How to debug project&lt;/h4&gt;
+I'm a bit stupid here, since I don't like to change MAVEN_OPTS frequently. So I choose to do:
+&lt;p&gt;
+&lt;pre class=&quot;code&quot;&gt;
+$ cd $MAVEN_HOME$/bin
+$ cp mvn mvn.run
+$ cp mvnDebug mvn
+&lt;/pre&gt;
+&lt;p&gt;
+Then I invoke &quot;Debug&quot; action from NetBeans toolbar, and get NetBeans' output window saying:
+&lt;p&gt;
+&lt;pre&gt;
+WARNING: You are running Maven builds externally, some UI functionality will not be available.
+Executing:/Users/dcaoyuan/apps/apache-maven-2.0.9/bin/mvn jetty:run
+Preparing to Execute Maven in Debug Mode
+Listening for transport dt_socket at address: 8000
+&lt;/pre&gt;
+&lt;p&gt;
+Open menu &quot;Debug&quot; -&gt; &quot;Attach Debugger...&quot;, in the popped window, for &quot;Port:&quot;, input &quot;8000&quot;. Everything goes smoothly then. You add/remove breakpoints just as you are doing for a regular Scala project.
+&lt;p&gt;
+Of course, if you want to turn back to &quot;Run&quot; from &quot;Debug&quot;, you have to &quot;cp mvn.run mvn&quot; back.
+&lt;p&gt;
+Anybody can give me hints on how to get this setting simple? in NetBeans Maven plugin.
+&lt;p&gt;
+Here's a snapshot: (click to enlarge it)
+&lt;p&gt;
+&lt;a href=&quot;http://blogtrader.net/resources/dcaoyuan/ScalaEditor_080729a.png&quot;&gt;&lt;img alt=&quot;nn&quot; width=&quot;700&quot; src=&quot;http://blogtrader.net/resources/dcaoyuan/ScalaEditor_080729a.png&quot; /&gt;&lt;/a&gt;
+&lt;p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;</description>
+	<pubDate>Tue, 29 Jul 2008 22:53:47 +0000</pubDate>
+</item>
+<item>
+	<title>Hypothetical Labs: Episode 6 Is Available</title>
+	<guid>http://weblog.hypotheticalabs.com/?p=283</guid>
+	<link>http://weblog.hypotheticalabs.com/?p=283</link>
+	<description>&lt;p&gt;Episode 6 in my &amp;#8220;Erlang In Practice&amp;#8221; series is &lt;a href=&quot;http://www.pragprog.com/screencasts/v-kserl/erlang-in-practice&quot;&gt;available&lt;/a&gt; now. Check it out if you&amp;#8217;re interestedin Mochiweb, REST, or writing Erlang code which interfaces with HTTP clients.&lt;/p&gt;</description>
+	<pubDate>Tue, 29 Jul 2008 15:49:48 +0000</pubDate>
+</item>
+<item>
+	<title>Caoyuan's Blog: Scala, NetBeans, Maven, and yes, Lift now</title>
+	<guid>http://blogtrader.org/page/dcaoyuan/entry/scala_netbeans_maven_and_yes</guid>
+	<link>http://blogtrader.org/page/dcaoyuan/entry/scala_netbeans_maven_and_yes</link>
+	<description>&lt;p&gt;
+Per recent changes, Scala for NetBeans can live with Maven for NetBeans, and yes, &lt;a href=&quot;http://liftweb.net&quot;&gt;Lift web framework&lt;/a&gt;.
+&lt;p&gt;
+The Maven for NetBeans has done an excellent work for Maven's project integration, with proper classpath supporting and indexing. So the Scala editor is well aware of auto-completion, types etc.
+&lt;p&gt;
+Here's a snapshot: (click to enlarge it)
+&lt;p&gt;
+&lt;a href=&quot;http://blogtrader.net/resources/dcaoyuan/ScalaEditor_080729.png&quot;&gt;&lt;img alt=&quot;nn&quot; width=&quot;700&quot; src=&quot;http://blogtrader.net/resources/dcaoyuan/ScalaEditor_080729.png&quot; /&gt;&lt;/a&gt;
+&lt;p&gt;
+To get above features, you have to download the latest NetBeans daily build, then install Scala's plugins and Maven plugins.
+&lt;p&gt;
+For Scala plugins, see &lt;a href=&quot;http://wiki.netbeans.org/Scala&quot;&gt;http://wiki.netbeans.org/Scala&lt;/a&gt;; For Maven plugins, see &lt;a href=&quot;http://wiki.netbeans.org/MavenBestPractices&quot;&gt;http://wiki.netbeans.org/MavenBestPractices&lt;/a&gt;.
+&lt;p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;</description>
+	<pubDate>Tue, 29 Jul 2008 03:25:38 +0000</pubDate>
+</item>
+<item>
+	<title>Hypothetical Labs: Erlang Screencast Goodness</title>
+	<guid>http://weblog.hypotheticalabs.com/?p=282</guid>
+	<link>http://weblog.hypotheticalabs.com/?p=282</link>
+	<description>&lt;p&gt;The next episode in my &lt;a href=&quot;http://www.pragprog.com/screencasts/v-kserl/erlang-in-practice&quot;&gt;series&lt;/a&gt; is done and should be available in the next 24 hours. The resident editing wizard at Pragmatic Studios, aka Mike Clark, has worked his magic again and made me look way more professional than I ever expected.&lt;/p&gt;
+&lt;p&gt;The episode runs a little long with a total run time of about 45 minutes.  It covers:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Downloading, building, and installing &lt;a href=&quot;http://code.google.com/p/mochiweb/&quot;&gt;Mochiweb&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Using Mochiweb to build a simple web application&lt;/li&gt;
+&lt;li&gt;Erlang&amp;#8217;s experimental support for parameterized modules&lt;/li&gt;
+&lt;li&gt;Adding REST-style endpoints to the chat system developed in previous episodes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;And because I felt a little bored today, I&amp;#8217;ve made another attempt at making my &lt;a href=&quot;http://weblog.hypotheticalabs.com/?p=265&quot;&gt;Configuring Emacs for Erlang&lt;/a&gt; screencast viewable for a wider audience. You can download the Ogg encoded version of the video &lt;a href=&quot;http://weblog.hypotheticalabs.com/downloads/emacs_erlang.ogg&quot;&gt;here&lt;/a&gt;. I tested it with the &lt;a href=&quot;http://www.videolan.org/vlc/&quot;&gt;VLC&lt;/a&gt; player on OS X 10.5.4 and a recent Fedora 9 install so I&amp;#8217;m hopeful more people will be able to view it.&lt;/p&gt;</description>
+	<pubDate>Tue, 29 Jul 2008 01:39:59 +0000</pubDate>
+</item>
+<item>
+	<title>Hypothetical Labs: Erlang &amp; Single Assignment: Youre Doing It Wrong</title>
+	<guid>http://weblog.hypotheticalabs.com/?p=281</guid>
+	<link>http://weblog.hypotheticalabs.com/?p=281</link>
+	<description>&lt;p&gt;Patrick Logan&amp;#8217;s latest &lt;a href=&quot;http://patricklogan.blogspot.com/2008/07/calling-names.html&quot;&gt;missive&lt;/a&gt; highlighting the complaints some people have about Erlang&amp;#8217;s single-assignment semantics reminds me of something I&amp;#8217;ve been wanting to say for a while:&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;&lt;b&gt;If you are chronically bumping into the limitations of single-assignment then you&amp;#8217;re doing it wrong.&lt;/b&gt;&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;Off the top of my head, here are the two reasons I can think of why people don&amp;#8217;t like single-assignment semantics (SAS for short):&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Looping over a collection of values - If you&amp;#8217;re running afoul of SAS then you&amp;#8217;re looping iteratively not functionally. You should investigate list comprehensions, recursive functions combined with pattern matching, or &lt;code&gt;map&lt;/code&gt;, &lt;code&gt;fold&lt;/code&gt;, &lt;code&gt;zip&lt;/code&gt;, or &lt;code&gt;zipwith&lt;/code&gt; in the &lt;code&gt;lists&lt;/code&gt; module. If you really need plain old for-loop style iteration, &lt;code&gt;lists:foreach/2&lt;/code&gt; should do nicely but in a functional style.&lt;/li&gt;
+&lt;li&gt;Reusing variables in the same function - Quit it. Really. Erlang is trying to tell you your function is either too long or doing too many things.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This isn&amp;#8217;t to say that you&amp;#8217;ll never bump into SAS. I run into it mostly when I&amp;#8217;m writing code which makes heavy use of records and &lt;code&gt;qlc&lt;/code&gt; although I daresay with a bit of thought and factoring I could remove those instances as well. Cobbler&amp;#8217;s shoes and all that.&lt;/p&gt;
+&lt;p&gt;Rather than bring your favorite language&amp;#8217;s paradigm to Erlang (Ruby, Python, Java, etc) try working with Erlang&amp;#8217;s grain. The style of programming these techniques encourage, namely reducing side-effects and function complexity, are beneficial no matter what language you&amp;#8217;re using.&lt;/p&gt;</description>
+	<pubDate>Mon, 28 Jul 2008 20:03:33 +0000</pubDate>
+</item>
+<item>
+	<title>Socklabs Blog: More on deploying CouchDB for I Play WoW</title>
+	<guid>tag:blog.socklabs.com,2008:entry-1546</guid>
+	<link>http://blog.socklabs.com/2008/07/more_on_deploying_couchdb_for/</link>
+	<description>&lt;p&gt;So its been well over 48 hours with CouchDB as a major data source for the I Play WoW Facebook application. It has been a lot of fun moving over to it and rethinking the way that some things are being done. This is sort of a quick overview of why I wanted to move over and what I got and lost doing so.&lt;/p&gt;
+
+&lt;p&gt;CouchDB represents where data storage systems are going and I want to know as much about it as possible. The data structures that I Play WoW uses lend themselves to CouchDB very well. I also really like the model that CouchDB follows with document revisions.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Win: I'm not bound to table columns! If I want to start supporting  additional fields for characters, I just have to start using them. I don't have to perform table maintenance or require data-store downtime to develop features.&lt;/li&gt;
+&lt;li&gt;Win: CouchDB's RESTful JSON over http interface makes caching super simple with something like Varnish. MySQL had some nifty caching internals for frequent queries, but I think the randomness of I Play WoW diminishes the value of them. To my knowledge Mnesia didn't do much at all regarding query caching.&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Win: Another very nice perk to using JSON over http is that I don't need x, y or z libraries to use it. I wrote a really simple (under 200 lines) erlang module for I Play WoW and most of my testing and development just used curl.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -X POST --data '{ &quot;map&quot; : &quot;function(doc) { if (doc.version == 2) { emit(doc.crc, [doc._id, doc._rev, doc.name, doc.version, doc.realm]); } }&quot; }' --header &quot;Content-Type: application/json&quot; http://127.0.0.1:5984/iplaywow/_temp_view
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Win: Views rock! Using view collation I've cut down what would be the number of queries that I have to execute. Loading a guild or realm page is now just one http request as opposed to 3-5 queries.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Win: The flexibility of &quot;loose&quot; documents let me do really cool things like character versioning. With the World of Warcraft Armory crawler now using CouchDB when I fetch character information and determine that it is newer than what I'm already storing I can archive the old document and create a new character document with an incremented version. The views for characters, guilds and realms use these versions to retrieve the latest versions of characters. I'm excited about this the most because it gives me the ability to develop features that let you &quot;diff&quot; character versions.&lt;/li&gt;
+&lt;li&gt;Compromise: I'm not sure if views are as snappy as Mnesia or MySQL queries. Doing direct document fetching is really quick but sometimes it takes a little longer than I expect with complex views. I'm pretty confident that as the project matures this will become less and less of an issue. Varnish also helps.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Right now the main database that I'm using has just over 350,000 documents representing characters, realms and guilds. I've got about 20 views for different things and still exploring ways to better utilize them. I'm still using Mnesia for some things, but I'm actively developing and exploring ways to move away from it.&lt;/p&gt;
+
+&lt;p&gt;What I really want to do is find a way to snapshot a table and freeze it on Amazon S3 or something. It'd be really cool to be able to fire up an EC2 instance the creates a replicator that dupes data up to a certain point, dumps the data to some sort of backup file, pushes it to S3 and destroys itself. &lt;/p&gt;</description>
+	<pubDate>Mon, 28 Jul 2008 07:44:00 +0000</pubDate>
+</item>
+<item>
+	<title>Kevin Scaldeferri's Weblog: OSCON in a Nutshell</title>
+	<guid>http://kevin.scaldeferri.com/blog/2008/07/26/Summary2008.html</guid>
+	<link>http://kevin.scaldeferri.com/blog/2008/07/26/Summary2008.html</link>
+	<description>&lt;p&gt;I couldn’t take detailed notes this year on account of a sprained
+  wrist, but here’s the highlights of my week.&lt;/p&gt;
+&lt;p&gt;I spent most of Monday and Tuesday working on my talk.  Tuesday
+  afternoon, I bounced back and forth between &lt;a href=&quot;http://en.oreilly.com/oscon2008/public/schedule/detail/3001&quot;&gt;People
+    for Geeks&lt;/a&gt; and &lt;a href=&quot;http://en.oreilly.com/oscon2008/public/schedule/detail/3373&quot;&gt;Francesco’s
+  Erlang Tutorial&lt;/a&gt;.  Nothing new for me in the Erlang talk, but I
+  wanted to get an idea of what he was covering.  There was a lot
+  packed into 3 hours, but people I talked to said positive things —
+  that they learned a lot about the language.  Over in “People for
+  Geeks”, Andy Lester had quite a bit to say about working with your
+  manager which I considered questionable.  For example, “don’t go to
+  your manager with problems” (I thought a manager’s job was to clear
+  obstacles) and “your job is to make your manager look good” (I
+  wonder what our shareholders and upper management have to say about
+  that one).  On the other hand, pointing out that your manager is
+  probably not actually incompetent or malicious is valid, although
+  it’s a little sad that we have to point that out.&lt;/p&gt;
+&lt;p&gt;Tuesday evening was the opening extravaganza.  I was kinda bored by
+Mark Shuttleworth’s talk, but r0ml and Damian Conway were excellent as
+  usual.  Although, knowing enough physics to be bothered by the
+  inaccuracies in Conway’s talk was a little annoying.&lt;/p&gt;
+&lt;p&gt;Wednesday I skipped the keynotes in favor of a proper breakfast and
+  another practice run before giving &lt;a href=&quot;http://en.oreilly.com/oscon2008/public/schedule/detail/3065&quot;&gt;my
+  talk&lt;/a&gt;.  Seemed to go well — good attendance, questions that
+  indicated people were interested in the subject matter.  Bummer that
+they scheduled both Erlang-related talks at the same time, though.  A
+  talk about &lt;a href=&quot;http://en.oreilly.com/oscon2008/public/schedule/detail/2475&quot;&gt;Hypertable&lt;/a&gt;
+was interesting, although a few too many questions were answered by
+  “we’re still working on that”.  Wrapped up the day with Paul
+  Fenwick’s &lt;a href=&quot;http://en.oreilly.com/oscon2008/public/schedule/detail/3072&quot;&gt;An
+    Illustrated History of Failure&lt;/a&gt;, a fun overview of some of the
+  more spectacular (mostly software) failures the world has seen.  In
+  the evening, went by the MySQL / Zend / Sun party, but spent most of
+the time worrying that drunk people on tricycles were going to run
+  into me and complicate my injuries.  Also, &lt;a href=&quot;http://www.flickr.com/photos/yi-shi-mcgee/2703200602/&quot;&gt;giant
+    rabbits&lt;/a&gt; are creepy.&lt;/p&gt;
+&lt;p&gt;Thursday.  Nat’s keynote on teaching kids to program was
+  inspirational.  I downloaded the programs he recommended to try out
+  with my daughter.  &lt;a href=&quot;http://en.oreilly.com/oscon2008/public/schedule/detail/2544&quot;&gt;Processing
+  Large Data with Hadoop and EC2&lt;/a&gt; was quite interesting.  The New
+  York Times used Hadoop and EC2 to do a pile of image processing
+  related to releasing the archives of the first 100 or so years of
+  the paper onto the web. Tim Bunce talked about &lt;a href=&quot;http://en.oreilly.com/oscon2008/public/schedule/detail/2960&quot;&gt;Ultimate
+  Perl Code Profiling&lt;/a&gt; using Devel::NYTProf v2.  To quote an
+  audience member, “I have only one question: why are you so
+  awesome?”.  I also went to a talk about &lt;a href=&quot;http://en.oreilly.com/oscon2008/public/schedule/detail/3131&quot;&gt;Meebo’s
+  Interview Process&lt;/a&gt; which was pretty interesting.  I’m not sure
+  that I picked up anything new, but it did validate a number of
+  opinions I’ve formed about what works and what doesn’t over the
+  years.  In particular, having candidates spend a couple hours
+  actually doing the sort of work they will on the job is a really
+  valuable technique.  She’s stressed that you have to ask people to
+  do a task that people who don’t do that job would actually fail.
+  I’d add that your interview process should probably be rigorous
+  enough that some of your current employees who &lt;em&gt;are&lt;/em&gt; doing that job
+  would fail it.&lt;/p&gt;
+&lt;p&gt;Thursday evening I decided to go home for a proper dinner, then
+  came back for Beerforge (kinda disappointingly sparsely attended)
+  and the O’Reilly speakers’ party (full of interesting people,
+  unsurprisingly).&lt;/p&gt;
+&lt;p&gt;On Friday, Tim Bray’s keynote was an amusingly frantic discussion
+  of language trends, with a nice shout-out given to Erlang, and a
+  general leaning towards functional languages as a promising
+  developing direction.  &lt;a href=&quot;http://en.oreilly.com/oscon2008/public/schedule/detail/2438&quot;&gt;The
+  Twilight Perl&lt;/a&gt; was a little less scary than average Conway,
+  because he limited himself to no source filters or even outside
+  modules for the most part.  As a result, most of the tricks weren’t
+  too difficult to figure out if you’re familiar with all the corners
+  of the base language.  But, it was still quite entertaining.  After
+  his talk, I bailed on the closing keynotes (a repeat of “An
+  Illustrated History of Failure” for some reason) in favor of lunch
+  and trying to replace my missing phone (lost somewhere Weds
+  evening).&lt;/p&gt;
+&lt;p&gt;Two fan-boy moments:  Spent a few minutes talking with Larry Wall
+  about Erlang, and asked Tim Bray for advice about hats (specifically
+  traveling with them).&lt;/p&gt;
+&lt;p&gt;Overall, it was a good week as usual.  Once again, I was struck by
+  how much I felt that living in town actually detracted from the
+  conference experience.  If I submit a talk for next year, I’ll make
+  sure to actually start writing it more than a week in advance; that
+  was stress I didn’t need.&lt;/p&gt;
+
+  &lt;p&gt;&lt;a href=&quot;http://kevin.scaldeferri.com/blog/2008/07/26/Summary2008.html#comments&quot;&gt;Comments&lt;/a&gt;&lt;p&gt;&lt;/p&gt;&lt;/p&gt;</description>
+	<pubDate>Sun, 27 Jul 2008 06:06:11 +0000</pubDate>
+</item>
+<item>
+	<title>Tony Arcieri: The single assignment cargo cult</title>
+	<guid>urn:uuid:fb5da128-af64-4442-a336-b704d928c6e0</guid>
+	<link>http://tonyarcieri.org/articles/2008/07/26/the-single-assignment-cargo-cult</link>
+	<description>&lt;p&gt;Erlang programmers are awfully vocal about the idea of single assignment: unlike virtually every other language on the planet where you are free to bind values to the same identifier over and over again, in Erlang you can do it once and only once.&amp;nbsp; However, if you ask an Erlang programmer why multiple assignment is a bad thing you&amp;#8217;re unlikely to get a straight answer:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;i&gt;&amp;quot;It is reason why once variable assignment is in Erlang and why it is good think. One advice for you: Don&amp;#8217;t change well proved language until you worth know it.&amp;quot;&lt;/i&gt;&lt;/p&gt;
+&lt;p&gt;&lt;i&gt;&amp;quot;Are you saying Joe Armstrong is wrong?&amp;quot;&lt;/i&gt;&lt;/p&gt;
+&lt;p&gt;&lt;i&gt;&amp;quot;If I have to explain to you why multiple assignment is bad, you obviously don&amp;#8217;t know Erlang well enough&amp;quot;&lt;/i&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I was rather relieved to see Damien Katz, one of the principal authors of CouchDB, expressing similar concerns about Erlang&amp;#8217;s lack of multiple assignment in his blog post &amp;quot;&lt;a href=&quot;http://damienkatz.net/2008/03/what_sucks_abou.html&quot;&gt;What Sucks About Erlang&lt;/a&gt;&amp;quot;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;In C, lets say you have some code:&lt;/p&gt;
+&lt;pre&gt;
+int f(int x) {
+  x = foo(x);
+  x = bar(x);
+  return baz(x);
+}
+&lt;/pre&gt;
+&lt;p&gt;And you want to add a new step in the function:&lt;/p&gt;
+&lt;pre&gt;
+int f(int x) {
+  x = foo(x);
+  &lt;b&gt;x = fab(x);&lt;/b&gt;
+  x = bar(x);
+  return baz(x);
+}
+&lt;/pre&gt;
+&lt;p&gt;Only one line needs editing,&lt;/p&gt;
+&lt;p&gt;Consider the Erlang equivalent:&lt;/p&gt;
+&lt;pre&gt;
+f(X) -&gt;
+  X1 = foo(X),
+  X2 = bar(X1),
+  baz(X2).
+&lt;/pre&gt;
+&lt;p&gt;Now you want to add a new step, which requires editing every variable thereafter:&lt;/p&gt;
+&lt;pre&gt;
+f(X) -&gt;
+  X1 = foo(X),
+  &lt;b&gt;X2 = fab(X1),&lt;br /&gt;  X3 = bar(X2),&lt;br /&gt;  baz(X3)&lt;/b&gt;.
+&lt;/pre&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+
+&lt;p&gt;Yariv Sadan, the creator of ErlyWeb and perhaps the most prominent Erlang blogger, agreed that he&amp;#8217;s run into it before and that it can be annoying.&amp;nbsp; In his &lt;a href=&quot;http://yarivsblog.com/articles/2008/03/09/in-response-to-what-sucks-about-erlang/&quot;&gt;response to Damien Katz&lt;/a&gt;, he suggested the following:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;If you&amp;rsquo;re writing code like in Damien&amp;rsquo;s example and you want to be able to insert lines without changing a bunch of variable names, I have a tip: increment by 10. This will prevent the big cascading variable renamings in most situations. Instead of the original code, write&lt;/p&gt;
+&lt;pre&gt;
+f(X) -&gt;
+  X10 = foo(X),
+  X20 = bar(X10),
+  baz(X20).
+&lt;/pre&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;then change it as follows when inserting a new line in the middle:&lt;/p&gt;
+&lt;pre&gt;
+f(X) -&gt;
+  X10 = foo(X),
+  X15 = fab(X10),
+  X20 = bar(X15),
+  baz(X20).
+&lt;/pre&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;Yes, I know, it&amp;rsquo;s not exactly beautiful, but in the rare cases where you need it, it&amp;rsquo;s a useful trick.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://tonyarcieri.org/images/pr0n/picard-facepalm.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;What is this?&amp;nbsp; BASIC?&amp;nbsp; Are we&amp;#8217;re back to line numbers as a good solution to this problem?&amp;nbsp; I have the utmost respect for Yariv and am using his excellent &lt;a href=&quot;http://yarivsblog.com/articles/2006/08/14/smerl-simple-metaprogramming-for-erlang/&quot;&gt;smerl&lt;/a&gt; library as part of &lt;a href=&quot;http://yarivsblog.com/articles/2006/08/14/smerl-simple-metaprogramming-for-erlang/&quot;&gt;Reia&lt;/a&gt;, but that&amp;#8217;s a truly silly answer.&lt;/p&gt;
+
+&lt;p&gt;I&amp;#8217;m going to try to go through some of the more common complaints against multiple assignment and see if I can address them&amp;#8230;&lt;b&gt;&lt;br /&gt;
+&lt;/b&gt;&lt;/p&gt;
+
+&lt;h2&gt;Immutability and Multiple Assignment Are NOT a Boolean Decision&lt;/h2&gt;
+
+&lt;p&gt;Perhaps one of the most common complaints against multiple assignment goes a little something like this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Immutability is a key feature of a concurrent programming language&lt;/p&gt;
+&lt;p&gt;Multiple assignment breaks immutability&lt;/p&gt;
+&lt;p&gt;Therefore, multiple assignment does not belong in a concurrent programming language&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Except there&amp;#8217;s one thing wrong with that argument: multiple assignment and immutability are two completely different things.&amp;nbsp; The single assignment cargo cult loves to conflate the two terms.&amp;nbsp; I cannot tell you how many times I&amp;#8217;ve seen someone toss out immutability as a red herring in arguments about multiple assignment.&amp;nbsp; They are not the same thing and have absolutely nothing to do with each other.&lt;/p&gt;
+
+&lt;p&gt;To begin, let&amp;#8217;s look at how Erlang&amp;#8217;s creator Joe Armstrong explains how to convert a statement which uses multiple assignment into one that does not:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;How can you express something like X = X + 1 in Erlang?&lt;/p&gt;
+&lt;p&gt;The answer is easy. Invent a new variable whose name hasn&amp;rsquo;t been used before (say X1), and write X1 = X + 1.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Simple as that!&amp;nbsp; Each time we encounter the potential reassignment of a variable, just pick a new name and bind to that.&amp;nbsp; At this point you might be wondering: couldn&amp;#8217;t the compiler do that for you?&amp;nbsp; Isn&amp;#8217;t it easy to take something like:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;X = 42&lt;br /&gt;
+Y = 1&lt;br /&gt;
+X = X + 1&lt;br /&gt;
+Y = Y + X&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;and transform it into an equivalent set of code which uses single assigment?&amp;nbsp; Of course it is:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;X0 = 42&lt;br /&gt;
+Y0 = 1&lt;br /&gt;
+X1 = X0 + 1&lt;br /&gt;
+Y1 = Y0 + X1&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In the new form, each variable is assigned exactly once, with the original variables split into &lt;i&gt;versions&lt;/i&gt;.&amp;nbsp; The compiler can take the original code which uses multiple assignment and convert it to what&amp;#8217;s known as &lt;a href=&quot;http://en.wikipedia.org/wiki/Static_single_assignment_form&quot;&gt;static single assignment form&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;There&amp;#8217;s nothing magic about this.&amp;nbsp; If the values the variables are bound to are immutable due to language constraints, they remain immutable.&amp;nbsp; This is just a simple compile-time transformation which has zero effect on the program when it is running.&lt;/p&gt;
+
+&lt;p&gt;Repeat after me: immutability and multiple assignment have absolutely nothing to do with each other.&amp;nbsp; In fact, SSA form has been &lt;a href=&quot;http://www.cs.princeton.edu/~appel/papers/ssafun.ps&quot;&gt;proven equivalent&lt;/a&gt; to the Continuation-Passing Style that was a popular intermediate form for functional languages (functional programmers may appreciate &lt;a href=&quot;http://www.ccs.neu.edu/scheme/pubs/pldi-fsdf.pdf&quot;&gt;this paper&lt;/a&gt; instead).&amp;nbsp; SSA form is effectively an intermediate lambda calculus representation of languages which allow multiple assignment.&amp;nbsp; In other words, there exists an intermediate functional representation for imperative programs.&lt;/p&gt;
+
+&lt;p&gt;That said, today I began writing a pass for the Reia compiler which converts the original Reia abstract syntax with multiple assignment into SSA form before compiling it to Erlang forms.&amp;nbsp; In other words, I&amp;#8217;m preprocessing a language with multiple assignment and compiling it to an equivalent Erlang program with single assignment.&lt;/p&gt;
+
+&lt;h2&gt;Pattern Matching and Multiple Assignment Can Coexist Peacefully&lt;/h2&gt;
+
+&lt;p&gt;Erlang makes extensive use of an idea called pattern matching.&amp;nbsp; Where the &amp;quot;=&amp;quot; operator in most languages is used exclusively to bind a variable on the left side to a value on the right, in Erlang it&amp;#8217;s used to match two expressions.&amp;nbsp; This means that if a variable is unbound it&amp;#8217;s assigned, and if it&amp;#8217;s bound it&amp;#8217;s matched as part of the pattern.&amp;nbsp; Patterns are a fundamental construct in Erlang and used as part of things like function declarations and case statements.&amp;nbsp; Consider the following example (in Erlang):&amp;nbsp;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;X = 42,&lt;br /&gt;
+Y = 0,&lt;br /&gt;
+case {42, 24} of&lt;br /&gt;
+&amp;nbsp;&amp;nbsp; {Y, Z} -&amp;gt; Y + Z;&lt;br /&gt;
+&amp;nbsp;&amp;nbsp; {X, Z} -&amp;gt; X + Z;&lt;br /&gt;
+&amp;nbsp;&amp;nbsp; _ -&amp;gt; X + Y&lt;br /&gt;
+end.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;It may be hard for non-Erlang programmers to tell what&amp;#8217;s going on there.&amp;nbsp; Perhaps I can start by telling you that the case statement returns &amp;quot;66&amp;quot;, which is 42 + 24. This is because Erlang&amp;#8217;s case statement is matching the expression {42, 24} against the three patterns listed in the case statement: the first is {Y, Z}, the next is {X, Z}, and the last is _ which acts as a catch-all pattern.&lt;/p&gt;
+
+&lt;p&gt;When Erlang matches a pattern containing variables, if the variable is bound it&amp;#8217;s used as a part of the pattern.&amp;nbsp; In the first case, {Y, Z}, since the variable Y is bound it&amp;#8217;s used as part of the pattern, so the first case is effectively {0, Z}.&amp;nbsp; Since 0 and 42 don&amp;#8217;t match, the case statement moves onto the next pattern, {X, Z}, which is effectively {42, Z}.&amp;nbsp; Here the pattern matches, but since the variable Z isn&amp;#8217;t bound the match expression binds it to the value 24.&amp;nbsp; The result is 66.&lt;/p&gt;
+
+&lt;p&gt;Erlang&amp;#8217;s pattern matching relies on the idea of single-assignment variables in order to operate.&amp;nbsp; So how could you have multiple assignment without breaking pattern matching?&lt;/p&gt;
+
+&lt;p&gt;Simple: introduce a unary operator for use in patterns which prevents variables from being rebound.&amp;nbsp; This is precisely how &lt;a href=&quot;http://wiki.reia-lang.org/wiki/Pattern_matching&quot;&gt;Reia aims to solve the problem&lt;/a&gt;.&amp;nbsp; Here&amp;#8217;s the same example as above in a hypothetical &amp;quot;multiple assignment Erlang&amp;quot; which uses a unary * operator to indicate that a variable should not be rebound in a pattern matching expression:&amp;nbsp;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;X = 42,&lt;br /&gt;
+Y = 0,&lt;br /&gt;
+case {42, 24} of&lt;br /&gt;
+&amp;nbsp;&amp;nbsp; {*Y, Z} -&amp;gt; Y + Z;&lt;br /&gt;
+&amp;nbsp;&amp;nbsp; {*X, Z} -&amp;gt; X + Z;&lt;br /&gt;
+&amp;nbsp;&amp;nbsp; _ -&amp;gt; X + Y&lt;br /&gt;
+end.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The result is virtually identical, but here it&amp;#8217;s explicitly clear which variables are bound and being used as part of the pattern matching expression, and which ones we wish to bind.&amp;nbsp; Personally I like this approach better and think it makes it easier to read the pattern matching expression, as opposed to inferring from context which variables are bound and which ones aren&amp;#8217;t, but YMMV&amp;#8230;&lt;/p&gt;
+
+&lt;h2&gt;Side Effects Really Just Aren&amp;#8217;t That Bad&lt;/h2&gt;
+
+&lt;p&gt;I can see a typical Erlang programmer actually following the last two arguments and perhaps even conceeding that they have a certain degree of validity.&amp;nbsp; Here I expect to hit a wall.&amp;nbsp; You, the hardcore Erlang programmer, will simply not buy this argument, and that&amp;#8217;s fine, different strokes for different folks.&amp;nbsp; But first let me just point out why it&amp;#8217;s hypocritical to be a side effect-hating Erlang programmer.&lt;/p&gt;
+
+&lt;p&gt;Erlang&amp;#8217;s entire concurrency model is built around side effects:&lt;/p&gt;
+
+&lt;ol&gt;
+    &lt;li&gt;When you send a message to another process, you&amp;#8217;ve caused a side effect&lt;/li&gt;
+    &lt;li&gt;When you register or unregister a process, you&amp;#8217;ve caused a side effect&lt;/li&gt;
+    &lt;li&gt;When you spawn a process, you&amp;#8217;ve caused a side effect&lt;/li&gt;
+    &lt;li&gt;When a node connects or disconnects to a distributed Erlang system, it causes a side effect (the value of erlang:nodes/0 changes)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;and the list does go on&amp;#8230; if you&amp;#8217;re an Erlang programmer who thinks side effects are truly bad, perhaps you should be looking at concurrent languages which don&amp;#8217;t have side effects at the heart of their operation.&lt;/p&gt;
+
+&lt;p&gt;All that said, I will admit: I have encountered errors where a variable has an unexpected value because it was accidently rebound.&amp;nbsp; I&amp;#8217;d say that sort of thing happens to me about once a month, and usually entails about 15 minutes or so of debugging time.&amp;nbsp; YMMV, but as far as I&amp;#8217;m concerned, &lt;i&gt;it really isn&amp;#8217;t that bad&lt;/i&gt;.&lt;/p&gt;
+
+&lt;p&gt;In my case, I&amp;#8217;m saying that single assignment would save me about 15 minutes of debugging time per month.&amp;nbsp; What would I be trading that 15 minutes per month for?&amp;nbsp; Well consider these examples, the first in Ruby:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;x = func(x) if y&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;and an equivalent expression in Erlang:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;X1 = if&lt;br /&gt;
+&amp;nbsp; Y -&amp;gt; func(X);&lt;br /&gt;
+&amp;nbsp; true -&amp;gt; X&lt;br /&gt;
+end.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Here Erlang isn&amp;#8217;t being helped by its unwieldy if syntax, but that syntax is made even more unwieldy by the lack of multiple assignment.&amp;nbsp; Here we&amp;#8217;re binding a completely new variable, X1, and so the if statement must consider if the Y condition is true and return X after having been run through the given function.&amp;nbsp; However, we still need to bind X1 to X&amp;#8217;s original value in the case that the Y condition is false.&lt;/p&gt;
+
+&lt;p&gt;In the Ruby example, we don&amp;#8217;t need to worry about the latter case, since it&amp;#8217;s implicitly done for us with a side effect.&amp;nbsp; In the end, single assignment causes more work for the programmer, both in this case and the sorts of examples Damien Katz gave above.&lt;/p&gt;
+
+&lt;p&gt;Is it really worth it?&amp;nbsp; Does having a more verbose language that from a certain perspective is easier to reason about actually save you time in the long run?&amp;nbsp; My answer is no&amp;#8230;&lt;/p&gt;
+
+&lt;h2&gt;Single Assignment is Weird&lt;/h2&gt;
+
+&lt;p&gt;In the programming language I&amp;#8217;m creating for Erlang&amp;#8217;s VM, &lt;a href=&quot;http://wiki.reia-lang.org/wiki/Main_Page&quot;&gt;Reia&lt;/a&gt;, I&amp;#8217;m allowing multiple assignment by compiling to SSA form.&amp;nbsp; In making this decision for Reia the other arguments above hardly factored in whatsoever.&amp;nbsp; There was one overall motivating factor in making the decision: single assignment is weird.&lt;/p&gt;
+
+&lt;p&gt;The overwhelming majority of programmers have only used languages with multiple assignment.&amp;nbsp; Multiple assignment is the de facto standard, and single assignment is one of the things that makes Erlang weird to new programmers.&amp;nbsp; Even Joe Armstrong conceeds this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;However, if you try to assign a different value to the variable X, you&amp;rsquo;ll &lt;br /&gt;
+get a somewhat brutal error message:&lt;/p&gt;
+&lt;p&gt;4&amp;gt; X = 1234. &lt;br /&gt;
+=ERROR REPORT==== 11-Sep-2006::20:32:49 === &lt;br /&gt;
+Error in process &amp;lt;0.31.0&amp;gt; with exit value: &lt;br /&gt;
+{{badmatch,1234},[{erl_eval,expr,3}]} &lt;br /&gt;
+** exited: {{badmatch,1234},[{erl_eval,expr,3}]} **&lt;/p&gt;
+&lt;p&gt;What on Earth is going on here?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This is practially the very first thing Joe must introduce in his book.&amp;nbsp; If you hand Erlang to a novice, &amp;quot;what on Earth is going on here&amp;quot; will precisely describe the discovery of Erlang&amp;#8217;s single assignment.&lt;/p&gt;
+
+&lt;p&gt;In Reia, I&amp;#8217;m trying to keep the &amp;quot;what on Earth is going on here&amp;quot; feeling to a minimum.&lt;/p&gt;</description>
+	<pubDate>Sat, 26 Jul 2008 21:28:00 +0000</pubDate>
+</item>
+<item>
+	<title>Caoyuan's Blog: Implementation of Scala for NetBeans based on GSF</title>
+	<guid>http://blogtrader.org/page/dcaoyuan/entry/implementation_of_scala_for_netbeans</guid>
+	<link>http://blogtrader.org/page/dcaoyuan/entry/implementation_of_scala_for_netbeans</link>
+	<description>&lt;p&gt;
+The Scala for NetBeans is under pre-beta stage, other than bug-fixes, I'm preparing some documentations for it too. If you are interested in how to write language supporting under GSF's framework, you can take a look at this working documentation.
+
+&lt;p&gt;
+&lt;a href=&quot;http://wiki.netbeans.org/ScalaImpl&quot;&gt;Implementation of Scala for NetBeans&lt;/a&gt;
+&lt;p&gt;
+And also:
+&lt;p&gt;
+&lt;a href=&quot;http://wiki.netbeans.org/ScalaProposal&quot;&gt;Proposal of Scala for NetBeans&lt;/a&gt;
+&lt;p&gt;
+&lt;a href=&quot;http://wiki.netbeans.org/ScalaTodo&quot;&gt;Progressing of Scala for NetBeans&lt;/a&gt;
+&lt;p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/p&gt;</description>
+	<pubDate>Sat, 26 Jul 2008 17:57:15 +0000</pubDate>
+</item>
+<item>
+	<title>Socklabs Blog: Using Erltl without ErlyWeb</title>
+	<guid>tag:blog.socklabs.com,2008:entry-1545</guid>
+	<link>http://blog.socklabs.com/2008/07/using_erltl_without_erlyweb/</link>
+	<description>&lt;p&gt;Daveb posts about using &lt;a href=&quot;http://weblog.miceda.org/2008/05/05/using-erlyweb-templates-with-mochiweb/&quot;&gt;ErlyWeb templates with MochiWeb&lt;/a&gt; and this is interesting. I'm a fan of &lt;a href=&quot;http://erlyweb.org/&quot;&gt;ErlyWeb&lt;/a&gt; and what it officers and, to be quite frank, I don't think there is another Erlang web framework that compares to it regarding features and functionality. With that said, there are a lot of cases where you don't need an entire web framework to do what you want. There are plenty of situations where Erltl-built modules can come in very handy for doing all kinds of content building.&lt;/p&gt;
+
+&lt;p&gt;I Play WoW and s3images both use Yaws to handle HTTP requests but instead of using all of ErlyWeb, it cherry-picks the requests that need complex output and uses &lt;a href=&quot;http://erlyweb.org/doc/erltl.html&quot;&gt;ErlTL&lt;/a&gt; modules as needed.&lt;/p&gt;
+
+&lt;p&gt;In the &lt;a href=&quot;http://github.com/ngerakines/s3imagehost/tree/master/src/s3images_ahandler.erl&quot;&gt;s3images_ahandler.erl&lt;/a&gt; file there is the &lt;code&gt;s3images_ahandler:wrap_body/3&lt;/code&gt; function that is used to build an outer and inner template content and then render it with Yaws. You can see that in the project's &lt;a href=&quot;http://github.com/ngerakines/s3imagehost/tree/master/Makefile&quot;&gt;Makefile&lt;/a&gt; there is a quick online command used to build the template files used by the project and dump them into the project's ebin folder for later use. Using a simple interface like this does exactly what I want and gives me the best of both worlds.&lt;/p&gt;
+
+&lt;p&gt;The I Play WoW Facebook application, which is much more FBML/HTML intense, also does something very similar to this to render the application content inside the Facebook application canvas.&lt;/p&gt;</description>
+	<pubDate>Sat, 26 Jul 2008 08:21:20 +0000</pubDate>
+</item>
+<item>
+	<title>Socklabs Blog: An Erlang World of Warcraft Armory client ... and more</title>
+	<guid>tag:blog.socklabs.com,2008:entry-1544</guid>
+	<link>http://blog.socklabs.com/2008/07/an_erlang_world_of_warcraft_ar/</link>
+	<description>&lt;p&gt;I've been really crunching lately to give &lt;a href=&quot;http://www.facebook.com/apps/application.php?id=2359644980&quot;&gt;I Play WoW&lt;/a&gt; some serious love before I get too involved in my next book. I've been heavily invested in the &lt;a href=&quot;http://culturedcode.com/things/&quot;&gt;Things&lt;/a&gt; application, plowing through tasks and bugs like it's nobody's business.&lt;/p&gt;
+
+&lt;p&gt;There are three major things on the plate right now. The first is, and now was, an overhaul of the image upload system. I'm pretty happy with the &lt;a href=&quot;http://github.com/ngerakines/s3imagehost/&quot;&gt;s3images&lt;/a&gt; project, and so far it has been relatively low-maintenance. &lt;/p&gt;
+
+&lt;p&gt;The second is the introduction of &lt;a href=&quot;http://incubator.apache.org/couchdb/&quot;&gt;CouchDB&lt;/a&gt; into the mix of I Play WoW technologies. I'm really excited to say that I've made a major dent and I've got an active and working CouchDB instance serving I Play WoW users. The load is relatively low, but there are a few hundred thousand documents in the system now and things are looking up. I'd love to write more about that experience, but I'm going to hold off until I feel comfortable enough to say that there is no going back.&lt;/p&gt;
+
+&lt;p&gt;The third goal includes introducing an external component to I Play WoW. I've got lots of data from over a year of use about how Facebook users use the application and connect with people. I'm eager to start opening up the floodgates and making parts of the application available to non-Facebook users. This feature is still on the drawing board and may be scrapped entirely, but I'm feeling good about what I've got so far.&lt;/p&gt;
+
+&lt;p&gt;In and around all of this activity, I feel compelled to open up as much as possible. With that said I posted the Erlang library that I use to connect to the armory. &lt;a href=&quot;http://github.com/ngerakines/erlang_wowarmory&quot;&gt;erlang_wowarmory&lt;/a&gt; is a simple gen_server based Erlang module that allows you to throttle World of Warcraft Armory requests and handle them in an offline manor. See the library and README file for more information.&lt;/p&gt;</description>
+	<pubDate>Sat, 26 Jul 2008 08:02:19 +0000</pubDate>
+</item>
+<item>
+	<title>21st Century Code Works: Scalaris Released</title>
+	<guid>tag:blogger.com,1999:blog-7435412383881764254.post-1549559424813718640</guid>
+	<link>http://21ccw.blogspot.com/2008/07/scalaris-released.html</link>
+	<description>If you were at the &lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://www.erlang-exchange.com/&quot;&gt;Erlang Exchange&lt;/a&gt; in London last month, you should know that one of the hottest talks was given by &lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://erlang-exchange.com/alexander-reinefeld&quot;&gt;Alexander Reinefeld&lt;/a&gt;, &quot;&lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://skillsmatter.com/podcast/erlang/building-a-transactional-distributed-data-store-with-erlang&quot;&gt;Building a transactional distributed data store with Erlang&lt;/a&gt;&quot;&lt;br /&gt;&lt;br /&gt;Joe Armstrong seems to like it too:&lt;br /&gt;&lt;br /&gt;&quot;I might be wrong, but my gut feeling is that what Alexander Reinefeld showed us will be the first killer application in Erlang.&quot;&lt;br /&gt;&lt;br /&gt;&quot;So my take on this is that this is one of the sexiest applications I've seen in many a year. I've been waiting for this to happen for a long while. The work is backed by quadzillion Ph.D's and is really good &lt;span&gt;believe me.&quot;&lt;br /&gt;&lt;br /&gt;&lt;/span&gt;- http://armstrongonsoftware.blogspot.com/2008/06/itching-my-programming-nerve.html&lt;br /&gt;&lt;br /&gt;Well, seems like Scalaris has been released! The link went up on the website in the last 24-48 hours. I haven't had the time to look at it yet, but you can grab it &lt;a rel=&quot;nofollow&quot; target=&quot;_blank&quot; href=&quot;http://code.google.com/p/scalaris/&quot;&gt;here&lt;/a&gt;.</description>
+	<pubDate>Thu, 24 Jul 2008 04:46:00 +0000</pubDate>
+</item>
+<item>
+	<title>Eric Merritt: Forth: The Other White Meat</title>
+	<guid>tag:blogger.com,1999:blog-7012030999962875668.post-5894913897205529613</guid>
+	<link>http://erlangish.blogspot.com/2008/07/forth-other-white-meat.html</link>
+	<description>Lisp has been constantly touted as a language that any self respecting coder must learn. The proponent's of Lisp have every right to make the claims that they do. From the prospect of stretching your mind Lisp actually is as good as they say it is. Lisp is a principle member of a small, elite group of languages, the use of which really causes a fundamental change in the way people think about programming and system design. However, it is not the only member of this group. The group includes at least one other language, Forth. Forth is just as mind bendy, introspective and universal as Lisp but it doesn't tend to get the same amount of press as its older brethren. Well, I intend to change that. At least for the small corner of the world that reads this column.&lt;br /&gt;&lt;br /&gt;I know that as soon as I mentioned the F word (Forth that is ;) a general groan went up from those of you that have some experience with it. Don't worry, groaners, I feel your pain. However, take a couple of aspirin sit back and listen to me for a bit and you might gain a different prospective on the language. For those of you not familiar with the language, the reason for the groaning will become obvious as our story progresses.&lt;br /&gt;&lt;br /&gt;I had given some thought to going about and gathering up all of the 'quotes' that people use to promulgate Lisp and then justifying them for forth. After thinking about it, I decided to take a slightly different tack. I went this other route mostly because Bill Clementson has already done most of the gathering work for me and also because I think that you're smart enough to draw correlations without me beating you over the head with them. So take a couple of minutes, pop over Bill's site and read the quotes. Don't worry, I'll wait.&lt;br /&gt;&lt;br /&gt;&lt;span&gt;What Is Forth&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;Back so soon? good. Forth is a language that takes a wildly different tack then any other language out there. It was initially developed by Charles Moore at the US National Radio Astronomy Observatory in the early 1970s. Back in the early sixties, while working for the Smithsonian Astrophysical Observatory Mr. Moore found a need for a little bit more dynamisim then he had had in the past. To that end he put together a little interpreter intended to control a punch reader. By using this interpreter he could compose different equations for tracking satellites without recompiling the entire system. This was no small feat for the time. Mr. Moore, like any good hacker, took his interpreter with him when he left that job. He carried it around for the next five or ten years constantly tweeking it. By 1968 it was finished enough to build up a little game called SpaceWar as well as pretty nifty Chess system. This version of the language was the first to be called 'Forth'.&lt;br /&gt;&lt;br /&gt;This early evolution and constant tweaking produced a fairly interesting language. A forth program is simply a series of tokens, called words, and two stacks. The stacks represent the main data stack and the return stack. For right now we will ignore the return stack and talk about the data stack. To give you comparitive examples, lets look at an operation in Lisp and Forth. The Lisp version is perfectly recognizable to just about anyone. It just adds two numbers together.&lt;br /&gt;&lt;br /&gt;&lt;pre&gt;&lt;br /&gt;&gt; (+ 1 2) &lt;br /&gt; 3&lt;br /&gt;&lt;/pre&gt;&lt;br /&gt;&lt;br /&gt;In Forth, it goes as follows.&lt;br /&gt;&lt;br /&gt;&lt;pre&gt;&lt;br /&gt;&gt; 1 2 +&lt;br /&gt; 3&lt;br /&gt;&lt;/pre&gt;&lt;br /&gt;&lt;br /&gt;A more complex example&lt;br /&gt;&lt;br /&gt;&lt;pre&gt;&lt;br /&gt;&gt; (/ (+ 27 18) (* 3 3))&lt;br /&gt; 5&lt;br /&gt;&lt;/pre&gt;&lt;br /&gt;&lt;br /&gt;In Forth, it goes as follows.&lt;br /&gt;&lt;br /&gt;&lt;pre&gt;&lt;br /&gt;&gt; 27 18 + 3 3 * /&lt;br /&gt; 5&lt;br /&gt;&lt;/pre&gt;&lt;br /&gt;&lt;br /&gt;If you have been exposed to some of the old TI calculators or even Postscript you may be able to tell whats going on here. Each number as it appears gets pushed onto the explicit data stack. The '+' words (and words they are) take exactly two numbers off the stack and replace them with the value resulting from there addition. So what we get on terms is.&lt;br /&gt;&lt;br /&gt;&lt;pre&gt;&lt;br /&gt;&gt; 1 2 + ( results in 3 on the stack)&lt;br /&gt;&lt;/pre&gt;&lt;br /&gt;&lt;br /&gt;This explicit stack is the way all data is handled in Forth, everything. You may remember that I said everything is a token. Thats absolutly correct. Forth reads each token and looks it up in a special dictionary that is used to store references to words. We create entries in that dictionary as follows.&lt;br /&gt;&lt;br /&gt;&lt;pre&gt;&lt;br /&gt; : square&lt;br /&gt;    DUP * ; &lt;br /&gt;&lt;/pre&gt;&lt;br /&gt;&lt;br /&gt;The colon is an immediate word (read macro) that reads ahead one word in the token stream and uses that word to create a new entry in the system dictionary.&lt;br /&gt;&lt;br /&gt;It then reads ahead until it finds a semi-colon ';' which it uses to indicate the close of the word. It then compiles the intervening tokens into references to words. It is as simple as that. 'Hold on, Hold on!' you say. 'You said everything was tokens in a forth system, aren't these special'. Nope, I didn't lead you astray. The colon and semi-colon aren't special at all and can be overwritten and changed at any point you like. The are examples of Forths powerful macro facility in which you can create syntax for a language that essentially has none. This is a powerful concept that Lisp shares. As Paul Graham says you can use this to build up your language to the system instead of the other way around. Of course, there is a downside. Any time you give the programmer extreme flexibility someone is going to abuse it. For example take a look at this example from a Forth library in the wild.&lt;br /&gt;&lt;br /&gt;&lt;pre&gt;&lt;br /&gt;: rework-% ( add - ) { url }  base @ &gt;r hex &lt;br /&gt;   0 url $@len 0 ?DO &lt;br /&gt;       url $@ drop I + c@ dup '% = IF &lt;br /&gt;           drop 0. url $@ I 1+ /string &lt;br /&gt;           2 min dup &gt;r &gt;number r&gt; swap - &gt;r 2drop &lt;br /&gt;       ELSE  0 &gt;r  THEN  over url $@ drop + c!  1+ &lt;br /&gt;   r&gt; 1+ +LOOP  url $!len &lt;br /&gt;   r&gt; base ! ;&lt;br /&gt;&lt;/pre&gt;&lt;br /&gt;&lt;br /&gt;Granted I have taken away the context, but you begin to understand the impetus behind those groans you heard a short while ago. Forth is one of the most flexible languages available, but the very flexibility that makes it interesting also makes it dangerous. It takes diligence on the part of the programmer to write really clean and maintainable code. However, if the coder does take that care he can write imminently readable and maintainable code. Take a look at the following examples that appeared in Starting Forth by Leo Brodie. You can get a good feel for whats going on even without knowing the context.&lt;br /&gt;&lt;br /&gt;&lt;pre&gt;&lt;br /&gt; : WASHER  WASH SPIN RINSE SPIN ;&lt;br /&gt; : RINSE  FAUCETS OPEN  TILL-FULL  FAUCETS CLOSE ;&lt;br /&gt;&lt;/pre&gt;&lt;br /&gt;&lt;br /&gt;So doing Forth well or not is entirely in the hands of the coder, that's why the Forth experience varies so much. That's why Forth is a Language for Smart People.&lt;br /&gt;&lt;br /&gt;&lt;span&gt;Forth Basics&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;I have the very good luck of owning a copy of the book Thinking Forth. This is one of those books that you should add to your library even if you never intend to write a single line of Forth code. It has a huge amount of great insight onto coding and system design in general, though you probably don't want to use it as your first introduction to Forth. In any case, I am going to be borrowing some topics and examples from that book to see us on our way.&lt;br /&gt;&lt;br /&gt;&lt;pre&gt;&lt;br /&gt;: breakfast&lt;br /&gt;    hurried? if cereal else eggs then clean ;&lt;br /&gt;&lt;/pre&gt;&lt;br /&gt;&lt;br /&gt;The above example illustrates the fundamental building block of every Forth system, the word. This specific example is whats called a colon definition. Its how you define a word in Forth. Basically the colon ':' in an immediate word (think macros operating on the word stream) that takes the very next word and creates an entry in the dictionary based on that word. It then reads all the words up to the semi-colon ';' that tells it to stop. For each word it encounters it looks up the position in the dictionary and puts that location in the code stream. Of course, in this case we have the if immediate word that takes control for a little while before handing it back. So what specifically might be going on here. In this case, hurried? probably looks at some parameter in the system to decide if haste is in order and puts a boolean on the stack. 'If' is an immediate word that compiles to a jump based on the 'else' and 'then' words. You can probably figure out what it does from here.&lt;br /&gt;&lt;br /&gt;This, admittedly simplistic, example does illustrate a few of the special characteristics of Forth. Most notably, the stack, words, and use of immediate words.&lt;br /&gt;&lt;br /&gt;&lt;span&gt;Factoring&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;Long before any one had ever heard of Agile Methodologies or Extreme Programing the idea of factoring was already hard at work in the Forth community. The idea of constantly looking at code, breaking up functions and generally simplifying the systems in a foundational concept in Forth. In fact it's taken to something of an extreme. Words are a huge part of Forth systems and the factoring process. For example, consider the following word which finds the sum of squares of two integers:&lt;br /&gt;&lt;br /&gt;&lt;pre&gt;&lt;br /&gt; : sum-of-squares   dup * swap dup * + ;&lt;br /&gt;&lt;/pre&gt;&lt;br /&gt;&lt;br /&gt;The Stack inputs to the word at run-time are two integers. The Stack output is a single integer. By the process of factoring, the example would be re-written in Forth using a new definition called 'squared' to allow sharing the common work of duplicating and multiplying a number. The first version was overly complex and illustrated the notorious line noise aspect of Forth. Fortunately, by factoring the system we can make a much more readable and understandable system.&lt;br /&gt;&lt;br /&gt;&lt;pre&gt;&lt;br /&gt; : squared  dup *  ;&lt;br /&gt; : sum-of-squares  squared swap squared + ;&lt;br /&gt;&lt;/pre&gt;&lt;br /&gt;&lt;br /&gt;Good Forth programmers strive to write programs containing very short (often one-line), well-named word definitions and reused factored code segments. The ability to pick just the right name for a word is a prized talent. Factoring is so important that it is common for a Forth program to have more subroutine calls than stack operations. Writing a Forth program is equivalent to extending the language to include all functions needed to implement an application. Therefore, programming in Forth may be thought of as creating a Domain Specific Language. As Lispers well know, this paradigm, when coupled with a very quick edit/compile/test cycle, seems to significantly increase productivity.&lt;br /&gt;&lt;br /&gt;&lt;span&gt;Immediate Words (The Macros of Forth)&lt;/span&gt;&lt;br /&gt;In comparison with more main stream languages, Forth's compiler is completely backwards. Most traditional compilers are huge programs designed to translate any foreseeable, legal combination of available operators into machine language. In Forth, however, most of the work of compilation is done by a single definition, only a few lines long. As I have said before, special structures like conditionals and loops are not compiled by the compiler but by the words being compiled (IF, DO, etc.) You may recognize this sort of thing from Lisp and it's macro system. Defining new, specialized compilers is as easy as defining any other word, as you will soon see. As you know, When you've got an extensible compiler, you've got a very powerful language!&lt;br /&gt;&lt;br /&gt;&lt;span&gt;Forths I Have Known&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;There are a couple of new Forths out there that are breaking with the Forth tradition somewhat and innovating in this area. One that I especially like is Factor. It's a very minimal but consistent for with some modern ideas like garbage collection, CLOS like object system, strait forward higher order functions, etc. This forth kind of bridges the gap between Lisp and Forth. A good traditional forth is Gforth. Its reasonably fast, reasonably stable and implements the full ANSI spec. You really can't go wrong with gforth if you want a good forth that will stand the test of time. If you just want an easy, interesting forth that will run just about anywhere I suggest you take a look at Ficl. Its ANSI compliant Forth written with in C as a subroutine threaded interpreter. It is stupid simple and about as robust as you can get. This is a really nice forth to start you tinkering with. Now if you want a Forth that is really stretching the bounds of what is possible and desirable take a look at Chuck Moore's latest Forth, Color Forth. It's the only language that I know of where color (yes, color) actually has semantic meaning. That the custom 25 core chip that color forth is designed to run show the Mr. Moore is really pushing the boundaries. It's worth while taking a bit of time exploring ColorForth just because of it's divergence from mainstream.&lt;br /&gt;&lt;br /&gt;&lt;span&gt;So Why the Comparisons to Lisp?&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;I think that many more people have had some exposure to Lisp then Forth. Because, Lisp and forth share so much 'meta' philosophy, I thought it would be beneficial to draw comparisons between Lisp and Forth. You will have to be the judge of whether this was a successful approach or not.</description>
+	<pubDate>Wed, 23 Jul 2008 23:26:13 +0000</pubDate>
+	<author>noreply@blogger.com (Eric)</author>
+</item>
+<item>
+	<title>Socklabs Blog: Erlang Snippet: Remove stale iplaywow cache files</title>
+	<guid>tag:blog.socklabs.com,2008:entry-1541</guid>
+	<link>http://blog.socklabs.com/2008/07/erlang_snippet_remove_stale_ip/</link>
+	<description>&lt;blockquote&gt;
+  &lt;p&gt;&lt;code&gt;Now = calendar:datetime_to_gregorian_seconds(erlang:universaltime()), [begin {ok, [{{time, Time}, _}]} = file:consult(File), case Time &amp;lt; Now - 14400 of true -&amp;gt; file:delete(File); _ -&amp;gt; ok end end || File &amp;lt;- filelib:wildcard(&quot;cache/*&quot;)].&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;em&gt;Updated&lt;/em&gt; This snippet now lives in gist: &lt;a href=&quot;http://gist.github.com/1843&quot;&gt;http://gist.github.com/1843&lt;/a&gt;&lt;/p&gt;</description>
+	<pubDate>Wed, 23 Jul 2008 18:47:36 +0000</pubDate>
+</item>
+<item>
+	<title>Joe Armstrong: Itching my programming nerve</title>
+	<guid>tag:blogger.com,1999:blog-5246027334551923738.post-4724295521704285571</guid>
+	<link>http://armstrongonsoftware.blogspot.com/2008/06/itching-my-programming-nerve.html</link>
+	<description>Photo: oreillygmt
+I've just got back from the first ever commercial Erlang conference. Some 40 talks in two days all related in some way or other to Erlang. It was a chance to meet old friends, make new friends and  connect people together in the hope that new synergy effects would arise.
+
+The most exciting thing was the emergence of what I think might be the first killer applications written in</description>
+	<pubDate>Wed, 23 Jul 2008 15:03:43 +0000</pubDate>
+	<author>noreply@blogger.com (Joe Armstrong)</author>
+</item>
+<item>
+	<title>Web 2.0 and beyond: Perl on Google App Engine</title>
+	<guid>tag:blogger.com,1999:blog-3729811.post-4513568622836783444</guid>
+	<link>http://www.rsaccon.com/2008/07/perl-on-google-app-engine.html</link>
+	<description>Brad Fitzpatrick, the guy who added memchached to the Google App Engine, is starting a new project at Google: adding Perl support to the App Engine.</description>
+	<pubDate>Tue, 22 Jul 2008 23:11:37 +0000</pubDate>
+	<author>noreply@blogger.com (Roberto Saccon)</author>
+</item>
+<item>
+	<title>Web 2.0 and beyond: 10gen: Cloud hosting platform offering serverside Javascript</title>
+	<guid>tag:blogger.com,1999:blog-3729811.post-5012858421140470441</guid>
+	<link>http://www.rsaccon.com/2008/07/10gen-cloud-hosting-platform-offering.html</link>
+	<description>There was some speculation that Google will offer it once they open up the App Engine Platform to more languages, there were some small-scale attempts with serverside Javascript (including the mine, with http://erlyjs.googlecode.com, which is currently receiving very little attention from my side) but now 10gen (with well known Java hacker and director of the Apache Software Foundation Geir</description>
+	<pubDate>Mon, 21 Jul 2008 13:58:29 +0000</pubDate>
+	<author>noreply@blogger.com (Roberto Saccon)</author>
+</item>
+<item>
+	<title>Programming in the 21st Century: Kilobyte Constants, a Simple and Beautiful Idea that Hasn't Caught On</title>
+	<guid>http://prog21.dadgum.com/32.html</guid>
+	<link>http://prog21.dadgum.com/32.html</link>
+	<description>Eric Isaacson's &lt;a href=&quot;http://eji.com/a86/&quot;&gt;A86 assembler&lt;/a&gt; (which I used regularly in the early 1990s) includes a great little feature that I've never seen in another language: the suffix &quot;K&quot; to indicate kilobytes in numeric literals.  For example, you can say &quot;16K&quot; instead of &quot;16384&quot;.  How many times have you seen C code like this:
+&lt;pre&gt;char Buffer[512 * 1024];
+&lt;/pre&gt;The &quot;* 1024&quot; is so common, and so clunky in comparison with:
+&lt;pre&gt;char Buffer[512K];
+&lt;/pre&gt;In Forth this is trivial to add, at least outside of compiled definitions.  All you need is:
+&lt;pre&gt;: K 1024 * ;
+&lt;/pre&gt;And then you can write:
+&lt;pre&gt;512 K allot
+&lt;/pre&gt;</description>
+	<pubDate>Sun, 20 Jul 2008 06:00:00 +0000</pubDate>
+</item>
+
+</channel>
+</rss>
