@@ -1,10 +1,11 @@
--module(fun).
--compile(export_all).
+-module(predicate).
+-export([func/1]).
 
--include_lib(”xmerl/include/xmerl.hrl”).
+-include_lib("xmerl/include/xmerl.hrl").
 
-Function(Elem) ->
-	if
-		-> true,
-		true -> false
+func(Elem) ->
+	fun() -> 
+		if
+			Elem -> true
+		end
 	end.
