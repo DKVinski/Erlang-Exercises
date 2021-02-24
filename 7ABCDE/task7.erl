@@ -13,8 +13,9 @@ get_module_info(Dir, Tag) ->
 	
 get_apps_data(Tag) ->
 	Paths = code:get_path(),
-	get_apps_data_tail(Paths, [], Tag).
-	
+	List = lists:map(fun(Elem) -> lists:flatten([Elem]) end, get_apps_data_tail(Paths, [], Tag)),
+	lists:flatten(List).
+		
 get_apps_data_tail([Head|Tail], Acc, Tag) ->
 	Data = get_module_info(Head, Tag),
 	get_apps_data_tail(Tail, [Data, Acc], Tag),
@@ -24,26 +25,25 @@ get_apps_data_tail([], _, _) ->
 	
 search4func(FuncName) ->
 	%%io:format("~p~n", [get_apps_data(functions)]),
-	Kvak = [{Mod, App} || {Mod, App, Name} <- search4func_tail(get_apps_data(functions), []), Name == FuncName],
+	Kvak = [{Mod, App} || {Mod, App, Name} <- search4func_tail(lists:flatten([get_apps_data(functions)]), []), Name == FuncName],
 	io:format("~p,~n",[Kvak]).
 	
 search4func_tail([Head|Tail], Acc1) ->
-	Acc4 = lists:append(Acc1, search4func_tail_tail(Head, [])),
+	search4func_tail(Tail, Acc1),
+	lists:append(Acc1, search4func_tail_tail(Head, []));
 	%%io:format("~p~n",[search4func_tail_tail(Head, [])]),
-	search4func_tail(Tail, [Acc4]),
+	
 	%%io:format(".~n"),
-	%%io:format("~p~n", [Acc4]),
-	[Acc4],
-	io:format("~p~n", [Acc4]);
-search4func_tail([],_Acc1) ->
-	[].
+	%%io:format("~p~n", [Acc4]);
+search4func_tail([],Acc1) ->
+	Acc1.
 	
 search4func_tail_tail({Mod,{_ok, App},[{Name, _}|NameTail]}, Acc2) ->
 	search4func_tail_tail({Mod,{_ok, App},NameTail}, Acc2),
 	%% io:format(".~n"),
-	[{Mod, App, Name}, Acc2];
-search4func_tail_tail([], _Acc2) ->
-	[];
+	lists:append([{Mod, App, Name}], Acc2);
+search4func_tail_tail([], Acc2) ->
+	Acc2;
 search4func_tail_tail({Mod,{_ok, App},[[]|NameTail]}, []) ->
 	search4func_tail_tail({Mod,{_ok, App},NameTail}, []);
 search4func_tail_tail({_Mod,{_ok, _App},[]}, []) ->

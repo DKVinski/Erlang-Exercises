@@ -1,31 +1,39 @@
--module(child).
+-module(qes).
+
 -export([]).
 -export([init/1]).
--export([handle_cast/2, handle_call/3]).
+-export([handle_cast/2, handle_call/3, handle_info/2]).
 -export([start_link/0]).
+
 -include_lib("wx/include/wx.hrl").
 
--behaviour(gen_server).
+-behaviour(supervisor).
 
 start_link() ->
-    gen_server:start_link(?MODULE, [], []).
+    gen_server:start_link({local, ?MODULE}, ?MODULE, []).
 
 init(_Args) ->
-    io:format("ch1 has started (~w)~n", [self()]),
-    {ok, ch1State}.
+    io:format("ch has started (~w)~n", [self()]),
+    {ok, chState}.
 
 handle_cast(calc, State) ->
     {noreply, State};
 handle_cast(calcbad, State) ->
     {noreply, State}.
 	
-handle_call(_Request, From, _State) ->
-	receive
-		{restart} -> From ! {restart};
-		{new} -> From ! {new};
-		{error} -> From ! {error}
-	after 10000 -> exit(normal)
-	end
+handle_call(_Request, _From, _State) ->
+	make_window(),
+	ok.
+	
+handle_info(#wx{userData=Btn}, _State) ->
+	case Btn of
+		quitBtn -> make_window(), ok1;
+		spawnBtn -> make_window(), ok2;
+		errorBtn -> make_window(), ok3
+	end,
+	ok;
+handle_info({window}, _state) ->
+	make_window(),
 	ok.
 	
 %% ----------------------------------------------------------------------

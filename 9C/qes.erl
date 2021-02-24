@@ -1,51 +1,37 @@
 -module(qes).
 
--export([start/0, make_window/0, loop/0]).
--export([start_link/0]).
 -export([init/1]).
+-export([handle_info/2]).
+-export([start_link/1]).
+
 -include_lib("wx/include/wx.hrl").
 
--behaviour(supervisor).
+-behaviour(gen_server).
+-record(state, {pid}).
 
-%%start() ->
-%%	make_window(),
-%%	receive
-%%		#wx{userData=quitBtn} -> exit(kvak)
-%%	after 10000 ->exit(normal)
-%%	end.
+start_link(Args) ->
+	%%io:format("sup ~p~n", [self()]),
+    gen_server:start_link({local, ?MODULE}, ?MODULE, [Args],[]).
 
-start() ->
-	{ok, _Pid} = start_link(),
+init(Args) ->
+    %%io:format("qes has started (~w)~n", [self()]),
 	make_window(),
-	loop().
-
-start_link() ->
-    {ok, Pid} = supervisor:start_link({local, ?MODULE}, 
-        ?MODULE, []),
-    {ok, Pid}.
-
-init(_Args) ->
-    RestartStrategy = {simple_one_for_one, 10, 60},
-    ChildSpec = {child, {child, start_link, []},
-        permanent, brutal_kill, worker, [child]},
-    Children = [ChildSpec],
-    {ok, {RestartStrategy, Children}}.
-
-loop() ->
-	receive
-		#wx{userData=quitBtn} -> {ok, Pid} = supervisor:restart_child(child, []), Pid ! {restart};
-		#wx{userData=spawnBtn} -> {ok, Pid} = supervisor:start_child(child, []), Pid ! {new};
-		#wx{userData=errorBtn} -> supervisor:terminate_child(child, []), {ok, Pid} = supervisor:start_child(child, []), Pid ! {error}
-	after 10000 -> exit(omg)
+	%%io:format("args ~p~n", [Args]),
+	[Pid] = Args,
+	State = #state{pid = Pid},
+    {ok, State}.
+	
+handle_info(#wx{userData=Btn}, #state{pid=Pid}) ->
+	case Btn of
+		quitBtn ->  Pid ! {ok, quitBtn, self()};
+		spawnBtn -> Pid ! {ok, spawnBtn, self()};
+		errorBtn -> Pid ! {ok, errorBtn, self()}
 	end,
-	receive
-		{restart} -> make_window();
-		{new} -> make_window();
-		{error} -> make_window()
-	after 10000 -> exit(normal)
-	end,
-	loop().
-
+	{noreply, #state{pid=Pid}};
+handle_info(_Message, State) ->
+    %%io:format("Message : ~p~n", [Message]),
+	{info, State}.
+	
 %% ----------------------------------------------------------------------
 %% Opens a window with three buttons for
 %%  QUIT:   Closes window and all child windows
