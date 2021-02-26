@@ -1,11 +1,13 @@
 -module(predicate).
--export([func/1]).
+-export([func/0]).
 
 -include_lib("xmerl/include/xmerl.hrl").
 
-func(Elem) ->
-	fun() -> 
-		if
-			Elem -> true
+func() -> 
+	fun(Elem) -> 
+		case Elem#xmlElement.name of
+			title -> true;
+			description -> true;
+			_ -> false
 		end
 	end.
