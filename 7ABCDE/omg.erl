@@ -23,19 +23,22 @@ get_apps_data_tail([Head|Tail], Acc, Tag) ->
 get_apps_data_tail([], _, _) -> 
 	[].
 	
+	
+%% run-time error
+%% 8> omg:search4func(ping).
+%% exception error: bad argument
+%%   in function  ets:lookup/2
+%%      called as ets:lookup(module_info_ets,ping)
+%%   in call from omg:search4func/1 (omg.erl, line 29)
+
 search4func(FuncName) ->
 	%%io:format("~p~n", [get_apps_data(functions)]),
-	Kvak = [{Mod, App} || {Mod, App, FuncName} <- search4func_tail(lists:flatten(ets:lookup(module_info_ets, FuncName)), [])],
+	TableId = save_apps_data(),
+	Kvak = [{Mod, App} ||  {_Func, {Mod, App}} <- ets:lookup(TableId, FuncName)],
 	io:format("~p,~n",[Kvak]).
-	
-search4func_tail([Head|Tail], Acc1) ->
-	Acc4 = lists:append(Acc1, Head),
-	search4func_tail(Tail, Acc4);
-search4func_tail([],Acc1) ->
-	Acc1.
 
 save_apps_data() ->
-	ets:new(module_info_ets, [bag, public]),
+	TableId = ets:new(module_info_ets, [bag, public]),
 	[for_each_module(fun(_Elem) -> 
-			ets:insert(module_info_ets, {Func, {Mod, App}}) end , code:get_path()) || {Mod, App, Func} <- get_apps_data(functions)],
-	ok.
+			ets:insert(TableId, {Func, {Mod, App}}) end , code:get_path()) || {Mod, App, Func} <- get_apps_data(functions)],
+	TableId.

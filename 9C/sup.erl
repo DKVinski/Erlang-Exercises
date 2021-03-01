@@ -11,6 +11,7 @@ start() ->
 	{ok, _ChildPid} = supervisor:start_child(sup, [self()]),
 	loop().
 	
+%% neki error u loop-u, ne starta se novi proces
 loop() ->
 	receive
 		{ok, quitBtn, ChildPid} -> supervisor:restart_child(sup, ChildPid);
