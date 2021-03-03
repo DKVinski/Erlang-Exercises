@@ -3,6 +3,7 @@
 -export([start_link/0, init/1, callback_mode/0, terminate/3, start/0, stop/0]).
 -export([idle/3, pre_wash/3, main_wash/3, rinse/3, dry/3]).
 -export([temperatureE/1, quick_program/1, prewash/1, dryY/1]).
+-export([skip/0, cancel/0, status/0]).
 
 -behaviour(gen_statem).
 
@@ -123,10 +124,10 @@ dry(state_timeout, rinse, Data) ->
 %%omg
 
 skip() ->
-	.
+	ok.
 	
 cancel() ->
-	.
+	ok.
 
 status() ->
-	.
+	ok.
