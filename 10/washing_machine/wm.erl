@@ -198,7 +198,3 @@ dry(OnOff) ->
 		{pid, ProcessPid} -> self() ! {pid, ProcessPid}, gen_server:call(ProcessPid, {dry, OnOff})
 	after 1000 -> exit(normal)
 	end.
-
-
-
-%% cancel, end, skip ???

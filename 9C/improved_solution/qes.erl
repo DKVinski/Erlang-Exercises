@@ -1,43 +1,44 @@
 -module(qes).
 
--export([init/1]).
--export([handle_info/2, handle_call/3, handle_cast/2]).
--export([start_link/1]).
-
+-export([start/2, start_link/2, init/1, handle_call/3, handle_cast/2, handle_info/2]).
 -include_lib("wx/include/wx.hrl").
 
 -behaviour(gen_server).
--record(state, {pid}).
 
-start_link(Args) ->
-	%%io:format("sup ~p~n", [self()]),
-    gen_server:start_link({local, ?MODULE}, ?MODULE, [Args],[]).
+-record(state, {supPid, nextN}).
 
-init(Args) ->
-    %%io:format("qes has started (~w)~n", [self()]),
-	make_window(),
-	%%io:format("args ~p~n", [Args]),
-	[Pid] = Args,
-	State = #state{pid = Pid},
-    {ok, State}.
+start(N, SupPid) ->
+	io:format("qes start~n", []),
+	start_link(N, SupPid).
+
+start_link(N, SupPid) ->
+	Name = lists:append("qes_", erlang:integer_to_list(N)),
+	io:format("qes start_link~n", []),
+	gen_server:start_link({local, erlang:list_to_atom(Name)}, ?MODULE, [N, SupPid],[]).
 	
-handle_info(#wx{userData=Btn}, #state{pid=Pid}) ->
-	case Btn of
-		quitBtn ->  Pid ! {ok, quitBtn, self()};
-		spawnBtn -> Pid ! {ok, spawnBtn, self()};
-		errorBtn -> Pid ! {ok, errorBtn, self()}
-	end,
-	{noreply, #state{pid=Pid}};
-handle_info(_Message, State) ->
-    %%io:format("Message : ~p~n", [Message]),
-	{info, State}.
+init([N, SupPid]) ->
+	io:format("qes init~n", []),
+	process_flag(trap_exit, true),
+	make_window(),
+	State = #state{supPid = SupPid, nextN = N+1},
+	io:format("qes init end~n", []),
+    {ok, State}.
+
+handle_call(_Request, _From, State) ->
+	{reply, ok, State}.
 	
 handle_cast(_Request, State) ->
 	{noreply, State}.
 	
-handle_call(_Request, _From, State) ->
-	{reply, ok, State}.
-	
+handle_info(#wx{userData=Btn}, State) ->
+	case Btn of
+		quitBtn ->  exit(self(), normal);
+		spawnBtn -> sup:start(State#state.nextN); %%gen_server:start_link({global, erlang:list_to_atom(lists:append("supervisor_", erlang:integer_to_list(State#state.nextN)))}, sup, [State#state.nextN, erlang:list_to_atom(lists:append("supervisor_", erlang:integer_to_list(State#state.nextN)))], [{timeout, 100}]);
+		errorBtn -> supervisor:restart_child(State#state.supPid, self())
+	end,
+	{noreply, State}.
+ 
+
 %% ----------------------------------------------------------------------
 %% Opens a window with three buttons for
 %%  QUIT:   Closes window and all child windows
