@@ -1,7 +1,6 @@
 -module(task3).
 -export([person/3, print_oldest/2]).
 
-%% kako provjerit jel argumnet string?
 person(Name, Age, Adress) when is_number(Age) ->
 	Person = #{Name => {Age, Adress}}.
 	%% maps:put(key, value, map)

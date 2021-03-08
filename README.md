@@ -1,6 +1,9 @@
 # Erlang-Exercises
 Solutions of Erlangator basic course exercises
 
+TASK 6
+	-> solutions are not in rss_xe module like suggested in task, but in modules predicate and xe
+
 TASK 7
 	-> modules ping and ping_pong are added to the folder for purpose of testing
 	-> module omg contains functions which use ets tables

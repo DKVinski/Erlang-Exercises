@@ -52,6 +52,3 @@ save_apps_data() ->
 	[ets:insert(TableId,{Func, {Mod, App}}) || {Mod, App, {Func, _Arrity}} <- get_apps_data(functions)],
 	%%io:format("table: ~p~n", [ets:tab2list(TableId)]),
 	TableId.
-	
-%% FUNC VRAĆA LISTU S POPISOM FUNKCIJA -> SREDIT get_apps_data_tail DA SVAKA FUNC IMA SVOJE PODATKE U TUPLE-U ZA SEBE
-%%			-> tri ugnježđene petlje @_@ fak fak fak

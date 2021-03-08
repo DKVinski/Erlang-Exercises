@@ -17,7 +17,6 @@ create_list_of_records([{Name, {Year, Month, Day}}|Tail], ListTilNow) ->
 create_list_of_records([], List) ->
 	List.
 
-%% print format has to be corrected	
 present(FileName) ->
 	People = create_index(FileName),
 	lists:foreach(fun(Elem) -> {Year,Month,Day}=Elem#person.birth, io:format("~p, ~p.~p.~n", [Elem#person.name, Day, Month]) end, People).
